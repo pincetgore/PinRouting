@@ -2,6 +2,12 @@ name: Update Routing Configs
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Принудительно обновить (LastUpdated и диплинки)'
+        required: false
+        type: boolean
+        default: false
   schedule:
     - cron: '0 */6 * * *'
   push:
@@ -21,13 +27,6 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
-    outputs:
-      happ_default: ${{ steps.deeplinks.outputs.happ_default }}
-      happ_whitelist: ${{ steps.deeplinks.outputs.happ_whitelist }}
-      happ_json: ${{ steps.deeplinks.outputs.happ_json }}
-      incy_default: ${{ steps.deeplinks.outputs.incy_default }}
-      incy_whitelist: ${{ steps.deeplinks.outputs.incy_whitelist }}
-      incy_json: ${{ steps.deeplinks.outputs.incy_json }}
 
     steps:
       - uses: actions/checkout@v7
@@ -42,6 +41,8 @@ jobs:
 
       - name: Update routing configs
         shell: bash
+        env:
+          FORCE_UPDATE: ${{ inputs.force || false }}
         run: |
           set -euo pipefail
           export TZ=UTC
@@ -65,7 +66,14 @@ jobs:
           echo "Latest GeoIP tag:   $geoip_tag"
           echo "Latest Geosite tag: $geosite_tag"
 
+          FORCE_UPDATE="${FORCE_UPDATE:-false}"
           need_update=false
+
+          if [[ "$FORCE_UPDATE" == "true" ]]; then
+            need_update=true
+            echo "Force update enabled: will update LastUpdated and deeplinks"
+          fi
+
           for dir in HAPP INCY; do
             for type in DEFAULT WHITELIST JSONSUB; do
               file="${dir}/${type}.JSON"
