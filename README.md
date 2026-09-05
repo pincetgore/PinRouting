@@ -35,20 +35,6 @@
 </tbody>
 </table>
 
-## 💻 Установка для Mihomo (Clash Meta)
-
-Готовые YAML-шаблоны в папке `MIHOMO/`:
-
-<table width="100%">
-<thead><tr><th align="left">Файл</th><th align="left">Описание</th></tr></thead>
-<tbody>
-<tr><td><code>default.yaml</code></td><td>DEFAULT конфиг для добавления в приложение вручную и 40+ rule-провайдерами</td></tr>
-<tr><td><code>template_remnawave.yaml</code></td><td>DEFAULT конфиг для интеграции с панелью Remnawave</td></tr>
-</tbody>
-</table>
-
-Подставьте URL вашей подписки и используйте с любым Mihomo-совместимым клиентом (Clash Mi, Clash Verge и др.).
-
 ---
 
 ## ✨ Преимущества
