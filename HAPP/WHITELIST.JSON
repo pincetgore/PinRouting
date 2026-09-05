@@ -1,5 +1,5 @@
 {
-  "Name": "RoscomVPN Whitelist",
+  "Name": "PinRouting Whitelist",
   "GlobalProxy": "true",
   "UseChunkFiles": "true",
   "RemoteDns": "9.9.9.9",

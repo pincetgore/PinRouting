@@ -1,7 +1,7 @@
 # ============================================================
-# ШАБЛОН MIHOMO ДЛЯ REMNAWAVE ОТ ROSCOMVPN
+# ШАБЛОН MIHOMO ДЛЯ REMNAWAVE ОТ PINROUTING
 # ============================================================
-# Набор правил RoscomVPN, адаптированный для Mihomo
+# Набор правил PinRouting, адаптированный для Mihomo
 #
 # Режим:       rule
 # Инбаунды:    TUN (system, strict-route), mixed-port 7890
@@ -19,7 +19,7 @@
 #   ⛔ Блок      — блокировка (REJECT)
 #   ⏭️ Пропуск   — PASS (передать следующему правилу)
 #
-# Rule-sets (репозитории hydraponique / RoscomVPN на GitHub):
+# Rule-sets (репозитории на GitHub):
 #   • Реклама и слежка Windows              → REJECT-DROP
 #   • Торренты (домены/клиенты)             → DIRECT
 #   • Microsoft, Apple                      → DIRECT
@@ -33,7 +33,7 @@
 #
 # Разработка: ristavor
 # Благодарности: hydraponique & fatyzzz
-# Группа RoscomVPN в Telegram: https://t.me/vpnrouting
+# Группа PinRouting в Telegram: https://t.me/vpnrouting
 #
 # Будем благодарны любой поддержке:
 # USDT TRC20 — TMu3N2ZjK5omJ7n3WAj5MNCSM5querBXsR

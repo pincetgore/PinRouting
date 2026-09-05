@@ -1,5 +1,5 @@
 {
-  "Name": "RoscomVPN JSON",
+  "Name": "PinRouting JSON",
   "GlobalProxy": "true",
   "UseChunkFiles": "false",
   "RemoteDns": "9.9.9.9",
