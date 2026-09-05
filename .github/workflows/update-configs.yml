@@ -134,27 +134,30 @@ jobs:
   deploy:
     needs: update
     runs-on: ubuntu-latest
+    if: ${{ secrets.DEPLOY_SERVERS != '' && secrets.DEPLOY_SSH_KEY != '' }}
 
     steps:
       - name: Deploy to servers
         shell: bash
+        env:
+          HAPP_DEFAULT: ${{ needs.update.outputs.happ_default }}
+          HAPP_WHITELIST: ${{ needs.update.outputs.happ_whitelist }}
+          HAPP_JSON: ${{ needs.update.outputs.happ_json }}
+          INCY_DEFAULT: ${{ needs.update.outputs.incy_default }}
+          INCY_WHITELIST: ${{ needs.update.outputs.incy_whitelist }}
+          INCY_JSON: ${{ needs.update.outputs.incy_json }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SERVERS: ${{ secrets.DEPLOY_SERVERS }}
         run: |
           set -euo pipefail
 
-          HAPP_DEFAULT="${{ needs.update.outputs.happ_default }}"
-          HAPP_WHITELIST="${{ needs.update.outputs.happ_whitelist }}"
-          HAPP_JSON="${{ needs.update.outputs.happ_json }}"
-          INCY_DEFAULT="${{ needs.update.outputs.incy_default }}"
-          INCY_WHITELIST="${{ needs.update.outputs.incy_whitelist }}"
-          INCY_JSON="${{ needs.update.outputs.incy_json }}"
-
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
           SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=10 -i ~/.ssh/deploy_key"
 
-          IFS=',' read -ra SERVERS <<< "${{ secrets.DEPLOY_SERVERS }}"
+          IFS=',' read -ra SERVERS <<< "$DEPLOY_SERVERS"
 
           TOTAL=${#SERVERS[@]}
           FAIL_COUNT=0
