@@ -29,7 +29,7 @@ jobs:
       incy_json: ${{ steps.deeplinks.outputs.incy_json }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Validate configs
         shell: bash
