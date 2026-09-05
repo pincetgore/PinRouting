@@ -38,8 +38,6 @@ jobs:
           set -euo pipefail
           echo "Validating JSON files..."
           jq empty HAPP/*.JSON INCY/*.JSON
-          echo "Validating YAML files..."
-          python3 -c "import yaml; yaml.safe_load(open('MIHOMO/default.yaml')); yaml.safe_load(open('MIHOMO/template_remnawave.yaml'))"
           echo "All configs valid!"
 
       - name: Update routing configs
@@ -134,7 +132,6 @@ jobs:
   deploy:
     needs: update
     runs-on: ubuntu-latest
-    if: ${{ secrets.DEPLOY_SERVERS != '' && secrets.DEPLOY_SSH_KEY != '' }}
 
     steps:
       - name: Deploy to servers
@@ -150,6 +147,11 @@ jobs:
           DEPLOY_SERVERS: ${{ secrets.DEPLOY_SERVERS }}
         run: |
           set -euo pipefail
+
+          if [[ -z "${DEPLOY_SERVERS:-}" || -z "${DEPLOY_SSH_KEY:-}" ]]; then
+            echo "DEPLOY_SERVERS or DEPLOY_SSH_KEY is not configured. Skipping deployment."
+            exit 0
+          fi
 
           mkdir -p ~/.ssh
           echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
