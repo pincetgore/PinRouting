@@ -5,7 +5,7 @@
   "RemoteDns": "9.9.9.9",
   "DomesticDns": "77.88.8.8",
   "RemoteDNSType": "DoH",
-  "RemoteDNSDomain": "https://dns.quad9.net/dns-query",
+  "RemoteDNSDomain": "https://9.9.9.9/dns-query",
   "RemoteDNSIP": "9.9.9.9",
   "DomesticDNSType": "DoH",
   "DomesticDNSDomain": "https://77.88.8.8/dns-query",
@@ -30,21 +30,7 @@
   ],
   "DirectIp": [
     "geoip:private",
-    "geoip:direct",
-    "10.0.0.0/8",
-    "100.64.0.0/10",
-    "127.0.0.0/8",
-    "169.254.0.0/16",
-    "172.16.0.0/12",
-    "192.0.0.0/24",
-    "192.0.2.0/24",
-    "192.88.99.0/24",
-    "192.168.0.0/16",
-    "198.51.100.0/24",
-    "203.0.113.0/24",
-    "224.0.0.0/4",
-    "255.255.255.255/32",
-    "239.255.255.250/32"
+    "geoip:direct"
   ],
   "ProxySites": [
     "geosite:google-play",

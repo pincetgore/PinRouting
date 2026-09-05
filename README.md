@@ -1,4 +1,6 @@
+# 🛡️ PinRouting
 
+Оптимизированные конфигурации маршрутизации (роутинга) для клиентов **Happ** и **INCY** на базе кастомных легковесных баз GeoIP и Geosite.
 
 ## 📱 Установка для Happ
 
@@ -85,8 +87,7 @@
 <tr><td>✅ <b>"Казенные" сервисы РФ и CDN</b></td><td>VK, OK, Mail.Ru, Яндекс, CDNVideo (включая зарубежные активы)</td></tr>
 <tr><td>✅ <b>Обновления и пуши</b></td><td>Apple, Microsoft — корректная работа устройства + экономия трафика</td></tr>
 <tr><td>✅ <b>Все банки РФ</b></td><td>Вытащены с сайта ЦБ РФ + собрано саморезолвингом, включая зарубежные домены</td></tr>
-<tr><td>✅ <b>Игровые платформы</b></td><td>Steam, Epic Games, Riot Games, Escape from Tarkov — экономия трафика + проблемы через прокси</td></tr>
-<tr><td>✅ <b>Faceit</b></td><td>Фикс для РФ игроков, увеличиваем количество доступных локаций серверов</td></tr>
+<tr><td>✅ <b>Steam</b></td><td>Экономия трафика + решение проблем подключения через прокси</td></tr>
 <tr><td>✅ <b>Twitch</b></td><td>Экономия трафика сервера</td></tr>
 <tr><td>✅ <b>Pinterest</b></td><td>Блокировка рекламы на сервисе</td></tr>
 </tbody>
@@ -120,7 +121,6 @@
 
 ---
 
-
 ## 🔄 Автообновление
 
 > [!IMPORTANT]
@@ -136,4 +136,3 @@ GitHub Actions:
 
 - [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) — IP-диапазоны (geoip.dat)
 - [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — доменные списки (geosite.dat)
-

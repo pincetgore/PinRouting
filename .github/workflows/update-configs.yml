@@ -21,6 +21,10 @@ on:
   repository_dispatch:
     types: [update-routing-configs]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -74,16 +78,14 @@ jobs:
             echo "Force update enabled: will update LastUpdated and deeplinks"
           fi
 
-          for dir in HAPP INCY; do
-            for type in DEFAULT WHITELIST JSONSUB; do
-              file="${dir}/${type}.JSON"
-              f_geoip="$(jq -r '.Geoipurl | capture("@(?<tag>[0-9]{12})/") | .tag' "$file" 2>/dev/null || true)"
-              f_geosite="$(jq -r '.Geositeurl | capture("@(?<tag>[0-9]{12})/") | .tag' "$file" 2>/dev/null || true)"
-              if [[ "$f_geoip" != "$geoip_tag" || "$f_geosite" != "$geosite_tag" ]]; then
-                need_update=true
-                echo "$file needs tag update (current geoip: ${f_geoip:-none}, geosite: ${f_geosite:-none})"
-              fi
-            done
+          for type in DEFAULT WHITELIST JSONSUB; do
+            file="HAPP/${type}.JSON"
+            f_geoip="$(jq -r '.Geoipurl | capture("@(?<tag>[0-9]{12})/") | .tag' "$file" 2>/dev/null || true)"
+            f_geosite="$(jq -r '.Geositeurl | capture("@(?<tag>[0-9]{12})/") | .tag' "$file" 2>/dev/null || true)"
+            if [[ "$f_geoip" != "$geoip_tag" || "$f_geosite" != "$geosite_tag" ]]; then
+              need_update=true
+              echo "$file needs tag update (current geoip: ${f_geoip:-none}, geosite: ${f_geosite:-none})"
+            fi
           done
 
           if [[ "$need_update" == "true" ]]; then
@@ -94,20 +96,21 @@ jobs:
             curl -fsSL --retry 3 --retry-delay 2 --retry-connrefused -I "$geoip_url" >/dev/null
             curl -fsSL --retry 3 --retry-delay 2 --retry-connrefused -I "$geosite_url" >/dev/null
 
-            for dir in HAPP INCY; do
-              for type in DEFAULT WHITELIST JSONSUB; do
-                file="${dir}/${type}.JSON"
-                tmp="$(mktemp)"
-                jq \
-                  --arg ts "$now_epoch" \
-                  --arg geoip "$geoip_url" \
-                  --arg geosite "$geosite_url" \
-                  '.LastUpdated = $ts | .Geoipurl = $geoip | .Geositeurl = $geosite' \
-                  "$file" > "$tmp"
-                mv "$tmp" "$file"
-              done
+            for type in DEFAULT WHITELIST JSONSUB; do
+              file="HAPP/${type}.JSON"
+              tmp="$(mktemp)"
+              jq \
+                --arg ts "$now_epoch" \
+                --arg geoip "$geoip_url" \
+                --arg geosite "$geosite_url" \
+                '.LastUpdated = $ts | .Geoipurl = $geoip | .Geositeurl = $geosite' \
+                "$file" > "$tmp"
+              mv "$tmp" "$file"
             done
           fi
+
+          echo "Mirroring HAPP configs to INCY..."
+          cp HAPP/*.JSON INCY/
 
           for type in DEFAULT WHITELIST JSONSUB; do
             happ_b64="$(jq -c . "HAPP/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
@@ -134,5 +137,5 @@ jobs:
           fi
 
           git commit -m "Auto-update routing configs [$(date -u +'%Y-%m-%d %H:%M UTC')]"
+          git pull --rebase origin main
           git push
-
