@@ -403,6 +403,11 @@ rules:
   - RULE-SET,torrent-clients,DIRECT
   - PROCESS-NAME-REGEX,discord,💬 Discord.exe
   - PROCESS-NAME-REGEX,vesktop,💬 Discord.exe
+  - DOMAIN-SUFFIX,discord.com,💬 Discord.exe
+  - DOMAIN-SUFFIX,discord.gg,💬 Discord.exe
+  - DOMAIN-SUFFIX,discordapp.com,💬 Discord.exe
+  - DOMAIN-SUFFIX,discordapp.net,💬 Discord.exe
+  - DOMAIN-SUFFIX,discord.media,💬 Discord.exe
   - RULE-SET,games,🎮 Игры
   - RULE-SET,ru-apps,DIRECT
   - RULE-SET,direct-ips,DIRECT

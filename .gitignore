@@ -1,2 +1,17 @@
-/ADDON_AUTOROUTING/Marzneshin/__pycache__
-/ADDON_AUTOROUTING/Marzban/__pycache__
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor & IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python / Bytecode
+__pycache__/
+*.py[cod]
+
+# Logs & temp
+*.log
+*.tmp

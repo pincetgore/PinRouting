@@ -450,9 +450,14 @@ rules:
   # --- Торренты ---
   - RULE-SET,torrent-clients,DIRECT                # торрент-клиенты по процессу
 
-  # --- Приложения по имени процесса ---
+  # --- Приложения по имени процесса и доменам ---
   - PROCESS-NAME-REGEX,discord,💬 Discord.exe
   - PROCESS-NAME-REGEX,vesktop,💬 Discord.exe
+  - DOMAIN-SUFFIX,discord.com,💬 Discord.exe
+  - DOMAIN-SUFFIX,discord.gg,💬 Discord.exe
+  - DOMAIN-SUFFIX,discordapp.com,💬 Discord.exe
+  - DOMAIN-SUFFIX,discordapp.net,💬 Discord.exe
+  - DOMAIN-SUFFIX,discord.media,💬 Discord.exe
 
   # --- Широкие категории ---
   - RULE-SET,games,🎮 Игры                         # общая игровая категория

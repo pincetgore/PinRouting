@@ -161,23 +161,6 @@
 
 ---
 
-## 🔌 Интеграция с панелями (ADDON_AUTOROUTING)
-
-> [!NOTE]
-> Готовые модули для автоматической инъекции роутинга в пользовательские подписки.
-> Модули `subscription.py` монтируются в контейнер панели и автоматически подставляют актуальные geoip.dat/geosite.dat в подписки пользователей.
-
-<table width="100%">
-<thead><tr><th align="left">Панель</th><th align="left">Описание</th></tr></thead>
-<tbody>
-<tr><td><a href="https://github.com/hydraponique/3x-ui">🚀 3x-ui</a></td><td>Кастомный форк с встроенным RoscomVPN-роутингом, UI-выбором профиля и автообновлением geo-файлов</td></tr>
-<tr><td><a href="ADDON_AUTOROUTING/Marzban/">Marzban</a></td><td><code>subscription.py</code> — один файл для JSON и Non-JSON подписок, тип роутинга через env var</td></tr>
-<tr><td><a href="ADDON_AUTOROUTING/Marzneshin/">Marzneshin</a></td><td><code>subscription.py</code> — один файл для JSON и Non-JSON подписок, тип роутинга через env var</td></tr>
-<tr><td><a href="ADDON_AUTOROUTING/Remnawave/">Remnawave</a></td><td>Контейнер для автообновления роутинга через API</td></tr>
-</tbody>
-</table>
-
----
 
 ## 🔄 Автообновление
 
