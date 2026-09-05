@@ -1,7 +1,9 @@
 {
   "Name": "PinRouting",
   "GlobalProxy": "true",
-  "RouteOrder": "block-proxy-direct",
+  "UseChunkFiles": "true",
+  "RemoteDns": "9.9.9.9",
+  "DomesticDns": "77.88.8.8",
   "RemoteDNSType": "DoH",
   "RemoteDNSDomain": "https://dns.quad9.net/dns-query",
   "RemoteDNSIP": "9.9.9.9",
@@ -15,6 +17,7 @@
     "lkfl2.nalog.ru": "213.24.64.175",
     "lknpd.nalog.ru": "213.24.64.181"
   },
+  "RouteOrder": "block-proxy-direct",
   "DirectSites": [
     "geosite:private",
     "geosite:category-ru",
@@ -58,6 +61,5 @@
   ],
   "BlockIp": [],
   "DomainStrategy": "IPIfNonMatch",
-  "FakeDNS": "false",
-  "UseChunkFiles": "true"
+  "FakeDNS": "false"
 }

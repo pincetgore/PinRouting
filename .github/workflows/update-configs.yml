@@ -58,17 +58,27 @@ jobs:
               | head -n 1
           }
 
-          current_geoip_tag="$(jq -r '.Geoipurl | capture("@(?<tag>[0-9]{12})/") | .tag' HAPP/DEFAULT.JSON 2>/dev/null || true)"
-          current_geosite_tag="$(jq -r '.Geositeurl | capture("@(?<tag>[0-9]{12})/") | .tag' HAPP/DEFAULT.JSON 2>/dev/null || true)"
-
           geoip_tag="$(latest_tag "$GEOIP_REPO")"
           geosite_tag="$(latest_tag "$GEOSITE_REPO")"
           [[ -n "$geoip_tag" && -n "$geosite_tag" ]]
 
-          echo "Current GeoIP tag:   ${current_geoip_tag:-none}, Latest: $geoip_tag"
-          echo "Current Geosite tag: ${current_geosite_tag:-none}, Latest: $geosite_tag"
+          echo "Latest GeoIP tag:   $geoip_tag"
+          echo "Latest Geosite tag: $geosite_tag"
 
-          if [[ "$current_geoip_tag" != "$geoip_tag" || "$current_geosite_tag" != "$geosite_tag" ]]; then
+          need_update=false
+          for dir in HAPP INCY; do
+            for type in DEFAULT WHITELIST JSONSUB; do
+              file="${dir}/${type}.JSON"
+              f_geoip="$(jq -r '.Geoipurl | capture("@(?<tag>[0-9]{12})/") | .tag' "$file" 2>/dev/null || true)"
+              f_geosite="$(jq -r '.Geositeurl | capture("@(?<tag>[0-9]{12})/") | .tag' "$file" 2>/dev/null || true)"
+              if [[ "$f_geoip" != "$geoip_tag" || "$f_geosite" != "$geosite_tag" ]]; then
+                need_update=true
+                echo "$file needs tag update (current geoip: ${f_geoip:-none}, geosite: ${f_geosite:-none})"
+              fi
+            done
+          done
+
+          if [[ "$need_update" == "true" ]]; then
             now_epoch="$(date -u +%s)"
             geoip_url="https://cdn.jsdelivr.net/gh/${GEOIP_REPO}@${geoip_tag}/release/geoip.dat"
             geosite_url="https://cdn.jsdelivr.net/gh/${GEOSITE_REPO}@${geosite_tag}/release/geosite.dat"
