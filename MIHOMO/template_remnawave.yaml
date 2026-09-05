@@ -6,7 +6,7 @@
 # Режим:       rule
 # Инбаунды:    TUN (system, strict-route), mixed-port 7890
 #              Приватные и зарезервированные IP исключены из TUN и сниффера
-# DNS:         fake-ip, Yandex DNS (direct) + Google DNS (proxy)
+# DNS:         fake-ip, Yandex DNS (direct) + Quad9 DNS (proxy)
 #              IPv6 в DNS отключён, весь IPv6-трафик ядра блокируется на уровне правил
 #
 # Группы прокси:
@@ -80,15 +80,15 @@ dns:
     - rule-set:private-domains # исключить из fake-ip приватные домены
   default-nameserver:
     - https://77.88.8.8/dns-query
-    - https://8.8.8.8/dns-query
+    - https://9.9.9.9/dns-query
   proxy-server-nameserver:
     - https://77.88.8.8/dns-query
-    - https://8.8.8.8/dns-query
+    - https://9.9.9.9/dns-query
   direct-nameserver:
     - https://77.88.8.8/dns-query
-    - https://8.8.8.8/dns-query
+    - https://9.9.9.9/dns-query
   nameserver:
-    - https://8.8.8.8/dns-query#PROXY
+    - https://dns.quad9.net/dns-query#PROXY
 sniffer:
   enable: true
   override-destination: false

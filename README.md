@@ -155,7 +155,7 @@
 <thead><tr><th align="center">Назначение</th><th align="left">Сервер</th><th align="left">Зачем</th></tr></thead>
 <tbody>
 <tr><td align="center">🏠 Domestic (direct)</td><td><a href="https://dns.yandex.ru/">Яндекс DNS</a> <code>77.88.8.8</code></td><td>Для работы ВЕЗДЕ в РФ — без вариантов в реалиях БС, шатдаунов и ТСПУ. Низкий пинг в РФ</td></tr>
-<tr><td align="center">🌍 Remote (proxy)</td><td><a href="https://developers.google.com/speed/public-dns/">Google Public DNS</a> <code>8.8.8.8</code></td><td>Резолвинг-DNS для проксируемого трафика</td></tr>
+<tr><td align="center">🌍 Remote (proxy)</td><td><a href="https://www.quad9.net/">Quad9 DNS</a> <code>9.9.9.9</code></td><td>Резолвинг-DNS для проксируемого трафика</td></tr>
 </tbody>
 </table>
 
