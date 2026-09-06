@@ -138,90 +138,13 @@ jobs:
           ls -lh /tmp/geosite-artifacts/geosite.dat
 
       # -----------------------------------------------------------------------
-      # Optional: Rulesets for Mihomo & sing-box
+      # Optional: Rulesets for sing-box
       # -----------------------------------------------------------------------
-      - name: Install Mihomo & sing-box
+      - name: Install sing-box
         continue-on-error: true
         run: |
           set -euo pipefail
-          ARCH=$(dpkg --print-architecture)
-          LATEST_URL=$(${{ env.CURL }} https://api.github.com/repos/MetaCubeX/mihomo/releases/latest \
-            | grep -oP '"browser_download_url":\s*"\K[^"]*mihomo-linux-'"$ARCH"'-[^"]*\.deb(?=")' \
-            | head -n1)
-          ${{ env.CURL }} -o /tmp/mihomo.deb "$LATEST_URL"
-          sudo dpkg -i /tmp/mihomo.deb || sudo apt-get install -f -y
-          rm -f /tmp/mihomo.deb
-
           ${{ env.CURL }} https://sing-box.app/install.sh | sudo -E sh -s -- --version 1.12.12
-
-      - name: Build Geosite .mrs (Mihomo)
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          command -v mihomo >/dev/null 2>&1 || exit 0
-
-          work=/tmp/mihomo-geosite
-          out="/tmp/geosite-artifacts/mihomo"
-          rm -rf "$work" "$out"
-          mkdir -p "$work" "$out"
-          cp -a ./geosite/data/. "$work"/
-
-          find "$work" -type f -print0 |
-          while IFS= read -r -d '' f; do
-            tmp="$(mktemp)"
-            awk '
-              function trim(s){ sub(/^[ \t]+/,"",s); sub(/[ \t]+$/,"",s); return s }
-              {
-                gsub(/\r/,"")
-                s=$0
-                sub(/[ \t]*#.*/, "", s)
-                sub(/[ \t]*\/\/.*/, "", s)
-                sub(/[ \t]*@.*/, "", s)
-                s=trim(s)
-                gsub(/[ \t]+/, "", s)
-                s=tolower(s)
-                if (s == "") next
-                if (s ~ /^full:/) {
-                  sub(/^full:/, "", s)
-                  if (s != "") print s
-                  next
-                }
-                if (s ~ /^keyword:/) {
-                  sub(/^keyword:/, "", s)
-                  sub(/^\./, "", s)
-                  if (s != "") {
-                    s = "+." s
-                    sub(/\.$/, ".*", s)
-                    print s
-                  }
-                  next
-                }
-                if (s ~ /^domain:/) {
-                  sub(/^domain:/, "", s)
-                  sub(/^\./, "", s)
-                  if (s != "") {
-                    s = "+." s
-                    sub(/\.$/, ".*", s)
-                    print s
-                  }
-                  next
-                }
-                if (s ~ /^[a-z0-9_-]+:/) next
-                sub(/^\./, "", s)
-                if (s != "") {
-                  s = "+." s
-                  sub(/\.$/, ".*", s)
-                  print s
-                }
-              }
-            ' "$f" > "$tmp"
-            rel="${f#$work/}"
-            rel_noext="${rel%.*}"
-            dest="$out/${rel_noext}.mrs"
-            mkdir -p "$(dirname "$dest")"
-            mihomo convert-ruleset domain text "$tmp" "$dest"
-            rm -f "$tmp"
-          done
 
       - name: Build Geosite .srs (sing-box)
         continue-on-error: true
@@ -288,19 +211,17 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf release /tmp/dist
-          mkdir -p release/text release/mihomo release/sing-box /tmp/dist
+          mkdir -p release/text release/sing-box /tmp/dist
 
           # GeoIP files
           cp -f geoip-builder/output/dat/geoip.dat release/
           cp -f geoip-builder/output/text/*.txt   release/text/
-          cp -f geoip-builder/output/mrs/*.mrs     release/mihomo/
-          cp -f geoip-builder/output/srs/*.srs     release/sing-box/
+          if [ -d geoip-builder/output/srs ]; then
+            cp -f geoip-builder/output/srs/*.srs release/sing-box/ 2>/dev/null || true
+          fi
 
           # Geosite files
           cp -f /tmp/geosite-artifacts/geosite.dat release/
-          if [ -d /tmp/geosite-artifacts/mihomo ]; then
-            cp -f /tmp/geosite-artifacts/mihomo/*.mrs release/mihomo/ 2>/dev/null || true
-          fi
           if [ -d /tmp/geosite-artifacts/sing-box ]; then
             cp -f /tmp/geosite-artifacts/sing-box/*.srs release/sing-box/ 2>/dev/null || true
           fi
@@ -311,8 +232,9 @@ jobs:
 
           # Tarballs for GitHub release
           tar -czf /tmp/dist/text.tar.gz     -C release text
-          tar -czf /tmp/dist/mihomo.tar.gz   -C release mihomo
-          tar -czf /tmp/dist/sing-box.tar.gz -C release sing-box
+          if [ -d release/sing-box ] && [ "$(ls -A release/sing-box)" ]; then
+            tar -czf /tmp/dist/sing-box.tar.gz -C release sing-box
+          fi
           cp -f release/*.dat release/*.dat.sha256 /tmp/dist/
 
       # -----------------------------------------------------------------------
