@@ -1,0 +1,419 @@
+name: Build and Update Routing
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - "geoip/**"
+      - "geosite/data/**"
+      - "HAPP/*.JSON"
+      - ".github/workflows/build-and-update.yml"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Принудительно пересобрать и обновить'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-latest
+    env:
+      CURL: "curl -fsSL --retry 3 --retry-delay 2 --retry-connrefused"
+
+    steps:
+      - name: Checkout PinRouting
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate configs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Validating JSON files..."
+          jq empty HAPP/*.JSON INCY/*.JSON
+          echo "All configs valid!"
+
+      - name: Set Tag & Timestamps
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TZ=UTC
+          DAILY_TAG=$(date -u +%Y%m%d%H%M)
+          NOW_EPOCH=$(date -u +%s)
+          echo "tag=${DAILY_TAG}" >> "$GITHUB_OUTPUT"
+          echo "epoch=${NOW_EPOCH}" >> "$GITHUB_OUTPUT"
+          echo "Building with tag: ${DAILY_TAG}, epoch: ${NOW_EPOCH}"
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.21'
+          cache: false
+
+      # -----------------------------------------------------------------------
+      # Build GeoIP
+      # -----------------------------------------------------------------------
+      - name: Checkout Loyalsoldier/geoip
+        uses: actions/checkout@v4
+        with:
+          repository: Loyalsoldier/geoip
+          path: geoip-builder
+          fetch-depth: 1
+
+      - name: Download GeoIP Inputs
+        working-directory: geoip-builder
+        run: |
+          set -euo pipefail
+          ${{ env.CURL }} -o whitelist.txt https://raw.githubusercontent.com/escapingworm/russia-whitelist/refs/heads/main/ru-whitelist-cidr.txt
+          ${{ env.CURL }} -o antifilterdownloadcommunity.txt https://community.antifilter.download/list/community.lst
+          ${{ env.CURL }} -o refilter.txt https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/ipsum.lst
+          ${{ env.CURL }} -o refiltercommunity.txt https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community_ips.lst
+          ${{ env.CURL }} -o antifilternetwork.txt https://antifilter.network/download/ip.lst
+          ${{ env.CURL }} -o cdn.lst https://raw.githubusercontent.com/mansourjabin/cdn-ip-database/refs/heads/main/data/cdn.lst
+          ${{ env.CURL }} -o merged.sum https://raw.githubusercontent.com/PentiumB/CDN-RuleSet/refs/heads/main/release/merged.sum
+          ${{ env.CURL }} -o geolite_ru.lst https://raw.githubusercontent.com/hydraponique/countrydb/refs/heads/main/output/geolite2-geo-whois-asn-country-ipv4/ru.lst
+          ${{ env.CURL }} -o geolite_by.lst https://raw.githubusercontent.com/hydraponique/countrydb/refs/heads/main/output/geolite2-geo-whois-asn-country-ipv4/by.lst
+          ${{ env.CURL }} -o ipinfo_ru.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/ru.lst
+          ${{ env.CURL }} -o ipinfo_by.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/by.lst
+          ${{ env.CURL }} -o dbip_ru.lst https://raw.githubusercontent.com/hydraponique/countrydb/refs/heads/main/output/dbip-country-ipv4/ru.lst
+          ${{ env.CURL }} -o dbip_by.lst https://raw.githubusercontent.com/hydraponique/countrydb/refs/heads/main/output/dbip-country-ipv4/by.lst
+          ${{ env.CURL }} -o /tmp/GeoLite2-ASN-CSV.zip https://dl.netsyms.net/dbs/geolite2/GeoLite2-ASN-CSV.zip
+          unzip -j /tmp/GeoLite2-ASN-CSV.zip '*/GeoLite2-ASN-Blocks-*.csv' -d ./geolite2
+          ls -l ./geolite2/
+
+      - name: Overlay Custom GeoIP Config & Lists
+        run: |
+          set -euo pipefail
+          cp -f geoip/*.json geoip-builder/
+          cp -f geoip/*.txt  geoip-builder/
+
+      - name: Compile & Run GeoIP Builder
+        working-directory: geoip-builder
+        run: |
+          set -euo pipefail
+          go mod download
+          go build -o geoip-tool
+          rm -rf output
+          ./geoip-tool convert -c config.json
+          ls -lh output/dat/*.dat
+
+      # -----------------------------------------------------------------------
+      # Build Geosite
+      # -----------------------------------------------------------------------
+      - name: Checkout v2fly/domain-list-community
+        uses: actions/checkout@v4
+        with:
+          repository: v2fly/domain-list-community
+          path: geosite-builder
+          fetch-depth: 1
+
+      - name: Compile & Run Geosite Builder
+        run: |
+          set -euo pipefail
+          rm -rf geosite-builder/data /tmp/geosite-out
+          mkdir -p geosite-builder/data /tmp/geosite-out
+          cp -a ./geosite/data/. geosite-builder/data/
+
+          pushd geosite-builder >/dev/null
+          go run ./ -outputdir=/tmp/geosite-out
+          popd >/dev/null
+
+          test -s /tmp/geosite-out/dlc.dat
+          mkdir -p /tmp/geosite-artifacts
+          cp -f /tmp/geosite-out/dlc.dat /tmp/geosite-artifacts/geosite.dat
+          ls -lh /tmp/geosite-artifacts/geosite.dat
+
+      # -----------------------------------------------------------------------
+      # Optional: Rulesets for Mihomo & sing-box
+      # -----------------------------------------------------------------------
+      - name: Install Mihomo & sing-box
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ARCH=$(dpkg --print-architecture)
+          LATEST_URL=$(${{ env.CURL }} https://api.github.com/repos/MetaCubeX/mihomo/releases/latest \
+            | grep -oP '"browser_download_url":\s*"\K[^"]*mihomo-linux-'"$ARCH"'-[^"]*\.deb(?=")' \
+            | head -n1)
+          ${{ env.CURL }} -o /tmp/mihomo.deb "$LATEST_URL"
+          sudo dpkg -i /tmp/mihomo.deb || sudo apt-get install -f -y
+          rm -f /tmp/mihomo.deb
+
+          ${{ env.CURL }} https://sing-box.app/install.sh | sudo -E sh -s -- --version 1.12.12
+
+      - name: Build Geosite .mrs (Mihomo)
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          command -v mihomo >/dev/null 2>&1 || exit 0
+
+          work=/tmp/mihomo-geosite
+          out="/tmp/geosite-artifacts/mihomo"
+          rm -rf "$work" "$out"
+          mkdir -p "$work" "$out"
+          cp -a ./geosite/data/. "$work"/
+
+          find "$work" -type f -print0 |
+          while IFS= read -r -d '' f; do
+            tmp="$(mktemp)"
+            awk '
+              function trim(s){ sub(/^[ \t]+/,"",s); sub(/[ \t]+$/,"",s); return s }
+              {
+                gsub(/\r/,"")
+                s=$0
+                sub(/[ \t]*#.*/, "", s)
+                sub(/[ \t]*\/\/.*/, "", s)
+                sub(/[ \t]*@.*/, "", s)
+                s=trim(s)
+                gsub(/[ \t]+/, "", s)
+                s=tolower(s)
+                if (s == "") next
+                if (s ~ /^full:/) {
+                  sub(/^full:/, "", s)
+                  if (s != "") print s
+                  next
+                }
+                if (s ~ /^keyword:/) {
+                  sub(/^keyword:/, "", s)
+                  sub(/^\./, "", s)
+                  if (s != "") {
+                    s = "+." s
+                    sub(/\.$/, ".*", s)
+                    print s
+                  }
+                  next
+                }
+                if (s ~ /^domain:/) {
+                  sub(/^domain:/, "", s)
+                  sub(/^\./, "", s)
+                  if (s != "") {
+                    s = "+." s
+                    sub(/\.$/, ".*", s)
+                    print s
+                  }
+                  next
+                }
+                if (s ~ /^[a-z0-9_-]+:/) next
+                sub(/^\./, "", s)
+                if (s != "") {
+                  s = "+." s
+                  sub(/\.$/, ".*", s)
+                  print s
+                }
+              }
+            ' "$f" > "$tmp"
+            rel="${f#$work/}"
+            rel_noext="${rel%.*}"
+            dest="$out/${rel_noext}.mrs"
+            mkdir -p "$(dirname "$dest")"
+            mihomo convert-ruleset domain text "$tmp" "$dest"
+            rm -f "$tmp"
+          done
+
+      - name: Build Geosite .srs (sing-box)
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          command -v sing-box >/dev/null 2>&1 || exit 0
+
+          src=/tmp/sing-box-geosite
+          out="/tmp/geosite-artifacts/sing-box"
+          rm -rf "$src" "$out"
+          mkdir -p "$src" "$out"
+          cp -a ./geosite/data/. "$src"/
+
+          find "$src" -type f -print0 |
+          while IFS= read -r -d '' f; do
+            tmp_json="$(mktemp)"
+            awk '
+              function trim(s){ sub(/^[ \t]+/,"",s); sub(/[ \t]+$/,"",s); return s }
+              function strip_tail(s){
+                gsub(/\r/,"",s)
+                s=trim(s)
+                sub(/[ \t]*#.*/, "", s)
+                sub(/[ \t]*\/\/.*/, "", s)
+                sub(/[ \t]*@.*/, "", s)
+                return trim(s)
+              }
+              {
+                t = strip_tail($0)
+                if (t == "") next
+                if (t ~ /^\/\//) next
+                if (t ~ /^#/) next
+                if (t ~ /^include:/) next
+                if (t ~ /^full:/)   { v=strip_tail(substr(t,6)); sub(/^\./,"",v); if(v!="") print "domain\t"  v; next }
+                if (t ~ /^domain:/) { v=strip_tail(substr(t,8)); sub(/^\./,"",v); if(v!="") print "suffix\t"  v; next }
+                if (t ~ /^keyword:/){ v=strip_tail(substr(t,9));                   if(v!="") print "keyword\t" v; next }
+                if (t ~ /^regexp:/) { v=strip_tail(substr(t,8));                   if(v!="") print "regex\t"   v; next }
+                v=t; sub(/^\./,"",v); if(v!="") print "keyword\t" v
+              }
+            ' "$f" | jq -Rn '
+              def add($k; $v): .rules[0][$k] = ((.rules[0][$k] // []) + [$v]);
+              reduce (inputs | split("\t")) as $it ({"version":3,"rules":[{}]};
+                if   $it[0]=="domain"  then add("domain";         $it[1])
+                elif $it[0]=="suffix"  then add("domain_suffix";  $it[1])
+                elif $it[0]=="keyword" then add("domain_keyword"; $it[1])
+                elif $it[0]=="regex"   then add("domain_regex";   $it[1])
+                else . end
+              )
+              | .rules[0] |= with_entries(select(.value | length > 0))
+              | if (.rules[0] | length) == 0 then .rules = [] else . end
+            ' > "$tmp_json"
+
+            rel="${f#$src/}"
+            rel_noext="${rel%.*}"
+            dest="$out/${rel_noext}.srs"
+            mkdir -p "$(dirname "$dest")"
+            sing-box rule-set compile --output "$dest" "$tmp_json"
+            rm -f "$tmp_json"
+          done
+
+      # -----------------------------------------------------------------------
+      # Package Release Assets
+      # -----------------------------------------------------------------------
+      - name: Prepare Release Directory
+        run: |
+          set -euo pipefail
+          rm -rf release /tmp/dist
+          mkdir -p release/text release/mihomo release/sing-box /tmp/dist
+
+          # GeoIP files
+          cp -f geoip-builder/output/dat/geoip.dat release/
+          cp -f geoip-builder/output/text/*.txt   release/text/
+          cp -f geoip-builder/output/mrs/*.mrs     release/mihomo/
+          cp -f geoip-builder/output/srs/*.srs     release/sing-box/
+
+          # Geosite files
+          cp -f /tmp/geosite-artifacts/geosite.dat release/
+          if [ -d /tmp/geosite-artifacts/mihomo ]; then
+            cp -f /tmp/geosite-artifacts/mihomo/*.mrs release/mihomo/ 2>/dev/null || true
+          fi
+          if [ -d /tmp/geosite-artifacts/sing-box ]; then
+            cp -f /tmp/geosite-artifacts/sing-box/*.srs release/sing-box/ 2>/dev/null || true
+          fi
+
+          # Checksums (relative filenames for sha256sum -c convenience)
+          (cd release && sha256sum geoip.dat   > geoip.dat.sha256)
+          (cd release && sha256sum geosite.dat > geosite.dat.sha256)
+
+          # Tarballs for GitHub release
+          tar -czf /tmp/dist/text.tar.gz     -C release text
+          tar -czf /tmp/dist/mihomo.tar.gz   -C release mihomo
+          tar -czf /tmp/dist/sing-box.tar.gz -C release sing-box
+          cp -f release/*.dat release/*.dat.sha256 /tmp/dist/
+
+      # -----------------------------------------------------------------------
+      # Update HAPP & INCY Configs
+      # -----------------------------------------------------------------------
+      - name: Update HAPP and INCY Configs
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          EPOCH="${{ steps.meta.outputs.epoch }}"
+          REPO="${{ github.repository }}"
+
+          GEOIP_URL="https://cdn.jsdelivr.net/gh/${REPO}@${TAG}/release/geoip.dat"
+          GEOSITE_URL="https://cdn.jsdelivr.net/gh/${REPO}@${TAG}/release/geosite.dat"
+
+          echo "Updating configs to:"
+          echo "  GeoIP:   $GEOIP_URL"
+          echo "  Geosite: $GEOSITE_URL"
+          echo "  Epoch:   $EPOCH"
+
+          for type in DEFAULT WHITELIST JSONSUB; do
+            file="HAPP/${type}.JSON"
+            tmp="$(mktemp)"
+            jq \
+              --arg ts "$EPOCH" \
+              --arg geoip "$GEOIP_URL" \
+              --arg geosite "$GEOSITE_URL" \
+              '.LastUpdated = $ts | .Geoipurl = $geoip | .Geositeurl = $geosite' \
+              "$file" > "$tmp"
+            mv "$tmp" "$file"
+          done
+
+          echo "Mirroring HAPP configs to INCY..."
+          cp HAPP/*.JSON INCY/
+
+          echo "Generating Deeplinks..."
+          for type in DEFAULT WHITELIST JSONSUB; do
+            happ_b64="$(jq -c . "HAPP/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
+            printf 'happ://routing/onadd/%s\n' "$happ_b64" > "HAPP/${type}.DEEPLINK"
+
+            incy_b64="$(jq -c . "INCY/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
+            printf 'incy://routing/onadd/%s\n' "$incy_b64" > "INCY/${type}.DEEPLINK"
+          done
+
+      # -----------------------------------------------------------------------
+      # Commit to main & Push Tag
+      # -----------------------------------------------------------------------
+      - name: Commit and Push Main Changes
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add release/ HAPP/ INCY/
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-update routing configs and geodata [${TAG}] [skip ci]"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+          # Tag current commit with DAILY_TAG
+          git tag "$TAG"
+          git push origin "$TAG"
+
+      # -----------------------------------------------------------------------
+      # Push to Release Branch & Publish Release
+      # -----------------------------------------------------------------------
+      - name: Push to Release Branch
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          cd release
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b release
+          git add -A
+          git commit -m "Release ${TAG}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f -u origin release
+          cd ..
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.tag }}
+          prerelease: false
+          draft: false
+          files: /tmp/dist/*
+
+      # -----------------------------------------------------------------------
+      # Purge jsDelivr Cache
+      # -----------------------------------------------------------------------
+      - name: Purge jsDelivr CDN Cache
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          REPO="${{ github.repository }}"
+          for f in geoip.dat geoip.dat.sha256 geosite.dat geosite.dat.sha256; do
+            curl -fsSL -i "https://purge.jsdelivr.net/gh/${REPO}@${TAG}/release/${f}" || true
+            curl -fsSL -i "https://purge.jsdelivr.net/gh/${REPO}@main/release/${f}" || true
+            curl -fsSL -i "https://purge.jsdelivr.net/gh/${REPO}@release/${f}" || true
+          done

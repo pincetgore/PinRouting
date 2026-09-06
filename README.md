@@ -121,18 +121,21 @@
 
 ---
 
-## 🔄 Автообновление
+## 🔄 Автономная сборка и автообновление
 
-> [!IMPORTANT]
-> Конфиги автоматически обновляются при выходе новых релизов [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) и [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite)
+> [!TIP]
+> Базы `geoip.dat` и `geosite.dat` теперь собираются **автономно прямо в репозитории PinRouting**, обеспечивая независимость от внешних релизов и мгновенную синхронизацию конфигураций.
 
 GitHub Actions:
-- Проверяет теги апстрим-репозиториев
-- Обновляет URL и таймстемпы в JSON-конфигах
+- Загружает актуальные данные (Antifilter, Re:filter, escapingworm ru-whitelist, CDN списки, MaxMind GeoLite2 ASN, IPinfo, DB-IP)
+- Собирает оптимизированные бинарные базы `geoip.dat` и `geosite.dat`
+- Публикует релизы и обновляет CDN-ссылки и таймстемпы в JSON-конфигах
 - Генерирует base64-диплинки для Happ и INCY
-- Коммитит изменения автоматически
+- Запускается по расписанию раз в сутки (04:00 UTC), при любом коммите в правила (`geoip/**`, `geosite/data/**`) или вручную через **Actions -> Run workflow**.
 
-## 🔗 Связанные проекты
+## 🔗 Источники и инструменты
 
-- [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) — IP-диапазоны (geoip.dat)
-- [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — доменные списки (geosite.dat)
+- [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) — инструмент сборки кастомных баз GeoIP
+- [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) — сборщик доменных списков Geosite
+- [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) & [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — оригинальные концепции и правила роутинга от hydraponique
+
