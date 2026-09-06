@@ -2,136 +2,212 @@
 
 Оптимизированные конфигурации маршрутизации (роутинга) для клиентов **Happ** и **INCY** на базе кастомных легковесных баз GeoIP и Geosite.
 
-## 📱 Установка для Happ
-
-<table width="100%">
-<thead><tr><th align="left">Способ</th><th align="left">Ссылка</th><th align="left">Описание</th></tr></thead>
-<tbody>
-<tr><td colspan="3"><b>DEFAULT</b> — полный профиль: RU/BY direct, YouTube/Telegram/GitHub через прокси, реклама блокируется</td></tr>
-<tr><td>🔗 DEFAULT.DEEPLINK</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.DEEPLINK">Просмотр</a></td><td>Диплинк-ссылка в текстовом формате</td></tr>
-<tr><td>📊 DEFAULT.JSON</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.JSON">Просмотр</a></td><td>JSON-конфиг роутинга</td></tr>
-<tr><td colspan="3"><b>WHITELIST</b> — direct только для сервисов и IP из белых списков РФ; всё остальное через прокси</td></tr>
-<tr><td>🔗 WHITELIST.DEEPLINK</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/WHITELIST.DEEPLINK">Просмотр</a></td><td>Диплинк-ссылка в текстовом формате</td></tr>
-<tr><td>📊 WHITELIST.JSON</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/WHITELIST.JSON">Просмотр</a></td><td>JSON-конфиг роутинга</td></tr>
-<tr><td colspan="3"><b>JSONSUB</b> — минимальный профиль: только DNS + кастомные geoip/geosite, без встроенных правил</td></tr>
-<tr><td>🔗 JSONSUB.DEEPLINK</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.DEEPLINK">Просмотр</a></td><td>Диплинк-ссылка в текстовом формате</td></tr>
-<tr><td>📊 JSONSUB.JSON</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.JSON">Просмотр</a></td><td>JSON-конфиг роутинга</td></tr>
-</tbody>
-</table>
-
-## 📱 Установка для INCY
-
-<table width="100%">
-<thead><tr><th align="left">Способ</th><th align="left">Ссылка</th><th align="left">Описание</th></tr></thead>
-<tbody>
-<tr><td colspan="3"><b>DEFAULT</b> — полный профиль: RU/BY direct, YouTube/Telegram/GitHub через прокси, реклама блокируется</td></tr>
-<tr><td>🔗 DEFAULT.DEEPLINK</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/DEFAULT.DEEPLINK">Просмотр</a></td><td>Диплинк-ссылка в текстовом формате</td></tr>
-<tr><td>📊 DEFAULT.JSON</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/DEFAULT.JSON">Просмотр</a></td><td>JSON-конфиг роутинга</td></tr>
-<tr><td colspan="3"><b>WHITELIST</b> — direct только для сервисов и IP из белых списков РФ; всё остальное через прокси</td></tr>
-<tr><td>🔗 WHITELIST.DEEPLINK</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.DEEPLINK">Просмотр</a></td><td>Диплинк-ссылка в текстовом формате</td></tr>
-<tr><td>📊 WHITELIST.JSON</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.JSON">Просмотр</a></td><td>JSON-конфиг роутинга</td></tr>
-<tr><td colspan="3"><b>JSONSUB</b> — минимальный профиль: только DNS + кастомные geoip/geosite, без встроенных правил</td></tr>
-<tr><td>🔗 JSONSUB.DEEPLINK</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.DEEPLINK">Просмотр</a></td><td>Диплинк-ссылка в текстовом формате</td></tr>
-<tr><td>📊 JSONSUB.JSON</td><td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.JSON">Просмотр</a></td><td>JSON-конфиг роутинга</td></tr>
-</tbody>
-</table>
+Проект автоматически собирает компактные бинарные базы правил (`geoip.dat` и `geosite.dat`), исключает рекламу, телеметрию, трекеры и обеспечивает прямое соединение (Direct) с российскими сервисами без задержек VPN, направляя заблокированные и зарубежные ресурсы в прокси-туннель.
 
 ---
 
-## ✨ Преимущества
+## 📱 Быстрая установка
 
-<details open>
-<summary><b>🌎 Кастомный GeoIP — <a href="https://github.com/hydraponique/roscomvpn-geoip">GitHub</a></b></summary>
+### Для Happ
 
-Максимально уменьшенный geoip.dat — выпилено все, кроме кастомного списка `geoip:direct`, где:
-- ➕ Русские/белорусские CIDR-диапазоны из трёх независимых геобаз: GeoLite2 (MaxMind), IPinfo, DB-IP
-- ➕ Кастомный список IP-диапазонов "казенных" VK Company, Yandex, CDNVideo (включая их зарубежные активы)
-- ➕ CIDR Apple Push-уведомлений (решение проблем с доставкой уведомлений на iOS устройствах)
-- ➖ DIFF-исключение списков: [Re:filter](https://github.com/1andrevich/Re-filter-lists) + [Antifilter.Network](https://antifilter.network) (для разблокировки РКН-списков)
-- ➖ DIFF-исключение Community-списков: [Re:filter](https://github.com/1andrevich/Re-filter-lists) + [Antifilter.Network](https://antifilter.network) + [Antifilter.Download](https://antifilter.download) (для проблемных/не работающих, НЕ заблокированных сервисов — 4pda, CloudFlare, аниме и др.)
-- ➖ DIFF-исключение [зарубежных CDN-сервисов](https://github.com/PentiumB/CDN-RuleSet) + кастомный список Hetzner и ZeroCDN (а именно их CIDR стран нашего таргета)
-- ➖ DIFF-исключение `0.0.0.0/8` из private списка (предотвращение утечки DNS на некоторых устройствах)
+<table width="100%">
+<thead><tr><th align="left">Профиль</th><th align="left">Диплинк (нажать для импорта)</th><th align="left">JSON-конфиг (для подписки)</th><th align="left">Описание</th></tr></thead>
+<tbody>
+<tr>
+  <td><b>DEFAULT</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.DEEPLINK">DEFAULT.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.JSON">DEFAULT.JSON</a></td>
+  <td><b>Основной профиль:</b> RU/BY, банки, гос. сервисы, Steam, Twitch напрямую. YouTube, Telegram, GitHub и зарубежный интернет — через прокси. Реклама и телеметрия заблокированы.</td>
+</tr>
+<tr>
+  <td><b>WHITELIST</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/WHITELIST.DEEPLINK">WHITELIST.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/WHITELIST.JSON">WHITELIST.JSON</a></td>
+  <td><b>Белый список:</b> Напрямую идут <i>только</i> проверенные ресурсы из <code>geosite:whitelist</code> и <code>geoip:whitelist</code> (банки, Госуслуги и др.). Весь остальной интернет — через прокси.</td>
+</tr>
+<tr>
+  <td><b>JSONSUB</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.DEEPLINK">JSONSUB.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.JSON">JSONSUB.JSON</a></td>
+  <td><b>Чистый профиль:</b> Настроены только безопасные DoH DNS и ссылки на кастомные базы geodata, без встроенных правил маршрутизации (для ручной настройки).</td>
+</tr>
+</tbody>
+</table>
 
-</details>
+### Для INCY
 
-<details open>
-<summary><b>🌐 Кастомный Geosite — <a href="https://github.com/hydraponique/roscomvpn-geosite">GitHub</a></b></summary>
+<table width="100%">
+<thead><tr><th align="left">Профиль</th><th align="left">Диплинк (нажать для импорта)</th><th align="left">JSON-конфиг (для подписки)</th><th align="left">Описание</th></tr></thead>
+<tbody>
+<tr>
+  <td><b>DEFAULT</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/DEFAULT.DEEPLINK">DEFAULT.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/DEFAULT.JSON">DEFAULT.JSON</a></td>
+  <td><b>Основной профиль:</b> Полная маршрутизация с разделением RU-трафика и зарубежных ресурсов.</td>
+</tr>
+<tr>
+  <td><b>WHITELIST</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.DEEPLINK">WHITELIST.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.JSON">WHITELIST.JSON</a></td>
+  <td><b>Белый список:</b> Прямой доступ только к доверенным белым спискам РФ, остальное через прокси.</td>
+</tr>
+<tr>
+  <td><b>JSONSUB</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.DEEPLINK">JSONSUB.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.JSON">JSONSUB.JSON</a></td>
+  <td><b>Чистый профиль:</b> DNS + базы геоданных без предопределённых правил.</td>
+</tr>
+</tbody>
+</table>
 
-- **Обновленные списки сервисов** — максимально оптимизированы под этот роутинг + дедупликация
-- **Минималистичный подход** — то, чего нет в конфиге роутинга, выпилено с корнем
-- **Облегченные списки** — разгружают ядро от фильтрации мусора и include-редиректов
-
-</details>
+> [!TIP]
+> **Как подключить в приложении:**
+> 1. Скопируйте текст ссылки из файла `.DEEPLINK` (начинается с `happ://routing/onadd/...` или `incy://routing/onadd/...`) и вставьте в адресную строку браузера либо откройте напрямую.
+> 2. Или скопируйте URL на `.JSON` файл и добавьте его в настройках роутинга как внешнюю ссылку.
 
 ---
 
-## 🗺 Что роутится в DEFAULT-версии
+## 🗺 Маршрутизация в профиле DEFAULT
+
+Порядок применения правил (`RouteOrder`): **`block-proxy-direct`**.
 
 ### 🔴 BLOCK (блокировка)
-
 <table width="100%">
-<thead><tr><th align="left">Что</th><th align="left">Зачем</th></tr></thead>
+<thead><tr><th align="left">Категория</th><th align="left">Зачем</th></tr></thead>
 <tbody>
-<tr><td>🚫 <b>Домены слежки Windows</b></td><td>Отключаем телеметрию и слежку за пользователями</td></tr>
-<tr><td>🚫 <b>BitTorrent DHT</b></td><td>Известные публичные DHT-серверы, для экономии трафика вашего сервера и успокоения хостера</td></tr>
-<tr><td>🚫 <b>Реклама VK Company</b></td><td>Отключаем рекламу в ВК Видео и ВК Музыке</td></tr>
-</tbody>
-</table>
-
-### 🟢 DIRECT (напрямую)
-
-<table width="100%">
-<thead><tr><th align="left">Что</th><th align="left">Зачем</th></tr></thead>
-<tbody>
-<tr><td>✅ <b>Русские/белорусские</b> домены и CIDR</td><td>За исключением РКН-списков + РФ активов зарубежных CDN-сервисов</td></tr>
-<tr><td>✅ <b>"Казенные" сервисы РФ и CDN</b></td><td>VK, OK, Mail.Ru, Яндекс, CDNVideo (включая зарубежные активы)</td></tr>
-<tr><td>✅ <b>Обновления и пуши</b></td><td>Apple, Microsoft — корректная работа устройства + экономия трафика</td></tr>
-<tr><td>✅ <b>Все банки РФ</b></td><td>Вытащены с сайта ЦБ РФ + собрано саморезолвингом, включая зарубежные домены</td></tr>
-<tr><td>✅ <b>Steam</b></td><td>Экономия трафика + решение проблем подключения через прокси</td></tr>
-<tr><td>✅ <b>Twitch</b></td><td>Экономия трафика сервера</td></tr>
-<tr><td>✅ <b>Pinterest</b></td><td>Блокировка рекламы на сервисе</td></tr>
+<tr><td>🚫 <code>geosite:win-spy</code></td><td>Отключение телеметрии и слежки компонентов ОС Windows</td></tr>
+<tr><td>🚫 <code>geosite:torrent</code></td><td>Блокировка публичных BitTorrent DHT-серверов и трекеров (защита VPS от абуз хостера)</td></tr>
+<tr><td>🚫 <code>geosite:category-ads</code></td><td>Блокировка рекламы (Mail.ru, VK Видео, VK Музыка и др.)</td></tr>
 </tbody>
 </table>
 
 ### 🔵 PROXY (через VPN)
-
 <table width="100%">
-<thead><tr><th align="left">Что</th><th align="left">Зачем</th></tr></thead>
+<thead><tr><th align="left">Сервис / Направление</th><th align="left">Зачем</th></tr></thead>
 <tbody>
-<tr><td>🌐 <b>YouTube</b></td><td>Борьба с ТСПУ и банами РКН</td></tr>
-<tr><td>🌐 <b>Telegram</b></td><td>Борьба с ТСПУ и банами РКН</td></tr>
-<tr><td>🌐 <b>GitHub</b></td><td>Борьба с ТСПУ и банами РКН</td></tr>
-<tr><td>🌐 <b>Twitch-ads</b></td><td>Возвращаем полное качество (Source) стримов с блокировкой рекламы</td></tr>
-<tr><td>🌐 <b>Весь остальной интернет</b></td><td>Все, чего нет в других списках, включая все зарубежные CDN</td></tr>
+<tr><td>🌐 <code>geosite:youtube</code></td><td>Обход замедлений ТСПУ и стабильное воспроизведение YouTube</td></tr>
+<tr><td>🌐 <code>geosite:telegram</code></td><td>Стабильное подключение к дата-центрам Telegram в обход блокировок</td></tr>
+<tr><td>🌐 <code>geosite:github</code></td><td>Обход фильтрации ресурсов и ассетов GitHub</td></tr>
+<tr><td>🌐 <code>geosite:twitch-ads</code></td><td>Обход рекламы Twitch для сохранения максимального исходного качества (Source) трансляций</td></tr>
+<tr><td>🌐 <b>Весь остальной зарубежный трафик</b></td><td>Все сайты и сервисы, не вошедшие в Direct-списки, направляются через прокси</td></tr>
+</tbody>
+</table>
+
+### 🟢 DIRECT (напрямую без VPN)
+<table width="100%">
+<thead><tr><th align="left">Сервис / Домены</th><th align="left">Зачем</th></tr></thead>
+<tbody>
+<tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
+<tr><td>✅ <code>geosite:whitelist</code> + <code>geoip:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ) и критически важные ресурсы</td></tr>
+<tr><td>✅ <code>geosite:apple</code> + APNs CIDR</td><td>Сервисы Apple, iCloud и мгновенная доставка пуш-уведомлений на iOS/macOS</td></tr>
+<tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
+<tr><td>✅ <code>geosite:steam</code></td><td>Игровой трафик Steam напрямую (максимальная скорость загрузки игр)</td></tr>
+<tr><td>✅ <code>geosite:twitch</code></td><td>Видеопотоки Twitch напрямую (экономия трафика сервера)</td></tr>
+<tr><td>✅ <code>geosite:pinterest</code></td><td>Прямой доступ к сервису Pinterest</td></tr>
+<tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, 127.0.0.0/8, 192.168.x.x, роутер, локальные устройства)</td></tr>
 </tbody>
 </table>
 
 ---
 
-## 🇷🇺 DNS
+## 🔒 DNS и защита от утечек
+
+В конфигурациях используется защищённый протокол **DNS-over-HTTPS (DoH)**:
 
 <table width="100%">
-<thead><tr><th align="center">Назначение</th><th align="left">Сервер</th><th align="left">Зачем</th></tr></thead>
+<thead><tr><th align="center">Направление</th><th align="left">Протокол и сервер</th><th align="left">Как работает</th></tr></thead>
 <tbody>
-<tr><td align="center">🏠 Domestic (direct)</td><td><a href="https://dns.yandex.ru/">Яндекс DNS</a> <code>77.88.8.8</code></td><td>Для работы ВЕЗДЕ в РФ — без вариантов в реалиях БС, шатдаунов и ТСПУ. Низкий пинг в РФ</td></tr>
-<tr><td align="center">🌍 Remote (proxy)</td><td><a href="https://www.quad9.net/">Quad9 DNS</a> <code>9.9.9.9</code></td><td>Резолвинг-DNS для проксируемого трафика</td></tr>
+<tr>
+  <td align="center">🏠 <b>Domestic (Direct)</b></td>
+  <td><b>Яндекс DNS (DoH)</b><br><code>https://77.88.8.8/dns-query</code></td>
+  <td>Используется для прямого мгновенного резолвинга российских сайтов через локального провайдера. Минимальный пинг в РФ.</td>
+</tr>
+<tr>
+  <td align="center">🌍 <b>Remote (Proxy)</b></td>
+  <td><b>Quad9 DNS (DoH)</b><br><code>https://dns.quad9.net/dns-query</code></td>
+  <td>Резолвинг зарубежных и заблокированных сайтов. Запросы шифруются и идут <b>через зашифрованный VPN-туннель</b> (не перехватываются ТСПУ). Не ведет логов, юрисдикция Швейцарии, фильтрация фишинга.</td>
+</tr>
 </tbody>
 </table>
 
+### Статические записи (`DnsHosts`)
+Для гарантированного доступа к Личному кабинету налогоплательщика ФНС РФ в конфигах заданы статические сопоставления:
+* `lkfl2.nalog.ru` $\to$ `213.24.64.175`
+* `lknpd.nalog.ru` $\to$ `213.24.64.181`
+
 ---
 
-## 🔄 Автономная сборка и автообновление
+## ⚙️ Особенности кастомных баз данных
 
-GitHub Actions:
-- Загружает актуальные данные (Antifilter, Re:filter, escapingworm ru-whitelist, CDN списки, MaxMind GeoLite2 ASN, IPinfo, DB-IP)
-- Собирает оптимизированные бинарные базы `geoip.dat` и `geosite.dat`
-- Публикует релизы и обновляет CDN-ссылки и таймстемпы в JSON-конфигах
-- Генерирует base64-диплинки для Happ и INCY
-- Запускается по расписанию раз в сутки (04:00 UTC), при любом коммите в правила (`geoip/**`, `geosite/data/**`) или вручную через **Actions -> Run workflow**.
+### 🌎 GeoIP (`geoip.dat`)
+Сборка базы выполняется с помощью утилиты Loyalsoldier на основе конфигурации [`geoip/config.json`](geoip/config.json):
+* **Включает подсети РФ и РБ** из трёх авторитетных источников: MaxMind GeoLite2 ASN, IPinfo и DB-IP.
+* **Кастомные списки ([`geoip/CUSTOM-LIST-ADD.txt`](geoip/CUSTOM-LIST-ADD.txt))**:
+  * Инфраструктура Yandex Cloud / HLL LLC (AS51115);
+  * Зарубежные точки присутствия Яндекса (Yandex Oy Финляндия, Yandex Europe B.V., серверы в США, Казахстане, Беларуси);
+  * Зарубежные серверы ВКонтакте и Mail.ru Games;
+  * Официальные диапазоны шлюзов Apple Push Notification Service (APNs) для решения проблем с доставкой уведомлений на iPhone и Mac.
+* **Кастомный белый список ([`geoip/CUSTOM-WHITELIST.txt`](geoip/CUSTOM-WHITELIST.txt))**: 17 900+ доверенных диапазонов для профиля WHITELIST.
+* **Точечные исправления ([`geoip/CUSTOM-FIX-ADD.txt`](geoip/CUSTOM-FIX-ADD.txt))**: принудительное возвращение в `direct` адресов, ошибочно заблокированных РКН (например, `images.biggeek.ru`).
+* **Исключение блокировок и CDN**:
+  * Вычитание списков блокировок РКН: [Re:filter](https://github.com/1andrevich/Re-filter-lists) + [Antifilter.Network](https://antifilter.network);
+  * Вычитание [зарубежных CDN](https://github.com/PentiumB/CDN-RuleSet), а также европейских хостингов (Hetzner, ZeroCDN) для исключения утечек прокси-трафика в прямой канал.
 
-## 🔗 Источники и инструменты
+### 🌐 Geosite (`geosite.dat`)
+Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
+* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `whitelist`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
+* **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения дубликатов.
 
-- [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) — инструмент сборки кастомных баз GeoIP
-- [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) — сборщик доменных списков Geosite
-- [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) & [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — оригинальные концепции и правила роутинга от hydraponique
+---
+
+## 🔄 Автоматическая сборка и раздача геоданных
+
+Пайплайн GitHub Actions ([`.github/workflows/build-and-update.yml`](.github/workflows/build-and-update.yml)):
+1. **Параллельно загружает** актуальные выгрузки блокировок и геобаз (Re:filter, Antifilter, IPinfo, DB-IP, MaxMind GeoLite2).
+2. **Компилирует бинарные файлы** `geoip.dat` и `geosite.dat`.
+3. **Пушит результаты в изолированную ветку `release`** (без засорения ветки `main` тяжелыми бинарными diff'ами).
+4. **Раздаёт файлы через Anycast CDN jsDelivr**:
+   * `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat`
+   * `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat`
+5. **Публикует GitHub Releases** с бинарниками, контрольными суммами (`.sha256`) и архивом текстовых списков (`text.tar.gz`).
+6. **Обновляет таймстемп `LastUpdated`** в JSON-конфигах и перегенерирует диплинки.
+7. **Очищает кэш CDN jsDelivr** через Purge API.
+
+Расписание запуска: **ежедневно в 04:00 UTC**, при каждом коммите в репозиторий или вручную через вкладку **Actions**.
+
+---
+
+## 📂 Структура репозитория
+
+```text
+├── .github/workflows/
+│   └── build-and-update.yml   # Автоматизированный CI/CD пайплайн сборки
+├── HAPP/                      # Конфигурации и диплинки для клиента Happ
+│   ├── DEFAULT.JSON / .DEEPLINK
+│   ├── WHITELIST.JSON / .DEEPLINK
+│   └── JSONSUB.JSON / .DEEPLINK
+├── INCY/                      # Зеркальные конфигурации для клиента INCY
+│   ├── DEFAULT.JSON / .DEEPLINK
+│   ├── WHITELIST.JSON / .DEEPLINK
+│   └── JSONSUB.JSON / .DEEPLINK
+├── geoip/                     # Конфигурация и кастомные списки GeoIP
+│   ├── config.json            # Правила объединения баз и вычитания списков РКН
+│   ├── CUSTOM-FIX-ADD.txt     # Точечные фиксы ложных блокировок
+│   ├── CUSTOM-LIST-ADD.txt    # Зарубежная инфраструктура Yandex, VK, Apple APNs
+│   └── CUSTOM-WHITELIST.txt   # Кастомный белый список подсетей
+├── geosite/
+│   ├── buildtools/            # Скрипты тестирования и дедупликации доменов
+│   └── data/                  # Текстовые списки доменов по категориям
+├── .gitignore                 # Исключение временных файлов и build artifacts (release/)
+└── README.md                  # Документация проекта
+```
+
+---
+
+## 🔗 Источники и благодарности
+
+* [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) — инструмент компиляции баз GeoIP.
+* [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) — генератор списков доменов Geosite.
+* [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) & [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — оригинальные правила роутинга от hydraponique.
+* [Re:filter](https://github.com/1andrevich/Re-filter-lists) & [Antifilter.Network](https://antifilter.network) — актуальные списки заблокированных ресурсов.
 
