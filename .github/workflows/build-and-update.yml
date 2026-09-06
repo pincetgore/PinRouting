@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Checkout PinRouting
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -59,7 +59,7 @@ jobs:
           echo "Building with tag: ${DAILY_TAG}, epoch: ${NOW_EPOCH}"
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: '>=1.21'
           cache: false
@@ -68,7 +68,7 @@ jobs:
       # Build GeoIP
       # -----------------------------------------------------------------------
       - name: Checkout Loyalsoldier/geoip
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Loyalsoldier/geoip
           path: geoip-builder
@@ -115,7 +115,7 @@ jobs:
       # Build Geosite
       # -----------------------------------------------------------------------
       - name: Checkout v2fly/domain-list-community
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: v2fly/domain-list-community
           path: geosite-builder
@@ -242,7 +242,7 @@ jobs:
           cd ..
 
       - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.meta.outputs.tag }}
           name: ${{ steps.meta.outputs.tag }}
