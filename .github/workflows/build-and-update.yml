@@ -220,8 +220,8 @@ jobs:
           fi
 
           # Tag current commit with DAILY_TAG
-          git tag "$TAG"
-          git push origin "$TAG"
+          git tag -f "$TAG"
+          git push origin "$TAG" --force
 
       # -----------------------------------------------------------------------
       # Push to Release Branch & Publish Release

@@ -98,7 +98,6 @@
 <table width="100%">
 <thead><tr><th align="left">Что</th><th align="left">Зачем</th></tr></thead>
 <tbody>
-<tr><td>🌐 <b>Google Play/Android</b></td><td>Борьба с ТСПУ и банами РКН</td></tr>
 <tr><td>🌐 <b>YouTube</b></td><td>Борьба с ТСПУ и банами РКН</td></tr>
 <tr><td>🌐 <b>Telegram</b></td><td>Борьба с ТСПУ и банами РКН</td></tr>
 <tr><td>🌐 <b>GitHub</b></td><td>Борьба с ТСПУ и банами РКН</td></tr>

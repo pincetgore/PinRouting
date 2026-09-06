@@ -5,7 +5,7 @@
   "RemoteDns": "9.9.9.9",
   "DomesticDns": "77.88.8.8",
   "RemoteDNSType": "DoH",
-  "RemoteDNSDomain": "https://9.9.9.9/dns-query",
+  "RemoteDNSDomain": "https://dns.quad9.net/dns-query",
   "RemoteDNSIP": "9.9.9.9",
   "DomesticDNSType": "DoH",
   "DomesticDNSDomain": "https://77.88.8.8/dns-query",
@@ -26,15 +26,13 @@
     "geosite:apple",
     "geosite:steam",
     "geosite:twitch",
-    "geosite:pinterest",
-    "google.com"
+    "geosite:pinterest"
   ],
   "DirectIp": [
     "geoip:private",
     "geoip:direct"
   ],
   "ProxySites": [
-    "geosite:google-play",
     "geosite:github",
     "geosite:twitch-ads",
     "geosite:youtube",
