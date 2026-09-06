@@ -26,7 +26,8 @@
     "geosite:apple",
     "geosite:steam",
     "geosite:twitch",
-    "geosite:pinterest"
+    "geosite:pinterest", 
+    "google.com"
   ],
   "DirectIp": [
     "geoip:private",
