@@ -15,3 +15,6 @@ __pycache__/
 # Logs & temp
 *.log
 *.tmp
+
+# Build artifacts
+release/
