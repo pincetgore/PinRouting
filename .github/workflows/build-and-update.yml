@@ -138,103 +138,27 @@ jobs:
           ls -lh /tmp/geosite-artifacts/geosite.dat
 
       # -----------------------------------------------------------------------
-      # Optional: Rulesets for sing-box
-      # -----------------------------------------------------------------------
-      - name: Install sing-box
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          ${{ env.CURL }} https://sing-box.app/install.sh | sudo -E sh -s -- --version 1.12.12
-
-      - name: Build Geosite .srs (sing-box)
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          command -v sing-box >/dev/null 2>&1 || exit 0
-
-          src=/tmp/sing-box-geosite
-          out="/tmp/geosite-artifacts/sing-box"
-          rm -rf "$src" "$out"
-          mkdir -p "$src" "$out"
-          cp -a ./geosite/data/. "$src"/
-
-          find "$src" -type f -print0 |
-          while IFS= read -r -d '' f; do
-            tmp_json="$(mktemp)"
-            awk '
-              function trim(s){ sub(/^[ \t]+/,"",s); sub(/[ \t]+$/,"",s); return s }
-              function strip_tail(s){
-                gsub(/\r/,"",s)
-                s=trim(s)
-                sub(/[ \t]*#.*/, "", s)
-                sub(/[ \t]*\/\/.*/, "", s)
-                sub(/[ \t]*@.*/, "", s)
-                return trim(s)
-              }
-              {
-                t = strip_tail($0)
-                if (t == "") next
-                if (t ~ /^\/\//) next
-                if (t ~ /^#/) next
-                if (t ~ /^include:/) next
-                if (t ~ /^full:/)   { v=strip_tail(substr(t,6)); sub(/^\./,"",v); if(v!="") print "domain\t"  v; next }
-                if (t ~ /^domain:/) { v=strip_tail(substr(t,8)); sub(/^\./,"",v); if(v!="") print "suffix\t"  v; next }
-                if (t ~ /^keyword:/){ v=strip_tail(substr(t,9));                   if(v!="") print "keyword\t" v; next }
-                if (t ~ /^regexp:/) { v=strip_tail(substr(t,8));                   if(v!="") print "regex\t"   v; next }
-                v=t; sub(/^\./,"",v); if(v!="") print "keyword\t" v
-              }
-            ' "$f" | jq -Rn '
-              def add($k; $v): .rules[0][$k] = ((.rules[0][$k] // []) + [$v]);
-              reduce (inputs | split("\t")) as $it ({"version":3,"rules":[{}]};
-                if   $it[0]=="domain"  then add("domain";         $it[1])
-                elif $it[0]=="suffix"  then add("domain_suffix";  $it[1])
-                elif $it[0]=="keyword" then add("domain_keyword"; $it[1])
-                elif $it[0]=="regex"   then add("domain_regex";   $it[1])
-                else . end
-              )
-              | .rules[0] |= with_entries(select(.value | length > 0))
-              | if (.rules[0] | length) == 0 then .rules = [] else . end
-            ' > "$tmp_json"
-
-            rel="${f#$src/}"
-            rel_noext="${rel%.*}"
-            dest="$out/${rel_noext}.srs"
-            mkdir -p "$(dirname "$dest")"
-            sing-box rule-set compile --output "$dest" "$tmp_json"
-            rm -f "$tmp_json"
-          done
-
-      # -----------------------------------------------------------------------
       # Package Release Assets
       # -----------------------------------------------------------------------
       - name: Prepare Release Directory
         run: |
           set -euo pipefail
           rm -rf release /tmp/dist
-          mkdir -p release/text release/sing-box /tmp/dist
+          mkdir -p release/text /tmp/dist
 
           # GeoIP files
           cp -f geoip-builder/output/dat/geoip.dat release/
           cp -f geoip-builder/output/text/*.txt   release/text/
-          if [ -d geoip-builder/output/srs ]; then
-            cp -f geoip-builder/output/srs/*.srs release/sing-box/ 2>/dev/null || true
-          fi
 
           # Geosite files
           cp -f /tmp/geosite-artifacts/geosite.dat release/
-          if [ -d /tmp/geosite-artifacts/sing-box ]; then
-            cp -f /tmp/geosite-artifacts/sing-box/*.srs release/sing-box/ 2>/dev/null || true
-          fi
 
           # Checksums (relative filenames for sha256sum -c convenience)
           (cd release && sha256sum geoip.dat   > geoip.dat.sha256)
           (cd release && sha256sum geosite.dat > geosite.dat.sha256)
 
           # Tarballs for GitHub release
-          tar -czf /tmp/dist/text.tar.gz     -C release text
-          if [ -d release/sing-box ] && [ "$(ls -A release/sing-box)" ]; then
-            tar -czf /tmp/dist/sing-box.tar.gz -C release sing-box
-          fi
+          tar -czf /tmp/dist/text.tar.gz -C release text
           cp -f release/*.dat release/*.dat.sha256 /tmp/dist/
 
       # -----------------------------------------------------------------------
