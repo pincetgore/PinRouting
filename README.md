@@ -123,9 +123,6 @@
 
 ## 🔄 Автономная сборка и автообновление
 
-> [!TIP]
-> Базы `geoip.dat` и `geosite.dat` теперь собираются **автономно прямо в репозитории PinRouting**, обеспечивая независимость от внешних релизов и мгновенную синхронизацию конфигураций.
-
 GitHub Actions:
 - Загружает актуальные данные (Antifilter, Re:filter, escapingworm ru-whitelist, CDN списки, MaxMind GeoLite2 ASN, IPinfo, DB-IP)
 - Собирает оптимизированные бинарные базы `geoip.dat` и `geosite.dat`
