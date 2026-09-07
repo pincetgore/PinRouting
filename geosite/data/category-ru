@@ -104,3 +104,33 @@ domain:bank131.com
 domain:asia-pay.ru
 # РНКО Люминис (АО) (Рег. № 3551)
 domain:rncoluminis.ru
+
+# Major banks and retail
+domain:sberbank.ru
+domain:sber.ru
+domain:tinkoff.ru
+domain:raiffeisen.ru
+domain:psbank.ru
+domain:sovcombank.ru
+domain:rosbank.ru
+domain:pochtabank.ru
+domain:mtsbank.ru
+domain:homecredit.ru
+domain:akbars.ru
+domain:rsb.ru
+domain:mkb.ru
+domain:uralsib.ru
+domain:magnit.ru
+
+# Services and apps
+domain:happ.su
+domain:happ.info
+domain:aliexpress.ru
+domain:aviasales.ru
+domain:aviasales.com
+domain:lava.ru
+domain:usmall.ru
+domain:rdp-onedash.ru
+domain:autowp.ru
+domain:appstorrent.ru
+domain:zr.ru

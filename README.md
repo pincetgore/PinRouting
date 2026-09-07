@@ -98,6 +98,7 @@
 <thead><tr><th align="left">Сервис / Домены</th><th align="left">Зачем</th></tr></thead>
 <tbody>
 <tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
+<tr><td>✅ <code>geosite:push</code></td><td>Доставка push-уведомлений Android (Google FCM / GCM) и проверка сетевого подключения (captive portal)</td></tr>
 <tr><td>✅ <code>geosite:whitelist</code> + <code>geoip:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ) и критически важные ресурсы</td></tr>
 <tr><td>✅ <code>geosite:apple</code> + APNs CIDR</td><td>Сервисы Apple, iCloud и мгновенная доставка пуш-уведомлений на iOS/macOS</td></tr>
 <tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
@@ -155,7 +156,7 @@
 
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
-* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `whitelist`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
+* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
 * **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения дубликатов.
 
 ---
