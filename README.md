@@ -85,6 +85,7 @@
 <table width="100%">
 <thead><tr><th align="left">Сервис / Направление</th><th align="left">Зачем</th></tr></thead>
 <tbody>
+<tr><td>🌐 <code>geosite:category-geoblock-ru</code></td><td>Зарубежные сервисы с геоблокировкой пользователей из РФ (Gemini, AI Studio, ChatGPT, Claude, Notion, Canva и др.)</td></tr>
 <tr><td>🌐 <code>geosite:youtube</code></td><td>Обход замедлений ТСПУ и стабильное воспроизведение YouTube</td></tr>
 <tr><td>🌐 <code>geosite:telegram</code></td><td>Стабильное подключение к дата-центрам Telegram в обход блокировок</td></tr>
 <tr><td>🌐 <code>geosite:github</code></td><td>Обход фильтрации ресурсов и ассетов GitHub</td></tr>
@@ -156,7 +157,7 @@
 
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
-* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
+* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
 * **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения дубликатов.
 
 ---
