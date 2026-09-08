@@ -193,6 +193,7 @@
 │   ├── WHITELIST.JSON / .DEEPLINK
 │   └── JSONSUB.JSON / .DEEPLINK
 ├── geoip/                     # Конфигурация и кастомные списки GeoIP
+│   ├── buildtools/            # Скрипты генерации IP-списков по странам
 │   ├── config.json            # Правила объединения баз и вычитания списков РКН
 │   ├── CUSTOM-FIX-ADD.txt     # Точечные фиксы ложных блокировок
 │   ├── CUSTOM-LIST-ADD.txt    # Зарубежная инфраструктура Yandex, VK, Apple APNs
@@ -210,6 +211,7 @@
 
 * [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) — инструмент компиляции баз GeoIP.
 * [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) — генератор списков доменов Geosite.
+* [@ip-location-db](https://github.com/sapics/ip-location-db) — открытые базы сопоставления IP и стран (GeoLite2, DB-IP).
 * [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) & [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — оригинальные правила роутинга от hydraponique.
 * [Re:filter](https://github.com/1andrevich/Re-filter-lists) & [Antifilter.Network](https://antifilter.network) — актуальные списки заблокированных ресурсов.
 
