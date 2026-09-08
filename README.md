@@ -209,9 +209,29 @@
 
 ## 🔗 Источники и благодарности
 
-* [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) — инструмент компиляции баз GeoIP.
-* [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) — генератор списков доменов Geosite.
-* [@ip-location-db](https://github.com/sapics/ip-location-db) — открытые базы сопоставления IP и стран (GeoLite2, DB-IP).
-* [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) & [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — оригинальные правила роутинга от hydraponique.
-* [Re:filter](https://github.com/1andrevich/Re-filter-lists) & [Antifilter.Network](https://antifilter.network) — актуальные списки заблокированных ресурсов.
+Проект агрегирует данные, списки и инструменты из следующих открытых источников:
+
+### 🛠 Инструменты сборки
+* [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) — инструмент компиляции бинарных баз `geoip.dat`.
+* [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) — компилятор бинарных баз правил `geosite.dat`.
+
+### 🌍 Базы IP-геолокации (GeoIP)
+* [@ip-location-db](https://github.com/sapics/ip-location-db) — ежедневные выгрузки сопоставления IP и стран (GeoLite2, DB-IP Lite).
+* [Davoyan/ipinfo](https://github.com/Davoyan/ipinfo) — ежедневные списки IP-диапазонов IPinfo Lite для России и Беларуси.
+* [Netsyms / MaxMind](https://dl.netsyms.net/dbs/geolite2/) — зеркало базы GeoLite2 ASN для фильтрации подсетей по номерам автономных систем (ASN).
+
+### 🛡 Списки блокировок РКН (для исключения из прямого трафика)
+* [Re:filter](https://github.com/1andrevich/Re-filter-lists) — актуальные списки заблокированных ресурсов (ipsum, community).
+* [Antifilter.Network](https://antifilter.network) — выгрузка заблокированных IP-адресов.
+* [Antifilter Community](https://community.antifilter.download) — общественный список блокировок.
+
+### 🌐 Исключение зарубежных CDN и хостингов
+* [PentiumB/CDN-RuleSet](https://github.com/PentiumB/CDN-RuleSet) — сводная база диапазонов глобальных CDN.
+* [mansourjabin/cdn-ip-database](https://github.com/mansourjabin/cdn-ip-database) — база IP-адресов сетей доставки контента.
+
+### 📋 Белые списки и правила маршрутизации
+* [escapingworm/russia-whitelist](https://github.com/escapingworm/russia-whitelist) — проверенные белые списки подсетей РФ (CIDR).
+* [kirilllavrov/RU-domain-list-for-whitelist](https://github.com/kirilllavrov/RU-domain-list-for-whitelist) — списки российских доменов для белого списка.
+* [hxehex/russia-mobile-internet-whitelist](https://github.com/hxehex/russia-mobile-internet-whitelist) — белые списки ресурсов мобильного интернета РФ.
+* [roscomvpn-routing](https://github.com/hydraponique/roscomvpn-routing), [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip), [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — базовые правила маршрутизации от hydraponique.
 
