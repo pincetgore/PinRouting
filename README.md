@@ -208,6 +208,7 @@
 │   ├── buildtools/            # Скрипты тестирования и дедупликации доменов
 │   └── data/                  # Текстовые списки доменов по категориям
 ├── .gitignore                 # Исключение временных файлов и build artifacts (release/)
+├── LICENSE                    # Лицензия MIT
 └── README.md                  # Документация проекта
 ```
 
@@ -240,4 +241,10 @@
 * [kirilllavrov/RU-domain-list-for-whitelist](https://github.com/kirilllavrov/RU-domain-list-for-whitelist) — списки российских доменов для белого списка.
 * [hxehex/russia-mobile-internet-whitelist](https://github.com/hxehex/russia-mobile-internet-whitelist) — белые списки ресурсов мобильного интернета РФ.
 * [roscomvpn-routing](https://github.com/hydraponique/roscomvpn-routing), [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip), [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — базовые правила маршрутизации от hydraponique.
+
+---
+
+## 📄 Лицензия
+
+Проект распространяется под открытой лицензией [MIT](LICENSE). Вы можете свободно использовать, модифицировать и распространять его как в личных, так и в коммерческих целях с обязательным сохранением указания авторства.
 
