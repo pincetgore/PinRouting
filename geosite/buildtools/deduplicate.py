@@ -20,6 +20,7 @@ import subprocess
 import time
 from bisect import bisect_right
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 # Ссылка на файл со списком IP-диапазонов (direct.txt или whitelist.txt) в GitHub
 DIRECT_TXT_URL = "https://raw.githubusercontent.com/pincetgore/PinRouting/release/text/direct.txt"
@@ -71,13 +72,8 @@ def curl_json(url: str) -> dict | None:
     return json.loads(result.stdout)
 
 
-def load_direct_cidrs_from_url() -> tuple[list[tuple[int, int]], list[int]]:
-    """Скачивает direct.txt/whitelist.txt и разбирает IP-диапазоны прямо из памяти.
-    Возвращает отсортированный список диапазонов и список их начал (для быстрого поиска)."""
-    print(f"Downloading direct.txt from {DIRECT_TXT_URL} ...")
-    data = curl_get(DIRECT_TXT_URL)
-    print(f"  Скачано {len(data)} байт")
-
+def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
+    """Разбирает текст с IP-диапазонами/CIDR и возвращает отсортированный список диапазонов и список начал."""
     intervals: list[tuple[int, int]] = []
     for line in data.splitlines():
         line = line.strip()
@@ -92,6 +88,23 @@ def load_direct_cidrs_from_url() -> tuple[list[tuple[int, int]], list[int]]:
     intervals.sort()
     starts = [iv[0] for iv in intervals]
     return intervals, starts
+
+
+def load_direct_cidrs(file_path: str | Path | None = None) -> tuple[list[tuple[int, int]], list[int]]:
+    """Загружает direct.txt/whitelist.txt из локального файла или скачивает по ссылке."""
+    if file_path:
+        path = Path(file_path)
+        if path.is_file():
+            print(f"Loading direct CIDRs from local file: {path} ...")
+            data = path.read_text(encoding="utf-8")
+            return parse_cidrs_from_text(data)
+        else:
+            print(f"Warning: Local file '{file_path}' not found. Falling back to URL.")
+
+    print(f"Downloading direct.txt from {DIRECT_TXT_URL} ...")
+    data = curl_get(DIRECT_TXT_URL)
+    print(f"  Скачано {len(data)} байт")
+    return parse_cidrs_from_text(data)
 
 
 def ip_to_int(ip_str: str) -> int | None:
@@ -337,11 +350,17 @@ def check_one_domain(
 def main() -> None:
     ap = argparse.ArgumentParser(description="Deduplicate geosite domains covered by geoip:direct/geoip:whitelist")
     ap.add_argument("geosite_file", help="Geosite data file (e.g. data/category-ru, data/whitelist)")
+    ap.add_argument(
+        "-f",
+        "--direct-file",
+        default=None,
+        help="Path to local direct.txt/whitelist.txt file (default: download from release branch)",
+    )
     ap.add_argument("--workers", type=int, default=WORKERS, help=f"Parallel workers (default: {WORKERS})")
     args = ap.parse_args()
 
-    # Шаг 1. Скачиваем и разбираем список IP-диапазонов (direct.txt/whitelist.txt)
-    intervals, starts = load_direct_cidrs_from_url()
+    # Шаг 1. Загружаем и разбираем список IP-диапазонов (direct.txt/whitelist.txt)
+    intervals, starts = load_direct_cidrs(args.direct_file)
     print(f"  {len(intervals)} IPv4 CIDR ranges loaded")
 
     total_nodes = len(RU_NODES) + len(FOREIGN_NODES)

@@ -72,6 +72,7 @@ jobs:
         working-directory: geoip-builder
         run: |
           set -euo pipefail
+          mkdir -p downloads
           pids=()
           ${{ env.CURL }} -o whitelist.txt https://raw.githubusercontent.com/escapingworm/russia-whitelist/refs/heads/main/ru-whitelist-cidr.txt & pids+=($!)
           ${{ env.CURL }} -o antifilterdownloadcommunity.txt https://community.antifilter.download/list/community.lst & pids+=($!)
@@ -80,25 +81,25 @@ jobs:
           ${{ env.CURL }} -o antifilternetwork.txt https://antifilter.network/download/ip.lst & pids+=($!)
           ${{ env.CURL }} -o cdn.lst https://raw.githubusercontent.com/mansourjabin/cdn-ip-database/refs/heads/main/data/cdn.lst & pids+=($!)
           ${{ env.CURL }} -o merged.sum https://raw.githubusercontent.com/PentiumB/CDN-RuleSet/refs/heads/main/release/merged.sum & pids+=($!)
-          ${{ env.CURL }} -o /tmp/geolite2-ipv4.csv https://cdn.jsdelivr.net/npm/@ip-location-db/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv4.csv & pids+=($!)
-          ${{ env.CURL }} -o /tmp/dbip-ipv4.csv https://cdn.jsdelivr.net/npm/@ip-location-db/dbip-country/dbip-country-ipv4.csv & pids+=($!)
+          ${{ env.CURL }} -o downloads/geolite2-ipv4.csv https://cdn.jsdelivr.net/npm/@ip-location-db/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv4.csv & pids+=($!)
+          ${{ env.CURL }} -o downloads/dbip-ipv4.csv https://cdn.jsdelivr.net/npm/@ip-location-db/dbip-country/dbip-country-ipv4.csv & pids+=($!)
           ${{ env.CURL }} -o ipinfo_ru.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/ru.lst & pids+=($!)
           ${{ env.CURL }} -o ipinfo_by.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/by.lst & pids+=($!)
-          ${{ env.CURL }} -o /tmp/GeoLite2-ASN-CSV.zip https://dl.netsyms.net/dbs/geolite2/GeoLite2-ASN-CSV.zip & pids+=($!)
+          ${{ env.CURL }} -o downloads/GeoLite2-ASN-CSV.zip https://dl.netsyms.net/dbs/geolite2/GeoLite2-ASN-CSV.zip & pids+=($!)
 
           for pid in "${pids[@]}"; do
             wait "$pid"
           done
 
           # Parse GeoLite2 and DB-IP datasets locally for RU & BY
-          python3 "${{ github.workspace }}/geoip/buildtools/parse_country_db.py" --input /tmp/geolite2-ipv4.csv --prefix geolite_ --countries RU,BY --output-dir .
-          python3 "${{ github.workspace }}/geoip/buildtools/parse_country_db.py" --input /tmp/dbip-ipv4.csv --prefix dbip_ --countries RU,BY --output-dir .
-          rm -f /tmp/geolite2-ipv4.csv /tmp/dbip-ipv4.csv
+          python3 "${{ github.workspace }}/geoip/buildtools/parse_country_db.py" --input downloads/geolite2-ipv4.csv --prefix geolite_ --countries RU,BY --output-dir .
+          python3 "${{ github.workspace }}/geoip/buildtools/parse_country_db.py" --input downloads/dbip-ipv4.csv --prefix dbip_ --countries RU,BY --output-dir .
 
           test -s geolite_ru.lst && test -s geolite_by.lst
           test -s dbip_ru.lst && test -s dbip_by.lst
-          test -s /tmp/GeoLite2-ASN-CSV.zip
-          unzip -j /tmp/GeoLite2-ASN-CSV.zip '*/GeoLite2-ASN-Blocks-*.csv' -d ./geolite2
+          test -s downloads/GeoLite2-ASN-CSV.zip
+          unzip -j downloads/GeoLite2-ASN-CSV.zip '*/GeoLite2-ASN-Blocks-*.csv' -d ./geolite2
+          rm -rf downloads
           ls -l ./geolite2/
 
       - name: Overlay Custom GeoIP Config & Lists
@@ -265,5 +266,7 @@ jobs:
           set -euo pipefail
           REPO="${{ github.repository }}"
           for f in geoip.dat geoip.dat.sha256 geosite.dat geosite.dat.sha256; do
-            curl -fsSL -i "https://purge.jsdelivr.net/gh/${REPO}@release/${f}" || true
+            if ! curl -fsSL -i "https://purge.jsdelivr.net/gh/${REPO}@release/${f}" > /dev/null; then
+              echo "::warning ::Failed to purge ${f} from jsDelivr cache"
+            fi
           done

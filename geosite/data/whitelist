@@ -111,7 +111,6 @@ domain:omsk.ru
 domain:orb.ru
 domain:oryol.ru
 domain:penza.ru
-domain:psk
 domain:psk.ru
 domain:pskov.ru
 domain:rnd.ru
@@ -472,12 +471,12 @@ domain:zentotem.net
 
 # Other New
 domain:google.com
-hematonix.ru
-medtrum.ru
-medtrum.eu
-anytimeru.com
-lumiflex.ru
-ican-sinocare.ru
-freestylediabetes.ru
-rsscenter.cloud
-dbankcloud.ru
+domain:hematonix.ru
+domain:medtrum.ru
+domain:medtrum.eu
+domain:anytimeru.com
+domain:lumiflex.ru
+domain:ican-sinocare.ru
+domain:freestylediabetes.ru
+domain:rsscenter.cloud
+domain:dbankcloud.ru
