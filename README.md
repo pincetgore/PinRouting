@@ -100,7 +100,7 @@
 <tbody>
 <tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
 <tr><td>✅ <code>geosite:push</code></td><td>Доставка push-уведомлений Android (Google FCM / GCM) и проверка сетевого подключения (captive portal)</td></tr>
-<tr><td>✅ <code>geosite:whitelist</code> + <code>geoip:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ) и критически важные ресурсы</td></tr>
+<tr><td>✅ <code>geosite:whitelist</code> + <code>geoip:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
 <tr><td>✅ <code>geosite:apple</code> + APNs CIDR</td><td>Сервисы Apple, iCloud и мгновенная доставка пуш-уведомлений на iOS/macOS</td></tr>
 <tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
 <tr><td>✅ <code>geosite:steam</code></td><td>Игровой трафик Steam напрямую (максимальная скорость загрузки игр)</td></tr>
@@ -109,6 +109,9 @@
 <tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, 127.0.0.0/8, 192.168.x.x, роутер, локальные устройства)</td></tr>
 </tbody>
 </table>
+
+> [!NOTE]
+> **Приоритет Google vs Gemini:** Домен `google.com` включён в `whitelist` для быстрого прямого поиска без задержек VPN. При этом сервисы Gemini и AI Studio (`gemini.google.com`, `generativelanguage.googleapis.com`) гарантированно направляются в прокси, так как правило `geosite:category-geoblock-ru` имеет более высокий приоритет исполнения (`RouteOrder: block-proxy-direct`).
 
 ---
 
@@ -143,7 +146,7 @@
 
 ### 🌎 GeoIP (`geoip.dat`)
 Сборка базы выполняется с помощью утилиты Loyalsoldier на основе конфигурации [`geoip/config.json`](geoip/config.json):
-* **Включает подсети РФ и РБ** из трёх авторитетных источников: MaxMind GeoLite2 ASN, IPinfo и DB-IP.
+* **Включает подсети РФ и РБ** из трёх авторитетных источников: MaxMind GeoLite2 ASN, IPinfo и DB-IP. Базы GeoLite2 и DB-IP конвертируются автономным скриптом [`geoip/buildtools/parse_country_db.py`](geoip/buildtools/parse_country_db.py) напрямую из выгрузок `@ip-location-db` без сторонних промежуточных сервисов.
 * **Кастомные списки ([`geoip/CUSTOM-LIST-ADD.txt`](geoip/CUSTOM-LIST-ADD.txt))**:
   * Инфраструктура Yandex Cloud / HLL LLC (AS51115);
   * Зарубежные точки присутствия Яндекса (Yandex Oy Финляндия, Yandex Europe B.V., серверы в США, Казахстане, Беларуси);
@@ -158,7 +161,10 @@
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
 * **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
-* **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения дубликатов.
+* **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения доменов, чьи IP уже полностью входят в Direct-диапазоны. Скрипт поддерживает запуск как с удаленной загрузкой, так и с локальным файлом:
+  ```bash
+  python3 geosite/buildtools/deduplicate.py -f release/text/direct.txt geosite/data/category-ru
+  ```
 
 ---
 
