@@ -157,7 +157,7 @@
 <tbody>
 <tr>
   <td align="center">🏠 <b>Domestic (Direct)</b></td>
-  <td><b>Яндекс DNS (DoH)</b><br><code>https://77.88.8.8/dns-query</code></td>
+  <td><b>Яндекс DNS (DoH)</b><br><code>https://common.dot.dns.yandex.net/dns-query</code></td>
   <td>Используется для прямого мгновенного резолвинга российских сайтов через локального провайдера. Минимальный пинг в РФ.</td>
 </tr>
 <tr>

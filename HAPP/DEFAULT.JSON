@@ -8,7 +8,7 @@
   "RemoteDNSDomain": "https://dns.quad9.net/dns-query",
   "RemoteDNSIP": "9.9.9.9",
   "DomesticDNSType": "DoH",
-  "DomesticDNSDomain": "https://77.88.8.8/dns-query",
+  "DomesticDNSDomain": "https://common.dot.dns.yandex.net/dns-query",
   "DomesticDNSIP": "77.88.8.8",
   "Geoipurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat",
   "Geositeurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat",
