@@ -134,7 +134,7 @@
 <table width="100%">
 <thead><tr><th align="left">Категория / Список</th><th align="left">Что входит</th></tr></thead>
 <tbody>
-<tr><td>✅ <code>geosite:whitelist</code></td><td><b>810+ проверенных корневых доменов</b> ключевых российских сервисов (банки, Госуслуги, суды, ФНС, ЕМИАС, аптеки, маркетплейсы, доставка, транспорт, авиация, телеком, облака)</td></tr>
+<tr><td>✅ <code>geosite:whitelist</code></td><td><b>860+ проверенных корневых доменов</b> ключевых российских сервисов (банки, Госуслуги, суды, ФНС, ЕМИАС, аптеки, маркетплейсы, доставка, транспорт, авиация, телеком, облака)</td></tr>
 <tr><td>✅ <code>geoip:whitelist</code></td><td><b>17 900+ доверенных IP-диапазонов РФ</b> для гарантированной работы банковских приложений и государственных порталов</td></tr>
 <tr><td>✅ <code>geosite:push</code></td><td>Push-уведомления Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei, Samsung) и проверка сетевого подключения (captive portal)</td></tr>
 <tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, роутер, домашние устройства)</td></tr>
@@ -193,7 +193,7 @@
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
 * **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `microsoft`, `steam`, `twitch`, `twitch-ads`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
-* **База `whitelist`**: более **810 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков и [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list).
+* **База `whitelist`**: более **860 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков, [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) и официального реестра ЦБ РФ.
 * **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения доменов, чьи IP уже полностью входят в Direct-диапазоны. Скрипт поддерживает запуск как с удаленной загрузкой, так и с локальным файлом:
   ```bash
   python3 geosite/buildtools/deduplicate.py -f release/text/direct.txt geosite/data/category-ru
@@ -273,7 +273,8 @@
 * [escapingworm/russia-whitelist](https://github.com/escapingworm/russia-whitelist) — проверенные белые списки подсетей РФ (CIDR).
 * [kirilllavrov/RU-domain-list-for-whitelist](https://github.com/kirilllavrov/RU-domain-list-for-whitelist) — списки российских доменов для белого списка.
 * [hxehex/russia-mobile-internet-whitelist](https://github.com/hxehex/russia-mobile-internet-whitelist) — белые списки ресурсов мобильного интернета РФ.
-* [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) — база популярных российских сервисов, приложений и доменов для белого списка.
+* [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) — структурированные базы доверенных доменов РФ по отраслям.
+* [misha-tgshv/shadowrocket-configuration-file](https://github.com/misha-tgshv/shadowrocket-configuration-file) — база сайтов кредитных организаций ЦБ РФ и чекеры доступности.
 * [roscomvpn-routing](https://github.com/hydraponique/roscomvpn-routing), [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip), [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — базовые правила маршрутизации от hydraponique.
 
 ---

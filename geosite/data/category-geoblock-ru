@@ -509,7 +509,6 @@ keyword:tailscale.com
 keyword:teamviewer.com
 
 # Tidal
-domain:onetrust.com
 domain:squareup.com
 keyword:tidal.com
 
@@ -1198,3 +1197,41 @@ domain:zerossl.com
 domain:zetalliance.org
 domain:zf.com
 domain:zoosk.com
+
+# Discord
+domain:dis.gd
+domain:discord-activities.com
+domain:discord.co
+domain:discord.com
+domain:discord.design
+domain:discord.dev
+domain:discord.gg
+domain:discord.gift
+domain:discord.gifts
+domain:discord.media
+domain:discord.new
+domain:discord.store
+domain:discord.tools
+domain:discordactivities.com
+domain:discordapp.com
+domain:discordapp.io
+domain:discordapp.net
+domain:discordcdn.com
+domain:discordmerch.com
+domain:discordpartygames.com
+domain:discordsays.com
+domain:discordstatus.com
+
+# Community blocked & geoblocked services
+domain:ntc.party
+domain:flibusta.is
+domain:flibusta.club
+domain:flibusta.site
+domain:sponsor.ajay.app
+domain:seasonvar.ru
+domain:hdrezka.ag
+domain:hdrezka.me
+domain:rezka.ag
+domain:browserleaks.com
+domain:browserleaks.org
+
