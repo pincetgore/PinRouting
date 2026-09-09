@@ -34,7 +34,7 @@
   <td><b>JSONSUB</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.DEEPLINK">JSONSUB.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.JSON">JSONSUB.JSON</a></td>
-  <td><b>Чистый профиль:</b> Настроены только безопасные DoH DNS и ссылки на кастомные базы geodata, без встроенных правил маршрутизации (для ручной настройки).</td>
+  <td><b>Базовый профиль:</b> Настроены DoH DNS, ссылки на кастомные базы geodata и прямой доступ для системных пуш-уведомлений (<code>geosite:push</code>), без других правил (для ручной настройки).</td>
 </tr>
 </tbody>
 </table>
@@ -60,7 +60,7 @@
   <td><b>JSONSUB</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.DEEPLINK">JSONSUB.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.JSON">JSONSUB.JSON</a></td>
-  <td><b>Чистый профиль:</b> DNS + базы геоданных без предопределённых правил.</td>
+  <td><b>Базовый профиль:</b> DNS + базы геоданных + прямой доступ для системных пуш-уведомлений (<code>geosite:push</code>).</td>
 </tr>
 </tbody>
 </table>
