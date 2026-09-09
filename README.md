@@ -104,9 +104,8 @@
 <thead><tr><th align="left">Сервис / Домены</th><th align="left">Зачем</th></tr></thead>
 <tbody>
 <tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
-<tr><td>✅ <code>geosite:push</code></td><td>Доставка push-уведомлений Android (Google FCM / GCM) и проверка сетевого подключения (captive portal)</td></tr>
+<tr><td>✅ <code>geosite:push</code></td><td>Доставка push-уведомлений Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei, Samsung) и проверка сетевого подключения (captive portal)</td></tr>
 <tr><td>✅ <code>geosite:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
-<tr><td>✅ <code>geosite:apple</code></td><td>Сервисы Apple, iCloud и мгновенная доставка пуш-уведомлений на iOS/macOS (шлюзы APNs включены в <code>geoip:direct</code>)</td></tr>
 <tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
 <tr><td>✅ <code>geosite:steam</code></td><td>Игровой трафик Steam напрямую (максимальная скорость загрузки игр)</td></tr>
 <tr><td>✅ <code>geosite:twitch</code></td><td>Видеопотоки Twitch напрямую (экономия трафика сервера)</td></tr>
@@ -137,7 +136,7 @@
 <tbody>
 <tr><td>✅ <code>geosite:whitelist</code></td><td><b>810+ проверенных корневых доменов</b> ключевых российских сервисов (банки, Госуслуги, суды, ФНС, ЕМИАС, аптеки, маркетплейсы, доставка, транспорт, авиация, телеком, облака)</td></tr>
 <tr><td>✅ <code>geoip:whitelist</code></td><td><b>17 900+ доверенных IP-диапазонов РФ</b> для гарантированной работы банковских приложений и государственных порталов</td></tr>
-<tr><td>✅ <code>geosite:push</code></td><td>Push-уведомления Android (Google FCM / GCM) и проверка сетевого подключения (captive portal)</td></tr>
+<tr><td>✅ <code>geosite:push</code></td><td>Push-уведомления Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei, Samsung) и проверка сетевого подключения (captive portal)</td></tr>
 <tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, роутер, домашние устройства)</td></tr>
 </tbody>
 </table>
@@ -193,7 +192,7 @@
 
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
-* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `twitch-ads`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
+* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `microsoft`, `steam`, `twitch`, `twitch-ads`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
 * **База `whitelist`**: более **810 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков и [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list).
 * **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения доменов, чьи IP уже полностью входят в Direct-диапазоны. Скрипт поддерживает запуск как с удаленной загрузкой, так и с локальным файлом:
   ```bash
