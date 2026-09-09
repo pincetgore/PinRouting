@@ -1,5 +1,10 @@
 # 🛡️ PinRouting
 
+[![Build and Update Routing](https://github.com/pincetgore/PinRouting/actions/workflows/build-and-update.yml/badge.svg)](https://github.com/pincetgore/PinRouting/actions/workflows/build-and-update.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/pincetgore/PinRouting?style=flat-square&color=blue)](https://github.com/pincetgore/PinRouting/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
+[![Clients](https://img.shields.io/badge/Clients-Happ%20%7C%20INCY-blueviolet?style=flat-square)](#-быстрая-установка)
+
 Оптимизированные конфигурации маршрутизации (роутинга) для клиентов **Happ** и **INCY** на базе кастомных легковесных баз GeoIP и Geosite.
 
 Проект автоматически собирает компактные бинарные базы правил (`geoip.dat` и `geosite.dat`), исключает рекламу, телеметрию, трекеры и обеспечивает прямое соединение (Direct) с российскими сервисами без задержек VPN, направляя заблокированные и зарубежные ресурсы в прокси-туннель.
@@ -11,7 +16,7 @@
 ### Для Happ
 
 <table width="100%">
-<thead><tr><th align="left">Профиль</th><th align="left">Диплинк (нажать для импорта)</th><th align="left">JSON-конфиг (для подписки)</th><th align="left">Описание</th></tr></thead>
+<thead><tr><th align="left">Профиль</th><th align="left">Файл диплинка (.DEEPLINK)</th><th align="left">JSON-конфиг (для подписки)</th><th align="left">Описание</th></tr></thead>
 <tbody>
 <tr>
   <td><b>DEFAULT</b></td>
@@ -37,7 +42,7 @@
 ### Для INCY
 
 <table width="100%">
-<thead><tr><th align="left">Профиль</th><th align="left">Диплинк (нажать для импорта)</th><th align="left">JSON-конфиг (для подписки)</th><th align="left">Описание</th></tr></thead>
+<thead><tr><th align="left">Профиль</th><th align="left">Файл диплинка (.DEEPLINK)</th><th align="left">JSON-конфиг (для подписки)</th><th align="left">Описание</th></tr></thead>
 <tbody>
 <tr>
   <td><b>DEFAULT</b></td>
@@ -62,8 +67,8 @@
 
 > [!TIP]
 > **Как подключить в приложении:**
-> 1. Скопируйте текст ссылки из файла `.DEEPLINK` (начинается с `happ://routing/onadd/...` или `incy://routing/onadd/...`) и вставьте в адресную строку браузера либо откройте напрямую.
-> 2. Или скопируйте URL на `.JSON` файл и добавьте его в настройках роутинга как внешнюю ссылку.
+> 1. **Через диплинк:** откройте ссылку на файл `.DEEPLINK`, скопируйте текстовую строку схемы (`happ://routing/onadd/...` или `incy://routing/onadd/...`) и откройте её в адресной строке браузера на устройстве (браузер предложит открыть клиент).
+> 2. **Через URL подписки:** скопируйте прямую ссылку на `.JSON` файл и укажите её в клиенте как внешний URL правил маршрутизации (с поддержкой автообновления).
 
 ---
 
@@ -100,8 +105,8 @@
 <tbody>
 <tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
 <tr><td>✅ <code>geosite:push</code></td><td>Доставка push-уведомлений Android (Google FCM / GCM) и проверка сетевого подключения (captive portal)</td></tr>
-<tr><td>✅ <code>geosite:whitelist</code> + <code>geoip:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
-<tr><td>✅ <code>geosite:apple</code> + APNs CIDR</td><td>Сервисы Apple, iCloud и мгновенная доставка пуш-уведомлений на iOS/macOS</td></tr>
+<tr><td>✅ <code>geosite:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
+<tr><td>✅ <code>geosite:apple</code></td><td>Сервисы Apple, iCloud и мгновенная доставка пуш-уведомлений на iOS/macOS (шлюзы APNs включены в <code>geoip:direct</code>)</td></tr>
 <tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
 <tr><td>✅ <code>geosite:steam</code></td><td>Игровой трафик Steam напрямую (максимальная скорость загрузки игр)</td></tr>
 <tr><td>✅ <code>geosite:twitch</code></td><td>Видеопотоки Twitch напрямую (экономия трафика сервера)</td></tr>
@@ -112,6 +117,34 @@
 
 > [!NOTE]
 > **Приоритет Google vs Gemini:** Домен `google.com` включён в `whitelist` для быстрого прямого поиска без задержек VPN. При этом сервисы Gemini и AI Studio (`gemini.google.com`, `generativelanguage.googleapis.com`) гарантированно направляются в прокси, так как правило `geosite:category-geoblock-ru` имеет более высокий приоритет исполнения (`RouteOrder: block-proxy-direct`).
+
+---
+
+## 🛡️ Маршрутизация в профиле WHITELIST (Белый список)
+
+Профиль предназначен для режима максимальной приватности или работы в небезопасных сетях: **весь интернет-трафик по умолчанию направляется в зашифрованный VPN-туннель**, за исключением критически важных российских сервисов, блокирующих зарубежные IP.
+
+Порядок применения правил (`RouteOrder`): **`block-proxy-direct`**.
+
+### 🔴 BLOCK (блокировка)
+* 🚫 `geosite:win-spy` — телеметрия и слежка компонентов ОС Windows
+* 🚫 `geosite:torrent` — публичные BitTorrent трекеры и DHT (защита VPS)
+* 🚫 `geosite:category-ads` — реклама и трекеры
+
+### 🟢 DIRECT (напрямую без VPN — только доверенные ресурсы)
+<table width="100%">
+<thead><tr><th align="left">Категория / Список</th><th align="left">Что входит</th></tr></thead>
+<tbody>
+<tr><td>✅ <code>geosite:whitelist</code></td><td><b>810+ проверенных корневых доменов</b> ключевых российских сервисов (банки, Госуслуги, суды, ФНС, ЕМИАС, аптеки, маркетплейсы, доставка, транспорт, авиация, телеком, облака)</td></tr>
+<tr><td>✅ <code>geoip:whitelist</code></td><td><b>17 900+ доверенных IP-диапазонов РФ</b> для гарантированной работы банковских приложений и государственных порталов</td></tr>
+<tr><td>✅ <code>geosite:push</code></td><td>Push-уведомления Android (Google FCM / GCM) и проверка сетевого подключения (captive portal)</td></tr>
+<tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, роутер, домашние устройства)</td></tr>
+</tbody>
+</table>
+
+### 🔵 PROXY (через VPN)
+* 🌐 `geosite:category-geoblock-ru` — зарубежные сервисы с геоблокировкой пользователей из РФ
+* 🌐 **Весь остальной трафик** — все поисковики, зарубежные сайты, социальные сети, медиа и сервисы, не входящие в белый список, идут через защищённый туннель.
 
 ---
 
@@ -160,7 +193,8 @@
 
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
-* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
+* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `push`, `youtube`, `telegram`, `github`, `apple`, `microsoft`, `steam`, `twitch`, `twitch-ads`, `pinterest`, `category-ads`, `torrent`, `win-spy`, `private`).
+* **База `whitelist`**: более **810 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков и [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list).
 * **Утилиты дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения доменов, чьи IP уже полностью входят в Direct-диапазоны. Скрипт поддерживает запуск как с удаленной загрузкой, так и с локальным файлом:
   ```bash
   python3 geosite/buildtools/deduplicate.py -f release/text/direct.txt geosite/data/category-ru
