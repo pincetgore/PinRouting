@@ -259,6 +259,33 @@ jobs:
           files: /tmp/dist/*
 
       # -----------------------------------------------------------------------
+      # Keep Only Latest Release & Tag
+      # -----------------------------------------------------------------------
+      - name: Delete Older Releases and Tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          CURRENT_TAG="${{ steps.meta.outputs.tag }}"
+          echo "Keeping current release and tag: ${CURRENT_TAG}"
+
+          # Delete all older releases and their associated tags
+          gh release list --limit 100 --json tagName --jq '.[].tagName' | while read -r tag; do
+            if [ -n "$tag" ] && [ "$tag" != "$CURRENT_TAG" ]; then
+              echo "Deleting old release: $tag"
+              gh release delete "$tag" --cleanup-tag -y || true
+            fi
+          done
+
+          # Clean up any remaining dangling remote tags
+          git ls-remote --tags origin | awk '{print $2}' | sed 's#refs/tags/##' | grep -v '\^{}' | while read -r rtag; do
+            if [ -n "$rtag" ] && [ "$rtag" != "$CURRENT_TAG" ]; then
+              echo "Deleting dangling remote tag: $rtag"
+              git push origin --delete "$rtag" || true
+            fi
+          done
+
+      # -----------------------------------------------------------------------
       # Purge jsDelivr Cache
       # -----------------------------------------------------------------------
       - name: Purge jsDelivr CDN Cache
