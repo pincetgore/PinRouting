@@ -1,5 +1,5 @@
 # NAME: whitelist.list
-# TOTAL: 862
+# TOTAL: 861
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:27:06 UTC
 # Direct for checkers
@@ -395,7 +395,6 @@ DOMAIN-SUFFIX,webvisor.com
 DOMAIN-SUFFIX,webvisor.org
 DOMAIN-SUFFIX,whoosh.bike
 DOMAIN-SUFFIX,wildberries.ru
-DOMAIN-SUFFIX,windsurf.com
 DOMAIN-SUFFIX,wink.ru
 DOMAIN-SUFFIX,x5.ru
 DOMAIN-SUFFIX,x5.tech

@@ -113,8 +113,22 @@ def build_rulesets(geosite_dir: str, rules_dir: str, repo: str, updated_str: str
             f.write("\n".join(ip_lines) + "\n")
         print(f"Generated {dst_path} ({ip_count} IP CIDR rules)")
 
+def load_dns_hosts(repo_root: str) -> str:
+    happ_default = os.path.join(repo_root, "HAPP", "DEFAULT.JSON")
+    if not os.path.isfile(happ_default):
+        return ""
+    try:
+        with open(happ_default, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        hosts = data.get("DnsHosts", {})
+        return "\n".join(f"{domain} = {ip}" for domain, ip in hosts.items())
+    except Exception as e:
+        print(f"Warning: failed to read DnsHosts from {happ_default}: {e}")
+        return ""
+
 def get_general_and_host_section(profile_name: str, filename: str, repo: str, branch: str, epoch: str, updated_str: str) -> str:
     raw_base = f"https://raw.githubusercontent.com/{repo}/{branch}/SHADOWROCKET"
+    hosts_str = load_dns_hosts(REPO_ROOT)
     return f"""# @PinRouting for Shadowrocket
 # Profile: {profile_name}
 # LastUpdated: {epoch} ({updated_str})
@@ -167,8 +181,7 @@ update-url = {raw_base}/{filename}
 
 [Host]
 # Статические DNS-записи (100% аналог DnsHosts из Happ/INCY для гарантированного доступа к ФНС)
-lkfl2.nalog.ru = 213.24.64.175
-lknpd.nalog.ru = 213.24.64.181
+{hosts_str}
 """
 
 def build_default_conf(out_path: str, repo: str, branch: str, epoch: str, updated_str: str):

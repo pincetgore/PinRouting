@@ -16,8 +16,9 @@ import ipaddress
 import json
 import re
 import struct
-import subprocess
 import time
+import urllib.request
+import urllib.error
 from bisect import bisect_right
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -53,23 +54,38 @@ WORKERS = 8
 
 # ── Скачивание и работа с IP-диапазонами ──────────────────────────────────
 
+def http_get(url: str, timeout: int = 5, headers: dict[str, str] | None = None, retries: int = 3) -> str:
+    """Скачивает содержимое по ссылке через urllib с повторными попытками."""
+    req_headers = {"User-Agent": "PinRouting-Deduplicate/1.0"}
+    if headers:
+        req_headers.update(headers)
+    req = urllib.request.Request(url, headers=req_headers)
+    last_err = None
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read().decode("utf-8", errors="replace")
+        except Exception as e:
+            last_err = e
+            if attempt < retries - 1:
+                time.sleep(1)
+    if last_err:
+        raise last_err
+    raise RuntimeError(f"Failed to fetch {url}")
+
+
 def curl_get(url: str, timeout: int = 5) -> str:
-    """Скачивает содержимое по ссылке через curl и возвращает текст."""
-    result = subprocess.run(
-        ["curl", "-fsSL", "--retry", "3", "--retry-delay", "1", "--max-time", str(timeout), url],
-        capture_output=True, text=True, check=True,
-    )
-    return result.stdout
+    """Скачивает содержимое по ссылке и возвращает текст."""
+    return http_get(url, timeout=timeout)
 
 
 def curl_json(url: str) -> dict | None:
-    """Скачивает JSON по ссылке через curl. При ошибке повторяет до 3 раз."""
-    result = subprocess.run(
-        ["curl", "-fsSL", "--retry", "3", "--retry-delay", "1", "--max-time", "5",
-         "-H", "Accept: application/json", url],
-        capture_output=True, text=True, check=True,
-    )
-    return json.loads(result.stdout)
+    """Скачивает JSON по ссылке. При ошибке возвращает None."""
+    try:
+        data_str = http_get(url, timeout=5, headers={"Accept": "application/json"}, retries=3)
+        return json.loads(data_str)
+    except Exception:
+        return None
 
 
 def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
@@ -90,7 +106,7 @@ def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
     return intervals, starts
 
 
-def load_direct_cidrs(file_path: str | Path | None = None) -> tuple[list[tuple[int, int]], list[int]]:
+def load_direct_cidrs(file_path: str | Path | None = None, direct_url: str = DIRECT_TXT_URL) -> tuple[list[tuple[int, int]], list[int]]:
     """Загружает direct.txt/whitelist.txt из локального файла или скачивает по ссылке."""
     if file_path:
         path = Path(file_path)
@@ -101,8 +117,8 @@ def load_direct_cidrs(file_path: str | Path | None = None) -> tuple[list[tuple[i
         else:
             print(f"Warning: Local file '{file_path}' not found. Falling back to URL.")
 
-    print(f"Downloading direct.txt from {DIRECT_TXT_URL} ...")
-    data = curl_get(DIRECT_TXT_URL)
+    print(f"Downloading direct CIDRs from {direct_url} ...")
+    data = curl_get(direct_url)
     print(f"  Скачано {len(data)} байт")
     return parse_cidrs_from_text(data)
 
@@ -356,11 +372,16 @@ def main() -> None:
         default=None,
         help="Path to local direct.txt/whitelist.txt file (default: download from release branch)",
     )
+    ap.add_argument(
+        "--direct-url",
+        default=DIRECT_TXT_URL,
+        help=f"URL to download direct.txt/whitelist.txt (default: {DIRECT_TXT_URL})",
+    )
     ap.add_argument("--workers", type=int, default=WORKERS, help=f"Parallel workers (default: {WORKERS})")
     args = ap.parse_args()
 
     # Шаг 1. Загружаем и разбираем список IP-диапазонов (direct.txt/whitelist.txt)
-    intervals, starts = load_direct_cidrs(args.direct_file)
+    intervals, starts = load_direct_cidrs(args.direct_file, direct_url=args.direct_url)
     print(f"  {len(intervals)} IPv4 CIDR ranges loaded")
 
     total_nodes = len(RU_NODES) + len(FOREIGN_NODES)

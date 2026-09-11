@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 1003
+# TOTAL: 1004
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:27:06 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -755,6 +755,7 @@ DOMAIN-SUFFIX,groupon.com
 DOMAIN-SUFFIX,grouponcdn.com
 DOMAIN-KEYWORD,happ.su
 DOMAIN-KEYWORD,happ-proxy.com
+DOMAIN-KEYWORD,happ.info
 DOMAIN-SUFFIX,hashicorp.com
 DOMAIN-SUFFIX,hashkey.com
 DOMAIN-SUFFIX,haydaygame.com

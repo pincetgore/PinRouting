@@ -1,5 +1,5 @@
 # NAME: category-ru.list
-# TOTAL: 130
+# TOTAL: 128
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:27:06 UTC
 # Direct for checkers
@@ -114,8 +114,6 @@ DOMAIN-SUFFIX,mkb.ru
 DOMAIN-SUFFIX,uralsib.ru
 DOMAIN-SUFFIX,magnit.ru
 # Services and apps
-DOMAIN-SUFFIX,happ.su
-DOMAIN-SUFFIX,happ.info
 DOMAIN-SUFFIX,aliexpress.ru
 DOMAIN-SUFFIX,aviasales.ru
 DOMAIN-SUFFIX,aviasales.com

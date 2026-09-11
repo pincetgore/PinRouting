@@ -10,6 +10,8 @@ on:
       - "geoip/**"
       - "geosite/data/**"
       - "HAPP/*.JSON"
+      - "INCY/*.JSON"
+      - "SHADOWROCKET/tools/**"
       - ".github/workflows/build-and-update.yml"
   workflow_dispatch:
 
