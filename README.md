@@ -3,9 +3,9 @@
 [![Build and Update Routing](https://github.com/pincetgore/PinRouting/actions/workflows/build-and-update.yml/badge.svg)](https://github.com/pincetgore/PinRouting/actions/workflows/build-and-update.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/pincetgore/PinRouting?style=flat-square&color=blue)](https://github.com/pincetgore/PinRouting/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
-[![Clients](https://img.shields.io/badge/Clients-Happ%20%7C%20INCY-blueviolet?style=flat-square)](#-быстрая-установка)
+[![Clients](https://img.shields.io/badge/Clients-Happ%20%7C%20INCY%20%7C%20Shadowrocket-blueviolet?style=flat-square)](#-быстрая-установка)
 
-Оптимизированные конфигурации маршрутизации (роутинга) для клиентов **Happ** и **INCY** на базе кастомных легковесных баз GeoIP и Geosite.
+Оптимизированные конфигурации маршрутизации (роутинга) для клиентов **Happ**, **INCY** и **Shadowrocket** на базе кастомных легковесных баз GeoIP и Geosite.
 
 Проект автоматически собирает компактные бинарные базы правил (`geoip.dat` и `geosite.dat`), исключает рекламу, телеметрию, трекеры и обеспечивает прямое соединение (Direct) с российскими сервисами без задержек VPN, направляя заблокированные и зарубежные ресурсы в прокси-туннель.
 
@@ -202,10 +202,10 @@
 </tbody>
 </table>
 
-### Статические записи (`DnsHosts`)
+### Статические записи (`DnsHosts` / `[Host]`)
 Для гарантированного доступа к Личному кабинету налогоплательщика ФНС РФ в конфигах заданы статические сопоставления:
-* `lkfl2.nalog.ru` $\to$ `213.24.64.175`
-* `lknpd.nalog.ru` $\to$ `213.24.64.181`
+* `lkfl2.nalog.ru` ➔ `213.24.64.175`
+* `lknpd.nalog.ru` ➔ `213.24.64.181`
 
 ---
 
@@ -246,7 +246,7 @@
    * `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat`
    * `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat`
 5. **Публикует GitHub Releases** с бинарниками, контрольными суммами (`.sha256`) и архивом текстовых списков (`text.tar.gz`).
-6. **Обновляет таймстемп `LastUpdated`** в JSON-конфигах и перегенерирует диплинки.
+6. **Обновляет таймстемп `LastUpdated`** в JSON-конфигах, перегенерирует диплинки и собирает конфигурации Shadowrocket.
 7. **Очищает кэш CDN jsDelivr** через Purge API.
 
 Расписание запуска: **ежедневно в 04:00 UTC**, при каждом коммите в репозиторий или вручную через вкладку **Actions**.
@@ -266,6 +266,14 @@
 │   ├── DEFAULT.JSON / .DEEPLINK
 │   ├── WHITELIST.JSON / .DEEPLINK
 │   └── JSONSUB.JSON / .DEEPLINK
+├── SHADOWROCKET/              # Конфигурации и списки правил для Shadowrocket
+│   ├── DEFAULT.CONF           # Основной профиль маршрутизации
+│   ├── WHITELIST.CONF         # Профиль белого списка РФ
+│   ├── JSONSUB.CONF           # Базовый профиль для подписки
+│   ├── EXTENDED.CONF          # Шаблон пользовательских правил (include)
+│   └── rules/                 # Сгенерированные списки правил (.list)
+├── tools/                     # Утилиты сборки и конвертации
+│   └── build_shadowrocket.py  # Генератор конфигураций Shadowrocket
 ├── geoip/                     # Конфигурация и кастомные списки GeoIP
 │   ├── buildtools/            # Скрипты генерации IP-списков по странам
 │   ├── config.json            # Правила объединения баз и вычитания списков РКН
@@ -309,7 +317,7 @@
 * [kirilllavrov/RU-domain-list-for-whitelist](https://github.com/kirilllavrov/RU-domain-list-for-whitelist) — списки российских доменов для белого списка.
 * [hxehex/russia-mobile-internet-whitelist](https://github.com/hxehex/russia-mobile-internet-whitelist) — белые списки ресурсов мобильного интернета РФ.
 * [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) — структурированные базы доверенных доменов РФ по отраслям.
-* [misha-tgshv/shadowrocket-configuration-file](https://github.com/misha-tgshv/shadowrocket-configuration-file) — база сайтов кредитных организаций ЦБ РФ и чекеры доступности.
+* [misha-tgshv/shadowrocket-configuration-file](https://github.com/misha-tgshv/shadowrocket-configuration-file) — база сайтов кредитных организаций ЦБ РФ, чекеры доступности и шаблоны конфигураций Shadowrocket.
 * [roscomvpn-routing](https://github.com/hydraponique/roscomvpn-routing), [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip), [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — базовые правила маршрутизации от hydraponique.
 
 ---
