@@ -1,2 +1,51 @@
+# Google Ads
+domain:doubleclick.net
+domain:googleadservices.com
+domain:googlesyndication.com
+domain:adservice.google.com
+domain:admob.com
+domain:adsense.com
+
+# Global AdTech / Banner / Popunder / Adult Ads
+domain:a.adtng.com
+domain:aaxads.com
+domain:ad-srv.net
+domain:adbutter.net
+domain:adtechus.com
+domain:adtrue.com
+domain:adxprtz.com
+domain:contentabc.com
+domain:ero-advertising.com
+domain:eroadvertising.com
+domain:exoclick.com
+domain:exosrv.com
+domain:juicyads.com
+domain:moatads.com
+domain:realsrv.com
+domain:trafficfactory.biz
+domain:trafficjunky.net
+domain:tsyndicate.com
+
+# Russian Ad Networks (Mail.ru / VK / MyTarget)
 domain:ad.mail.ru
+domain:ad4.mail.ru
 domain:alt-ad.mail.ru
+domain:an.mail.ru
+domain:bs.mail.ru
+domain:myadx.net
+domain:reklama.mail.ru
+domain:relap.mail.ru
+domain:target.my.com
+
+# Yandex Ads (RSYA / AdFox / Yandex Ads Tech)
+domain:adfox.ru
+domain:admetrica.ru
+domain:an.yandex.ru
+domain:yabs.yandex.ru
+domain:yads.tech
+
+# Sber & MTS Ads
+domain:a.mts.ru
+domain:ads.sber.ru
+domain:neon.click
+domain:sbermarketing.ru

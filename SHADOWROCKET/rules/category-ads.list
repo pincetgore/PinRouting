@@ -1,6 +1,51 @@
 # NAME: category-ads.list
-# TOTAL: 2
+# TOTAL: 42
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 18:06:07 UTC
+# Google Ads
+DOMAIN-SUFFIX,doubleclick.net
+DOMAIN-SUFFIX,googleadservices.com
+DOMAIN-SUFFIX,googlesyndication.com
+DOMAIN-SUFFIX,adservice.google.com
+DOMAIN-SUFFIX,admob.com
+DOMAIN-SUFFIX,adsense.com
+# Global AdTech / Banner / Popunder / Adult Ads
+DOMAIN-SUFFIX,a.adtng.com
+DOMAIN-SUFFIX,aaxads.com
+DOMAIN-SUFFIX,ad-srv.net
+DOMAIN-SUFFIX,adbutter.net
+DOMAIN-SUFFIX,adtechus.com
+DOMAIN-SUFFIX,adtrue.com
+DOMAIN-SUFFIX,adxprtz.com
+DOMAIN-SUFFIX,contentabc.com
+DOMAIN-SUFFIX,ero-advertising.com
+DOMAIN-SUFFIX,eroadvertising.com
+DOMAIN-SUFFIX,exoclick.com
+DOMAIN-SUFFIX,exosrv.com
+DOMAIN-SUFFIX,juicyads.com
+DOMAIN-SUFFIX,moatads.com
+DOMAIN-SUFFIX,realsrv.com
+DOMAIN-SUFFIX,trafficfactory.biz
+DOMAIN-SUFFIX,trafficjunky.net
+DOMAIN-SUFFIX,tsyndicate.com
+# Russian Ad Networks (Mail.ru / VK / MyTarget)
 DOMAIN-SUFFIX,ad.mail.ru
+DOMAIN-SUFFIX,ad4.mail.ru
 DOMAIN-SUFFIX,alt-ad.mail.ru
+DOMAIN-SUFFIX,an.mail.ru
+DOMAIN-SUFFIX,bs.mail.ru
+DOMAIN-SUFFIX,myadx.net
+DOMAIN-SUFFIX,reklama.mail.ru
+DOMAIN-SUFFIX,relap.mail.ru
+DOMAIN-SUFFIX,target.my.com
+# Yandex Ads (RSYA / AdFox / Yandex Ads Tech)
+DOMAIN-SUFFIX,adfox.ru
+DOMAIN-SUFFIX,admetrica.ru
+DOMAIN-SUFFIX,an.yandex.ru
+DOMAIN-SUFFIX,yabs.yandex.ru
+DOMAIN-SUFFIX,yads.tech
+# Sber & MTS Ads
+DOMAIN-SUFFIX,a.mts.ru
+DOMAIN-SUFFIX,ads.sber.ru
+DOMAIN-SUFFIX,neon.click
+DOMAIN-SUFFIX,sbermarketing.ru

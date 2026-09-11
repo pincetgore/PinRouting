@@ -115,7 +115,7 @@
 <tbody>
 <tr><td>🚫 <code>geosite:win-spy</code></td><td>Отключение телеметрии и слежки компонентов ОС Windows</td></tr>
 <tr><td>🚫 <code>geosite:torrent</code></td><td>Блокировка публичных BitTorrent DHT-серверов и трекеров (защита VPS от абуз хостера)</td></tr>
-<tr><td>🚫 <code>geosite:category-ads</code></td><td>Блокировка рекламы (Mail.ru, VK Видео, VK Музыка и др.)</td></tr>
+<tr><td>🚫 <code>geosite:category-ads</code></td><td>Блокировка рекламы (Google Ads, РСЯ, AdFox, MyTarget, VK, Sber Ads, агрессивные баннерные сети и попандеры)</td></tr>
 </tbody>
 </table>
 

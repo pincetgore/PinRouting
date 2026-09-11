@@ -1,5 +1,5 @@
 # NAME: whitelist.list
-# TOTAL: 857
+# TOTAL: 854
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 18:06:07 UTC
 # Direct for checkers
@@ -165,8 +165,6 @@ DOMAIN-SUFFIX,5ka.ru
 DOMAIN-SUFFIX,5post.market
 DOMAIN-SUFFIX,abr.ru
 DOMAIN-SUFFIX,aclub.ru
-DOMAIN-SUFFIX,adfox.ru
-DOMAIN-SUFFIX,admetrica.ru
 DOMAIN-SUFFIX,aeroflot.ru
 DOMAIN-SUFFIX,alfa-bank.com
 DOMAIN-SUFFIX,alfa-bank.ru
@@ -409,7 +407,6 @@ DOMAIN-SUFFIX,xn--90aifd0aza.site
 DOMAIN-SUFFIX,xn--b1aew.xn--p1ai
 DOMAIN-SUFFIX,xn--d1acpjx3f.xn--p1ai
 DOMAIN-SUFFIX,ya.ru
-DOMAIN-SUFFIX,yads.tech
 DOMAIN-SUFFIX,yandex
 DOMAIN-SUFFIX,yandex-bank.net
 DOMAIN-SUFFIX,yandex-team.ru
