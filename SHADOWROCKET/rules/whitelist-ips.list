@@ -1,5 +1,5 @@
 # NAME: whitelist-ips.list
-# TOTAL: 17911
+# TOTAL: 17857
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:46:24 UTC
 IP-CIDR,84.201.128.0/18,no-resolve
@@ -13173,28 +13173,6 @@ IP-CIDR,82.202.253.220/31,no-resolve
 IP-CIDR,82.202.253.222/32,no-resolve
 IP-CIDR,82.202.253.241/32,no-resolve
 IP-CIDR,82.202.253.242/32,no-resolve
-IP-CIDR,84.201.133.91/32,no-resolve
-IP-CIDR,84.201.135.232/32,no-resolve
-IP-CIDR,84.201.136.178/32,no-resolve
-IP-CIDR,84.201.139.93/32,no-resolve
-IP-CIDR,84.201.140.1/32,no-resolve
-IP-CIDR,84.201.140.183/32,no-resolve
-IP-CIDR,84.201.142.129/32,no-resolve
-IP-CIDR,84.201.142.241/32,no-resolve
-IP-CIDR,84.201.151.91/32,no-resolve
-IP-CIDR,84.201.151.229/32,no-resolve
-IP-CIDR,84.201.154.121/32,no-resolve
-IP-CIDR,84.201.155.209/32,no-resolve
-IP-CIDR,84.201.156.220/32,no-resolve
-IP-CIDR,84.201.157.7/32,no-resolve
-IP-CIDR,84.201.162.163/32,no-resolve
-IP-CIDR,84.201.166.1/32,no-resolve
-IP-CIDR,84.201.171.79/32,no-resolve
-IP-CIDR,84.201.172.213/32,no-resolve
-IP-CIDR,84.201.173.203/32,no-resolve
-IP-CIDR,84.201.184.69/32,no-resolve
-IP-CIDR,84.201.185.18/32,no-resolve
-IP-CIDR,84.201.187.148/32,no-resolve
 IP-CIDR,87.226.162.5/32,no-resolve
 IP-CIDR,87.226.162.8/32,no-resolve
 IP-CIDR,87.226.162.10/32,no-resolve
@@ -15523,8 +15501,6 @@ IP-CIDR,95.181.177.30/32,no-resolve
 IP-CIDR,95.181.177.33/32,no-resolve
 IP-CIDR,95.181.181.140/32,no-resolve
 IP-CIDR,95.181.181.229/32,no-resolve
-IP-CIDR,95.181.182.180/30,no-resolve
-IP-CIDR,95.181.182.184/31,no-resolve
 IP-CIDR,95.213.167.231/32,no-resolve
 IP-CIDR,95.213.167.235/32,no-resolve
 IP-CIDR,95.213.232.194/31,no-resolve
@@ -15814,36 +15790,6 @@ IP-CIDR,151.236.71.246/32,no-resolve
 IP-CIDR,151.236.71.248/31,no-resolve
 IP-CIDR,151.236.71.251/32,no-resolve
 IP-CIDR,151.236.71.254/32,no-resolve
-IP-CIDR,158.160.11.58/32,no-resolve
-IP-CIDR,158.160.11.168/32,no-resolve
-IP-CIDR,158.160.15.146/32,no-resolve
-IP-CIDR,158.160.25.226/32,no-resolve
-IP-CIDR,158.160.29.13/32,no-resolve
-IP-CIDR,158.160.34.10/32,no-resolve
-IP-CIDR,158.160.39.217/32,no-resolve
-IP-CIDR,158.160.52.157/32,no-resolve
-IP-CIDR,158.160.58.226/32,no-resolve
-IP-CIDR,158.160.63.222/32,no-resolve
-IP-CIDR,158.160.64.92/32,no-resolve
-IP-CIDR,158.160.67.92/32,no-resolve
-IP-CIDR,158.160.74.226/32,no-resolve
-IP-CIDR,158.160.79.225/32,no-resolve
-IP-CIDR,158.160.85.24/32,no-resolve
-IP-CIDR,158.160.86.227/32,no-resolve
-IP-CIDR,158.160.96.92/32,no-resolve
-IP-CIDR,158.160.99.226/32,no-resolve
-IP-CIDR,158.160.145.178/32,no-resolve
-IP-CIDR,158.160.152.76/32,no-resolve
-IP-CIDR,158.160.157.167/32,no-resolve
-IP-CIDR,158.160.162.217/32,no-resolve
-IP-CIDR,158.160.164.197/32,no-resolve
-IP-CIDR,158.160.166.152/32,no-resolve
-IP-CIDR,158.160.167.144/32,no-resolve
-IP-CIDR,158.160.171.227/32,no-resolve
-IP-CIDR,158.160.176.226/32,no-resolve
-IP-CIDR,158.160.183.112/32,no-resolve
-IP-CIDR,158.160.189.225/32,no-resolve
-IP-CIDR,158.160.192.96/32,no-resolve
 IP-CIDR,176.114.120.254/32,no-resolve
 IP-CIDR,176.114.121.254/32,no-resolve
 IP-CIDR,176.114.122.254/32,no-resolve

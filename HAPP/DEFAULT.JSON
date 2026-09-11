@@ -25,7 +25,6 @@
     "geosite:category-ru",
     "geosite:whitelist",
     "geosite:domains-geo-detect",
-    "geosite:domains-ipchecker",
     "geosite:microsoft",
     "geosite:steam",
     "geosite:twitch",

@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 1003
+# TOTAL: 1005
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:46:24 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -13,7 +13,7 @@ DOMAIN-SUFFIX,onlinesim.io
 # Adobe
 DOMAIN-SUFFIX,adobe-identity.com
 DOMAIN-SUFFIX,adobe-services.com
-DOMAIN-KEYWORD,adobe.com
+DOMAIN-SUFFIX,adobe.com
 DOMAIN-SUFFIX,adobe.io
 DOMAIN-SUFFIX,adobecc.com
 DOMAIN-SUFFIX,adobecces.com
@@ -50,12 +50,11 @@ DOMAIN-SUFFIX,anaconda.org
 # Asana
 DOMAIN-SUFFIX,asana.com
 # Autodesk
-DOMAIN-KEYWORD,autodesk.com
-DOMAIN-SUFFIX,cdn.web-platform.io
+DOMAIN-SUFFIX,autodesk.com
 DOMAIN-SUFFIX,qualtrics.com
 # Basecamp
 DOMAIN-SUFFIX,37signals.com
-DOMAIN-KEYWORD,basecamp.com
+DOMAIN-SUFFIX,basecamp.com
 DOMAIN-SUFFIX,basecampapi.com
 # Binance
 DOMAIN-SUFFIX,binance.com
@@ -69,7 +68,7 @@ DOMAIN-SUFFIX,blackbox.ai
 DOMAIN-SUFFIX,booking.com
 DOMAIN-SUFFIX,bstatic.com
 # Brave
-DOMAIN-KEYWORD,brave.com
+DOMAIN-SUFFIX,brave.com
 # Bybit
 DOMAIN-SUFFIX,bybit-global.com
 DOMAIN-SUFFIX,bybit.com
@@ -81,7 +80,7 @@ DOMAIN-SUFFIX,squadbustersgame.com
 DOMAIN-SUFFIX,supercell.com
 # Canva
 DOMAIN-SUFFIX,canva-apps.com
-DOMAIN-KEYWORD,canva.com
+DOMAIN-SUFFIX,canva.com
 DOMAIN-SUFFIX,canva.dev
 # Cici/Dola
 DOMAIN-SUFFIX,cici.com
@@ -89,10 +88,10 @@ DOMAIN-SUFFIX,ciciai.com
 DOMAIN-SUFFIX,ciciaicdn.com
 DOMAIN-SUFFIX,dola.com
 # Claude
-DOMAIN-KEYWORD,anthropic.com
-DOMAIN-KEYWORD,claude.ai
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
 DOMAIN-SUFFIX,claudeusercontent.com
-DOMAIN-KEYWORD,intercom.io
+DOMAIN-SUFFIX,intercom.io
 DOMAIN-SUFFIX,intercomassets.com
 DOMAIN-SUFFIX,intercomcdn.com
 # ClickUp
@@ -110,9 +109,9 @@ DOMAIN-SUFFIX,anysphere.co
 DOMAIN-SUFFIX,cursor.com
 DOMAIN-SUFFIX,cursor.sh
 # DeepL
-DOMAIN-KEYWORD,deepl.
+DOMAIN-SUFFIX,deepl.com
 # Deezer
-DOMAIN-KEYWORD,deezer.com
+DOMAIN-SUFFIX,deezer.com
 DOMAIN-SUFFIX,dzcdn.net
 # Dell
 DOMAIN-SUFFIX,dell.com
@@ -130,7 +129,8 @@ DOMAIN-SUFFIX,duolingo.org
 DOMAIN-SUFFIX,copilot.microsoft.com
 DOMAIN-SUFFIX,designer.microsoft.com
 # Dyson
-DOMAIN-KEYWORD,dyson.
+DOMAIN-SUFFIX,dyson.com
+DOMAIN-SUFFIX,dyson.de
 # edX
 DOMAIN-SUFFIX,edx.org
 # ElevenLabs + ElevenReader
@@ -196,7 +196,7 @@ DOMAIN-SUFFIX,lookerstudio.google.com
 DOMAIN-SUFFIX,o.pki.goog
 DOMAIN-SUFFIX,suggestqueries.google.com
 # Grok
-DOMAIN-KEYWORD,grok.com
+DOMAIN-SUFFIX,grok.com
 DOMAIN-SUFFIX,grok.x.com
 DOMAIN-SUFFIX,x.ai
 # Hetzner
@@ -209,11 +209,11 @@ DOMAIN-SUFFIX,hulustream.com
 # Guilded
 DOMAIN-SUFFIX,guilded.gg
 # Imgur
-DOMAIN-KEYWORD,imgur.com
+DOMAIN-SUFFIX,imgur.com
 # Intel
-DOMAIN-KEYWORD,intel.
+DOMAIN-SUFFIX,intel.com
 # Jetbrains
-DOMAIN-KEYWORD,jetbrains.com
+DOMAIN-SUFFIX,jetbrains.com
 DOMAIN-SUFFIX,jetbrains.ai
 DOMAIN-SUFFIX,jetbrains.space
 DOMAIN-SUFFIX,myjetbrains.com
@@ -238,9 +238,9 @@ DOMAIN-SUFFIX,lumalabs.ai
 DOMAIN-SUFFIX,make.com
 # Manus
 DOMAIN-SUFFIX,manus.cdn
-DOMAIN-KEYWORD,manus.im
+DOMAIN-SUFFIX,manus.im
 # Meta AI
-DOMAIN-KEYWORD,meta.ai
+DOMAIN-SUFFIX,meta.ai
 DOMAIN-SUFFIX,llamameta.net
 DOMAIN-SUFFIX,meta.com
 DOMAIN-SUFFIX,metademolab.com
@@ -259,7 +259,8 @@ DOMAIN-SUFFIX,naukimg.com
 DOMAIN-SUFFIX,naukri.com
 # Netflix
 DOMAIN-SUFFIX,fast.com
-DOMAIN-KEYWORD,netflix.
+DOMAIN-SUFFIX,netflix.com
+DOMAIN-SUFFIX,netflix.net
 DOMAIN-SUFFIX,netflixinvestor.com
 DOMAIN-SUFFIX,netflixstudios.com
 DOMAIN-SUFFIX,netflixtechblog.com
@@ -279,21 +280,23 @@ URL-REGEX,(^|\.)dualstack\.ichnaea-web-.+\.amazonaws\.com$
 DOMAIN-SUFFIX,hellonotion.com
 DOMAIN-SUFFIX,notion-media.com
 DOMAIN-SUFFIX,notion-static.com
-DOMAIN-KEYWORD,notion.
+DOMAIN-SUFFIX,notion.so
+DOMAIN-SUFFIX,notion.site
+DOMAIN-SUFFIX,notion.com
 DOMAIN-SUFFIX,notionup.com
 DOMAIN-SUFFIX,notionusercontent.com
 DOMAIN-SUFFIX,splunkcloud.com
-DOMAIN-KEYWORD,zendesk.com
+DOMAIN-SUFFIX,zendesk.com
 DOMAIN-SUFFIX,zendesk.de
 # OKX
 DOMAIN-SUFFIX,okx.cab
 DOMAIN-SUFFIX,okx.com
 # OpenAI / ChatGPT
-DOMAIN-KEYWORD,chatgpt.com
+DOMAIN-SUFFIX,chatgpt.com
 DOMAIN-SUFFIX,chat.com
 DOMAIN-SUFFIX,oaistatic.com
 DOMAIN-SUFFIX,oaiusercontent.com
-DOMAIN-KEYWORD,openai.
+DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,sora.com
 DOMAIN-SUFFIX,ai.com
 DOMAIN-SUFFIX,auth0.com
@@ -305,7 +308,6 @@ DOMAIN-SUFFIX,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net
 DOMAIN-SUFFIX,production-openaicom-storage.azureedge.net
 URL-REGEX,^chatgpt-async-webps-prod-\s+-\d+\.webpubsub\.azure\.com$
-DOMAIN-SUFFIX,o33249.ingest.sentry.io
 DOMAIN-SUFFIX,openaicom.imgix.net
 DOMAIN-SUFFIX,browser-intake-datadoghq.com
 # Oracle
@@ -342,16 +344,16 @@ DOMAIN-SUFFIX,protonvpn.ch
 DOMAIN-SUFFIX,protonvpn.com
 DOMAIN-SUFFIX,protonweb.com
 # Reddit
-DOMAIN-KEYWORD,redd.it
+DOMAIN-SUFFIX,redd.it
 DOMAIN-SUFFIX,reddit.app.link
-DOMAIN-KEYWORD,reddit.com
+DOMAIN-SUFFIX,reddit.com
 DOMAIN-SUFFIX,redditblog.com
 DOMAIN-SUFFIX,reddithelp.com
 DOMAIN-SUFFIX,redditinc.com
 DOMAIN-SUFFIX,redditmail.com
 DOMAIN-SUFFIX,redditmedia.com
 DOMAIN-SUFFIX,redditspace.com
-DOMAIN-KEYWORD,redditstatic.com
+DOMAIN-SUFFIX,redditstatic.com
 DOMAIN-SUFFIX,redditstatus.com
 DOMAIN-SUFFIX,reddit.map.fastly.net
 # Reve
@@ -379,10 +381,10 @@ DOMAIN-SUFFIX,pscdn.co
 DOMAIN-SUFFIX,scdn.co
 DOMAIN-SUFFIX,spoti.fi
 DOMAIN-SUFFIX,spotify-everywhere.com
-DOMAIN-KEYWORD,spotify.com
+DOMAIN-SUFFIX,spotify.com
 DOMAIN-SUFFIX,spotify.design
-DOMAIN-KEYWORD,spotifycdn.com
-DOMAIN-KEYWORD,spotifycdn.net
+DOMAIN-SUFFIX,spotifycdn.com
+DOMAIN-SUFFIX,spotifycdn.net
 DOMAIN-SUFFIX,spotifycharts.com
 DOMAIN-SUFFIX,spotifycodes.com
 DOMAIN-SUFFIX,spotifyforbrands.com
@@ -397,7 +399,7 @@ DOMAIN-SUFFIX,heads4-ak-spotify-com.akamaized.net
 DOMAIN-SUFFIX,spotify.map.fastly.net
 DOMAIN-SUFFIX,spotify.map.fastlylb.net
 # Strava
-DOMAIN-KEYWORD,strava.com
+DOMAIN-SUFFIX,strava.com
 # Stripe
 DOMAIN-SUFFIX,stripe.com
 DOMAIN-SUFFIX,stripe.network
@@ -410,59 +412,59 @@ DOMAIN-SUFFIX,supabase.co
 DOMAIN-SUFFIX,supabase.com
 DOMAIN-SUFFIX,supabase.io
 # Tableau
-DOMAIN-KEYWORD,tableau.com
+DOMAIN-SUFFIX,tableau.com
 # Tailscale
-DOMAIN-KEYWORD,tailscale.com
+DOMAIN-SUFFIX,tailscale.com
 # TeamViewer
-DOMAIN-KEYWORD,teamviewer.com
+DOMAIN-SUFFIX,teamviewer.com
 # Tidal
 DOMAIN-SUFFIX,squareup.com
-DOMAIN-KEYWORD,tidal.com
+DOMAIN-SUFFIX,tidal.com
 # Tiktok / CapCut / ByteDance
-DOMAIN-KEYWORD,amemv.com
-DOMAIN-KEYWORD,bytecdn.cn
-DOMAIN-KEYWORD,byted.org
-DOMAIN-KEYWORD,bytedance.com
-DOMAIN-KEYWORD,bytedance.net
-DOMAIN-KEYWORD,bytedns.net
-DOMAIN-KEYWORD,bytefcdn-oversea.com
-DOMAIN-KEYWORD,bytefcdn-ttpeu.com
-DOMAIN-KEYWORD,byteglb.com
-DOMAIN-KEYWORD,byteicdn.com
-DOMAIN-KEYWORD,byteimg.com
-DOMAIN-KEYWORD,byteoversea.com
-DOMAIN-KEYWORD,bytetcdn.com
-DOMAIN-KEYWORD,capcut.com
-DOMAIN-KEYWORD,hypstarcdn.com
-DOMAIN-KEYWORD,ibytedtos.com
-DOMAIN-KEYWORD,ibyteimg.com
-DOMAIN-KEYWORD,ipstatp.com
-DOMAIN-KEYWORD,isnssdk.com
-DOMAIN-KEYWORD,muscdn.com
-DOMAIN-KEYWORD,musical.ly
-DOMAIN-KEYWORD,pstatp.com
-DOMAIN-KEYWORD,snssdk.com
-DOMAIN-KEYWORD,tiktok-row.net
-DOMAIN-KEYWORD,tiktok-row.org
-DOMAIN-KEYWORD,tiktok.
-DOMAIN-KEYWORD,tiktokcdn-eu.com
-DOMAIN-KEYWORD,tiktokcdn-eu.net
-DOMAIN-KEYWORD,tiktokcdn-in.com
-DOMAIN-KEYWORD,tiktokcdn-us.com
-DOMAIN-KEYWORD,tiktokcdn.com
-DOMAIN-KEYWORD,tiktokd.net
-DOMAIN-KEYWORD,tiktokd.org
-DOMAIN-KEYWORD,tiktokeu-cdn.com
-DOMAIN-KEYWORD,tiktoklb.eu
-DOMAIN-KEYWORD,tiktokpangle-cdn-us.com
-DOMAIN-KEYWORD,tiktokrow-cdn.com
-DOMAIN-KEYWORD,tiktokv.com
-DOMAIN-KEYWORD,tiktokv.eu
-DOMAIN-KEYWORD,tiktokv.us
-DOMAIN-KEYWORD,tiktokw.eu
-DOMAIN-KEYWORD,tiktokw.us
-DOMAIN-KEYWORD,tlivecdn.com
-DOMAIN-KEYWORD,ttlivecdn.com
+DOMAIN-SUFFIX,amemv.com
+DOMAIN-SUFFIX,bytecdn.cn
+DOMAIN-SUFFIX,byted.org
+DOMAIN-SUFFIX,bytedance.com
+DOMAIN-SUFFIX,bytedance.net
+DOMAIN-SUFFIX,bytedns.net
+DOMAIN-SUFFIX,bytefcdn-oversea.com
+DOMAIN-SUFFIX,bytefcdn-ttpeu.com
+DOMAIN-SUFFIX,byteglb.com
+DOMAIN-SUFFIX,byteicdn.com
+DOMAIN-SUFFIX,byteimg.com
+DOMAIN-SUFFIX,byteoversea.com
+DOMAIN-SUFFIX,bytetcdn.com
+DOMAIN-SUFFIX,capcut.com
+DOMAIN-SUFFIX,hypstarcdn.com
+DOMAIN-SUFFIX,ibytedtos.com
+DOMAIN-SUFFIX,ibyteimg.com
+DOMAIN-SUFFIX,ipstatp.com
+DOMAIN-SUFFIX,isnssdk.com
+DOMAIN-SUFFIX,muscdn.com
+DOMAIN-SUFFIX,musical.ly
+DOMAIN-SUFFIX,pstatp.com
+DOMAIN-SUFFIX,snssdk.com
+DOMAIN-SUFFIX,tiktok-row.net
+DOMAIN-SUFFIX,tiktok-row.org
+DOMAIN-SUFFIX,tiktok.com
+DOMAIN-SUFFIX,tiktokcdn-eu.com
+DOMAIN-SUFFIX,tiktokcdn-eu.net
+DOMAIN-SUFFIX,tiktokcdn-in.com
+DOMAIN-SUFFIX,tiktokcdn-us.com
+DOMAIN-SUFFIX,tiktokcdn.com
+DOMAIN-SUFFIX,tiktokd.net
+DOMAIN-SUFFIX,tiktokd.org
+DOMAIN-SUFFIX,tiktokeu-cdn.com
+DOMAIN-SUFFIX,tiktoklb.eu
+DOMAIN-SUFFIX,tiktokpangle-cdn-us.com
+DOMAIN-SUFFIX,tiktokrow-cdn.com
+DOMAIN-SUFFIX,tiktokv.com
+DOMAIN-SUFFIX,tiktokv.eu
+DOMAIN-SUFFIX,tiktokv.us
+DOMAIN-SUFFIX,tiktokw.eu
+DOMAIN-SUFFIX,tiktokw.us
+DOMAIN-SUFFIX,tlivecdn.com
+DOMAIN-SUFFIX,ttlivecdn.com
 DOMAIN-SUFFIX,bdurl.net
 DOMAIN-SUFFIX,bytedanceapi.com
 DOMAIN-SUFFIX,bytedapm.com
@@ -525,10 +527,10 @@ DOMAIN-SUFFIX,bytedance.map.fastly.net
 DOMAIN-SUFFIX,theaudiodb.com
 DOMAIN-SUFFIX,themoviedb.org
 DOMAIN-SUFFIX,tmdb-image-prod.b-cdn.net
-DOMAIN-KEYWORD,tmdb.com
-DOMAIN-KEYWORD,tmdb.org
+DOMAIN-SUFFIX,tmdb.com
+DOMAIN-SUFFIX,tmdb.org
 # Truth Social
-DOMAIN-KEYWORD,truthsocial.com
+DOMAIN-SUFFIX,truthsocial.com
 # Udemy
 DOMAIN-SUFFIX,udemy.com
 DOMAIN-SUFFIX,udemycdn.com
@@ -541,9 +543,9 @@ DOMAIN-SUFFIX,vercel.app
 DOMAIN-SUFFIX,vercel.com
 # WB Games
 DOMAIN-SUFFIX,wbagora.com
-DOMAIN-KEYWORD,wbgames.com
+DOMAIN-SUFFIX,wbgames.com
 # Weather.com
-DOMAIN-KEYWORD,weather.com
+DOMAIN-SUFFIX,weather.com
 # Windsurf
 DOMAIN-SUFFIX,codeium.com
 DOMAIN-SUFFIX,windsurf.com
@@ -551,7 +553,7 @@ DOMAIN-SUFFIX,windsurf.com
 DOMAIN-SUFFIX,transferwise.com
 DOMAIN-SUFFIX,wise.com
 # WorkOS
-DOMAIN-KEYWORD,workos.com
+DOMAIN-SUFFIX,workos.com
 # Xbox
 DOMAIN-SUFFIX,auth.xboxlive.com
 DOMAIN-SUFFIX,edgeservices.bing.com
@@ -560,10 +562,10 @@ DOMAIN-SUFFIX,rewards.bing.com
 DOMAIN-SUFFIX,sydney.bing.com
 DOMAIN-SUFFIX,xboxdesignlab.xbox.com
 # Xerox
-DOMAIN-KEYWORD,xerox.com
+DOMAIN-SUFFIX,xerox.com
 # Zapier
 DOMAIN-SUFFIX,zapier-deployment.com
-DOMAIN-KEYWORD,zapier.com
+DOMAIN-SUFFIX,zapier.com
 # Zoom
 DOMAIN-SUFFIX,zoom.com
 DOMAIN-SUFFIX,zoom.us
@@ -597,7 +599,7 @@ DOMAIN-SUFFIX,ansys.com
 DOMAIN-SUFFIX,anythingllm.com
 DOMAIN-SUFFIX,apiary.io
 DOMAIN-SUFFIX,aplawrence.com
-DOMAIN-KEYWORD,archive.org
+DOMAIN-SUFFIX,archive.org
 DOMAIN-SUFFIX,atlassian.com
 DOMAIN-SUFFIX,att.com
 DOMAIN-SUFFIX,atwiki.jp
@@ -685,7 +687,7 @@ DOMAIN-SUFFIX,digitalcontent.sky
 DOMAIN-SUFFIX,disctech.com
 DOMAIN-SUFFIX,disneyplus.com
 DOMAIN-SUFFIX,dnb.com
-DOMAIN-KEYWORD,docs.rw
+DOMAIN-SUFFIX,docs.rw
 DOMAIN-SUFFIX,ducati.com
 DOMAIN-SUFFIX,e-hentai.org
 DOMAIN-SUFFIX,easyjet.com
@@ -752,16 +754,16 @@ DOMAIN-SUFFIX,grazie.ai
 DOMAIN-SUFFIX,groq.com
 DOMAIN-SUFFIX,groupon.com
 DOMAIN-SUFFIX,grouponcdn.com
-DOMAIN-KEYWORD,happ.su
-DOMAIN-KEYWORD,happ-proxy.com
-DOMAIN-KEYWORD,happ.info
+DOMAIN-SUFFIX,happ.su
+DOMAIN-SUFFIX,happ-proxy.com
+DOMAIN-SUFFIX,happ.info
 DOMAIN-SUFFIX,hashicorp.com
 DOMAIN-SUFFIX,hashkey.com
 DOMAIN-SUFFIX,haydaygame.com
 DOMAIN-SUFFIX,hbomax.com
 DOMAIN-SUFFIX,healthline.com
-DOMAIN-KEYWORD,heroku.com
-DOMAIN-KEYWORD,herokucdn.com
+DOMAIN-SUFFIX,heroku.com
+DOMAIN-SUFFIX,herokucdn.com
 DOMAIN-SUFFIX,hex-rays.com
 DOMAIN-SUFFIX,hollisterco.com
 DOMAIN-SUFFIX,home-connect.cn
@@ -786,7 +788,7 @@ DOMAIN-SUFFIX,infineon.com
 DOMAIN-SUFFIX,informit.com
 DOMAIN-SUFFIX,insanelymac.com
 DOMAIN-SUFFIX,insideevs.com
-DOMAIN-KEYWORD,intellij.net
+DOMAIN-SUFFIX,intellij.net
 DOMAIN-SUFFIX,intellipaat.com
 DOMAIN-SUFFIX,intuitibits.com
 DOMAIN-SUFFIX,iperf3serverlist.net
@@ -846,8 +848,8 @@ DOMAIN-SUFFIX,middlewareinventory.com
 DOMAIN-SUFFIX,militarnyi.com
 DOMAIN-SUFFIX,mixcloud.com
 DOMAIN-SUFFIX,moneypuck.com
-DOMAIN-KEYWORD,mongodb.com
-DOMAIN-KEYWORD,mongodb.net
+DOMAIN-SUFFIX,mongodb.com
+DOMAIN-SUFFIX,mongodb.net
 DOMAIN-SUFFIX,monoprice.com
 DOMAIN-SUFFIX,monotype.com
 DOMAIN-SUFFIX,monotypefonts.com
@@ -862,17 +864,17 @@ DOMAIN-SUFFIX,myrotvorets.center
 DOMAIN-SUFFIX,nba.com
 DOMAIN-SUFFIX,neo4j.com
 DOMAIN-SUFFIX,netgate.com
-DOMAIN-KEYWORD,netlify.com
+DOMAIN-SUFFIX,netlify.com
 DOMAIN-SUFFIX,newark.com
 DOMAIN-SUFFIX,nfl.com
-DOMAIN-KEYWORD,ngrok.com
+DOMAIN-SUFFIX,ngrok.com
 DOMAIN-SUFFIX,nike.com
 DOMAIN-SUFFIX,nitropdf.com
 DOMAIN-SUFFIX,nordaccount.com
 DOMAIN-SUFFIX,nordcdn.com
 DOMAIN-SUFFIX,nordvpn.com
-DOMAIN-KEYWORD,norton.com
-DOMAIN-KEYWORD,nvidia.com
+DOMAIN-SUFFIX,norton.com
+DOMAIN-SUFFIX,nvidia.com
 DOMAIN-SUFFIX,nxp.com
 DOMAIN-SUFFIX,oasis.app
 DOMAIN-SUFFIX,oclc.org
@@ -934,11 +936,11 @@ DOMAIN-SUFFIX,reactflow.dev
 DOMAIN-SUFFIX,readdle.com
 DOMAIN-SUFFIX,readybot.io
 DOMAIN-SUFFIX,recraft.ai
-DOMAIN-KEYWORD,redis.com
-DOMAIN-KEYWORD,redis.io
+DOMAIN-SUFFIX,redis.com
+DOMAIN-SUFFIX,redis.io
 DOMAIN-SUFFIX,refinitiv.com
 DOMAIN-SUFFIX,reka.ai
-DOMAIN-KEYWORD,remna.st
+DOMAIN-SUFFIX,remna.st
 DOMAIN-SUFFIX,res.cloudinary.com
 DOMAIN-SUFFIX,research.net
 DOMAIN-SUFFIX,resp.app
@@ -964,7 +966,7 @@ DOMAIN-SUFFIX,securitytrails.com
 DOMAIN-SUFFIX,seekvectorlogo.net
 DOMAIN-SUFFIX,semrush.com
 DOMAIN-SUFFIX,sendy.jp
-DOMAIN-KEYWORD,sentry.io
+DOMAIN-SUFFIX,sentry.io
 DOMAIN-SUFFIX,sephora.com
 DOMAIN-SUFFIX,serato.com
 DOMAIN-SUFFIX,serialcart.com
@@ -1045,7 +1047,7 @@ DOMAIN-SUFFIX,undress.cc
 DOMAIN-SUFFIX,upwork.com
 DOMAIN-SUFFIX,vagrantcloud.com
 DOMAIN-SUFFIX,vaio.com
-DOMAIN-KEYWORD,vans.
+DOMAIN-SUFFIX,vans.com
 DOMAIN-SUFFIX,vectorworks.net
 DOMAIN-SUFFIX,veeam.com
 DOMAIN-SUFFIX,veritas.com

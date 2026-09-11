@@ -1,5 +1,5 @@
 # NAME: whitelist.list
-# TOTAL: 861
+# TOTAL: 857
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:46:24 UTC
 # Direct for checkers
@@ -244,7 +244,6 @@ DOMAIN-SUFFIX,jx5.ru
 DOMAIN-SUFFIX,kaspersky.com
 DOMAIN-SUFFIX,kaspersky.ru
 DOMAIN-SUFFIX,kazanexpress.ru
-DOMAIN-SUFFIX,kinopoisk-ru.clstorage.net
 DOMAIN-SUFFIX,kinopoisk.ru
 DOMAIN-SUFFIX,kommersant.ru
 DOMAIN-SUFFIX,kp.ru
@@ -413,7 +412,6 @@ DOMAIN-SUFFIX,ya.ru
 DOMAIN-SUFFIX,yads.tech
 DOMAIN-SUFFIX,yandex
 DOMAIN-SUFFIX,yandex-bank.net
-DOMAIN-SUFFIX,yandex-images.clstorage.net
 DOMAIN-SUFFIX,yandex-team.ru
 DOMAIN-SUFFIX,yandex.aero
 DOMAIN-SUFFIX,yandex.az
@@ -495,7 +493,6 @@ DOMAIN-SUFFIX,finmarket.ru
 DOMAIN-SUFFIX,fssprus.ru
 DOMAIN-SUFFIX,garant.ru
 DOMAIN-SUFFIX,gibdd.ru
-DOMAIN-SUFFIX,gu.spb.ru
 DOMAIN-SUFFIX,mos-gorsud.ru
 DOMAIN-SUFFIX,mvd.ru
 DOMAIN-SUFFIX,notariat.ru
@@ -696,7 +693,6 @@ DOMAIN-SUFFIX,stolichki.ru
 DOMAIN-SUFFIX,vitaexpress.ru
 DOMAIN-SUFFIX,zdravcity.ru
 # ЖКХ, энергетика и коммунальные расчеты
-DOMAIN-SUFFIX,eirc.spb.ru
 DOMAIN-SUFFIX,kvartplata.ru
 DOMAIN-SUFFIX,mosenergosbyt.ru
 DOMAIN-SUFFIX,mosobleirc.ru

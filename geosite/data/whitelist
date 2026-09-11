@@ -249,7 +249,6 @@ domain:jx5.ru
 domain:kaspersky.com
 domain:kaspersky.ru
 domain:kazanexpress.ru
-domain:kinopoisk-ru.clstorage.net
 domain:kinopoisk.ru
 domain:kommersant.ru
 domain:kp.ru
@@ -418,7 +417,6 @@ domain:ya.ru
 domain:yads.tech
 domain:yandex
 domain:yandex-bank.net
-domain:yandex-images.clstorage.net
 domain:yandex-team.ru
 domain:yandex.aero
 domain:yandex.az
@@ -503,7 +501,6 @@ domain:finmarket.ru
 domain:fssprus.ru
 domain:garant.ru
 domain:gibdd.ru
-domain:gu.spb.ru
 domain:mos-gorsud.ru
 domain:mvd.ru
 domain:notariat.ru
@@ -709,7 +706,6 @@ domain:vitaexpress.ru
 domain:zdravcity.ru
 
 # ЖКХ, энергетика и коммунальные расчеты
-domain:eirc.spb.ru
 domain:kvartplata.ru
 domain:mosenergosbyt.ru
 domain:mosobleirc.ru

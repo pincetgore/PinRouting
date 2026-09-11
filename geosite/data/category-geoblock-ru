@@ -11,7 +11,7 @@ domain:onlinesim.io
 # Adobe
 domain:adobe-identity.com
 domain:adobe-services.com
-keyword:adobe.com
+domain:adobe.com
 domain:adobe.io
 domain:adobecc.com
 domain:adobecces.com
@@ -53,13 +53,12 @@ domain:anaconda.org
 domain:asana.com
 
 # Autodesk
-keyword:autodesk.com
-domain:cdn.web-platform.io
+domain:autodesk.com
 domain:qualtrics.com
 
 # Basecamp
 domain:37signals.com
-keyword:basecamp.com
+domain:basecamp.com
 domain:basecampapi.com
 
 # Binance
@@ -77,7 +76,7 @@ domain:booking.com
 domain:bstatic.com
 
 # Brave
-keyword:brave.com
+domain:brave.com
 
 # Bybit
 domain:bybit-global.com
@@ -92,7 +91,7 @@ domain:supercell.com
 
 # Canva
 domain:canva-apps.com
-keyword:canva.com
+domain:canva.com
 domain:canva.dev
 
 # Cici/Dola
@@ -102,10 +101,10 @@ domain:ciciaicdn.com
 domain:dola.com
 
 # Claude
-keyword:anthropic.com
-keyword:claude.ai
+domain:anthropic.com
+domain:claude.ai
 domain:claudeusercontent.com
-keyword:intercom.io
+domain:intercom.io
 domain:intercomassets.com
 domain:intercomcdn.com
 
@@ -129,10 +128,10 @@ domain:cursor.com
 domain:cursor.sh
 
 # DeepL
-keyword:deepl.
+domain:deepl.com
 
 # Deezer
-keyword:deezer.com
+domain:deezer.com
 domain:dzcdn.net
 
 # Dell
@@ -156,7 +155,8 @@ domain:copilot.microsoft.com
 domain:designer.microsoft.com
 
 # Dyson
-keyword:dyson.
+domain:dyson.com
+domain:dyson.de
 
 # edX
 domain:edx.org
@@ -238,7 +238,7 @@ domain:o.pki.goog
 domain:suggestqueries.google.com
 
 # Grok
-keyword:grok.com
+domain:grok.com
 domain:grok.x.com
 domain:x.ai
 
@@ -255,13 +255,13 @@ domain:hulustream.com
 domain:guilded.gg
 
 # Imgur
-keyword:imgur.com
+domain:imgur.com
 
 # Intel
-keyword:intel.
+domain:intel.com
 
 # Jetbrains
-keyword:jetbrains.com
+domain:jetbrains.com
 domain:jetbrains.ai
 domain:jetbrains.space
 domain:myjetbrains.com
@@ -294,10 +294,10 @@ domain:make.com
 
 # Manus
 domain:manus.cdn
-keyword:manus.im
+domain:manus.im
 
 # Meta AI
-keyword:meta.ai
+domain:meta.ai
 domain:llamameta.net
 domain:meta.com
 domain:metademolab.com
@@ -322,7 +322,8 @@ domain:naukri.com
 
 # Netflix
 domain:fast.com
-keyword:netflix.
+domain:netflix.com
+domain:netflix.net
 domain:netflixinvestor.com
 domain:netflixstudios.com
 domain:netflixtechblog.com
@@ -343,11 +344,13 @@ regexp:(^|\.)dualstack\.ichnaea-web-.+\.amazonaws\.com$
 domain:hellonotion.com
 domain:notion-media.com
 domain:notion-static.com
-keyword:notion.
+domain:notion.so
+domain:notion.site
+domain:notion.com
 domain:notionup.com
 domain:notionusercontent.com
 domain:splunkcloud.com
-keyword:zendesk.com
+domain:zendesk.com
 domain:zendesk.de
 
 # OKX
@@ -355,11 +358,11 @@ domain:okx.cab
 domain:okx.com
 
 # OpenAI / ChatGPT
-keyword:chatgpt.com
+domain:chatgpt.com
 domain:chat.com
 domain:oaistatic.com
 domain:oaiusercontent.com
-keyword:openai.
+domain:openai.com
 domain:sora.com
 domain:ai.com
 domain:auth0.com
@@ -371,7 +374,6 @@ domain:openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 domain:openaicomproductionae4b.blob.core.windows.net
 domain:production-openaicom-storage.azureedge.net
 regexp:^chatgpt-async-webps-prod-\S+-\d+\.webpubsub\.azure\.com$
-domain:o33249.ingest.sentry.io
 domain:openaicom.imgix.net
 domain:browser-intake-datadoghq.com
 
@@ -419,16 +421,16 @@ domain:protonvpn.com
 domain:protonweb.com
 
 # Reddit
-keyword:redd.it
+domain:redd.it
 domain:reddit.app.link
-keyword:reddit.com
+domain:reddit.com
 domain:redditblog.com
 domain:reddithelp.com
 domain:redditinc.com
 domain:redditmail.com
 domain:redditmedia.com
 domain:redditspace.com
-keyword:redditstatic.com
+domain:redditstatic.com
 domain:redditstatus.com
 domain:reddit.map.fastly.net
 
@@ -464,10 +466,10 @@ domain:pscdn.co
 domain:scdn.co
 domain:spoti.fi
 domain:spotify-everywhere.com
-keyword:spotify.com
+domain:spotify.com
 domain:spotify.design
-keyword:spotifycdn.com
-keyword:spotifycdn.net
+domain:spotifycdn.com
+domain:spotifycdn.net
 domain:spotifycharts.com
 domain:spotifycodes.com
 domain:spotifyforbrands.com
@@ -483,7 +485,7 @@ domain:spotify.map.fastly.net
 domain:spotify.map.fastlylb.net
 
 # Strava
-keyword:strava.com
+domain:strava.com
 
 # Stripe
 domain:stripe.com
@@ -500,63 +502,63 @@ domain:supabase.com
 domain:supabase.io
 
 # Tableau
-keyword:tableau.com
+domain:tableau.com
 
 # Tailscale
-keyword:tailscale.com
+domain:tailscale.com
 
 # TeamViewer
-keyword:teamviewer.com
+domain:teamviewer.com
 
 # Tidal
 domain:squareup.com
-keyword:tidal.com
+domain:tidal.com
 
 # Tiktok / CapCut / ByteDance
-keyword:amemv.com
-keyword:bytecdn.cn
-keyword:byted.org
-keyword:bytedance.com
-keyword:bytedance.net
-keyword:bytedns.net
-keyword:bytefcdn-oversea.com
-keyword:bytefcdn-ttpeu.com
-keyword:byteglb.com
-keyword:byteicdn.com
-keyword:byteimg.com
-keyword:byteoversea.com
-keyword:bytetcdn.com
-keyword:capcut.com
-keyword:hypstarcdn.com
-keyword:ibytedtos.com
-keyword:ibyteimg.com
-keyword:ipstatp.com
-keyword:isnssdk.com
-keyword:muscdn.com
-keyword:musical.ly
-keyword:pstatp.com
-keyword:snssdk.com
-keyword:tiktok-row.net
-keyword:tiktok-row.org
-keyword:tiktok.
-keyword:tiktokcdn-eu.com
-keyword:tiktokcdn-eu.net
-keyword:tiktokcdn-in.com
-keyword:tiktokcdn-us.com
-keyword:tiktokcdn.com
-keyword:tiktokd.net
-keyword:tiktokd.org
-keyword:tiktokeu-cdn.com
-keyword:tiktoklb.eu
-keyword:tiktokpangle-cdn-us.com
-keyword:tiktokrow-cdn.com
-keyword:tiktokv.com
-keyword:tiktokv.eu
-keyword:tiktokv.us
-keyword:tiktokw.eu
-keyword:tiktokw.us
-keyword:tlivecdn.com
-keyword:ttlivecdn.com
+domain:amemv.com
+domain:bytecdn.cn
+domain:byted.org
+domain:bytedance.com
+domain:bytedance.net
+domain:bytedns.net
+domain:bytefcdn-oversea.com
+domain:bytefcdn-ttpeu.com
+domain:byteglb.com
+domain:byteicdn.com
+domain:byteimg.com
+domain:byteoversea.com
+domain:bytetcdn.com
+domain:capcut.com
+domain:hypstarcdn.com
+domain:ibytedtos.com
+domain:ibyteimg.com
+domain:ipstatp.com
+domain:isnssdk.com
+domain:muscdn.com
+domain:musical.ly
+domain:pstatp.com
+domain:snssdk.com
+domain:tiktok-row.net
+domain:tiktok-row.org
+domain:tiktok.com
+domain:tiktokcdn-eu.com
+domain:tiktokcdn-eu.net
+domain:tiktokcdn-in.com
+domain:tiktokcdn-us.com
+domain:tiktokcdn.com
+domain:tiktokd.net
+domain:tiktokd.org
+domain:tiktokeu-cdn.com
+domain:tiktoklb.eu
+domain:tiktokpangle-cdn-us.com
+domain:tiktokrow-cdn.com
+domain:tiktokv.com
+domain:tiktokv.eu
+domain:tiktokv.us
+domain:tiktokw.eu
+domain:tiktokw.us
+domain:tlivecdn.com
+domain:ttlivecdn.com
 domain:bdurl.net
 domain:bytedanceapi.com
 domain:bytedapm.com
@@ -620,11 +622,11 @@ domain:bytedance.map.fastly.net
 domain:theaudiodb.com
 domain:themoviedb.org
 domain:tmdb-image-prod.b-cdn.net
-keyword:tmdb.com
-keyword:tmdb.org
+domain:tmdb.com
+domain:tmdb.org
 
 # Truth Social
-keyword:truthsocial.com
+domain:truthsocial.com
 
 # Udemy
 domain:udemy.com
@@ -641,10 +643,10 @@ domain:vercel.com
 
 # WB Games
 domain:wbagora.com
-keyword:wbgames.com
+domain:wbgames.com
 
 # Weather.com
-keyword:weather.com
+domain:weather.com
 
 # Windsurf
 domain:codeium.com
@@ -655,7 +657,7 @@ domain:transferwise.com
 domain:wise.com
 
 # WorkOS
-keyword:workos.com
+domain:workos.com
 
 # Xbox
 domain:auth.xboxlive.com
@@ -666,11 +668,11 @@ domain:sydney.bing.com
 domain:xboxdesignlab.xbox.com
 
 # Xerox
-keyword:xerox.com
+domain:xerox.com
 
 # Zapier
 domain:zapier-deployment.com
-keyword:zapier.com
+domain:zapier.com
 
 # Zoom
 domain:zoom.com
@@ -706,7 +708,7 @@ domain:ansys.com
 domain:anythingllm.com
 domain:apiary.io
 domain:aplawrence.com
-keyword:archive.org
+domain:archive.org
 domain:atlassian.com
 domain:att.com
 domain:atwiki.jp
@@ -794,7 +796,7 @@ domain:digitalcontent.sky
 domain:disctech.com
 domain:disneyplus.com
 domain:dnb.com
-keyword:docs.rw
+domain:docs.rw
 domain:ducati.com
 domain:e-hentai.org
 domain:easyjet.com
@@ -861,16 +863,16 @@ domain:grazie.ai
 domain:groq.com
 domain:groupon.com
 domain:grouponcdn.com
-keyword:happ.su
-keyword:happ-proxy.com
-keyword:happ.info
+domain:happ.su
+domain:happ-proxy.com
+domain:happ.info
 domain:hashicorp.com
 domain:hashkey.com
 domain:haydaygame.com
 domain:hbomax.com
 domain:healthline.com
-keyword:heroku.com
-keyword:herokucdn.com
+domain:heroku.com
+domain:herokucdn.com
 domain:hex-rays.com
 domain:hollisterco.com
 domain:home-connect.cn
@@ -895,7 +897,7 @@ domain:infineon.com
 domain:informit.com
 domain:insanelymac.com
 domain:insideevs.com
-keyword:intellij.net
+domain:intellij.net
 domain:intellipaat.com
 domain:intuitibits.com
 domain:iperf3serverlist.net
@@ -955,8 +957,8 @@ domain:middlewareinventory.com
 domain:militarnyi.com
 domain:mixcloud.com
 domain:moneypuck.com
-keyword:mongodb.com
-keyword:mongodb.net
+domain:mongodb.com
+domain:mongodb.net
 domain:monoprice.com
 domain:monotype.com
 domain:monotypefonts.com
@@ -971,17 +973,17 @@ domain:myrotvorets.center
 domain:nba.com
 domain:neo4j.com
 domain:netgate.com
-keyword:netlify.com
+domain:netlify.com
 domain:newark.com
 domain:nfl.com
-keyword:ngrok.com
+domain:ngrok.com
 domain:nike.com
 domain:nitropdf.com
 domain:nordaccount.com
 domain:nordcdn.com
 domain:nordvpn.com
-keyword:norton.com
-keyword:nvidia.com
+domain:norton.com
+domain:nvidia.com
 domain:nxp.com
 domain:oasis.app
 domain:oclc.org
@@ -1043,11 +1045,11 @@ domain:reactflow.dev
 domain:readdle.com
 domain:readybot.io
 domain:recraft.ai
-keyword:redis.com
-keyword:redis.io
+domain:redis.com
+domain:redis.io
 domain:refinitiv.com
 domain:reka.ai
-keyword:remna.st
+domain:remna.st
 domain:res.cloudinary.com
 domain:research.net
 domain:resp.app
@@ -1073,7 +1075,7 @@ domain:securitytrails.com
 domain:seekvectorlogo.net
 domain:semrush.com
 domain:sendy.jp
-keyword:sentry.io
+domain:sentry.io
 domain:sephora.com
 domain:serato.com
 domain:serialcart.com
@@ -1154,7 +1156,7 @@ domain:undress.cc
 domain:upwork.com
 domain:vagrantcloud.com
 domain:vaio.com
-keyword:vans.
+domain:vans.com
 domain:vectorworks.net
 domain:veeam.com
 domain:veritas.com
