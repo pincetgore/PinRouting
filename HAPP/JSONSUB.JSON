@@ -19,7 +19,8 @@
   },
   "RouteOrder": "block-proxy-direct",
   "DirectSites": [
-    "geosite:push"
+    "geosite:apple-push",
+    "geosite:android-push"
   ],
   "DirectIp": [],
   "ProxySites": [],
