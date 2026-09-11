@@ -14,6 +14,9 @@ import time
 from datetime import datetime, timezone
 import argparse
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
+
 REPO_DEFAULT = "pincetgore/PinRouting"
 BRANCH_DEFAULT = "main"
 
@@ -21,8 +24,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Build Shadowrocket configurations and rulesets.")
     parser.add_argument("--repo", default=REPO_DEFAULT, help="GitHub repository (owner/name)")
     parser.add_argument("--branch", default=BRANCH_DEFAULT, help="Git branch for raw URLs")
-    parser.add_argument("--geosite-dir", default="geosite/data", help="Path to geosite data directory")
-    parser.add_argument("--output-dir", default="SHADOWROCKET", help="Path to output directory")
+    parser.add_argument("--geosite-dir", default=os.path.join(REPO_ROOT, "geosite", "data"), help="Path to geosite data directory")
+    parser.add_argument("--output-dir", default=os.path.join(REPO_ROOT, "SHADOWROCKET"), help="Path to output directory")
     parser.add_argument("--epoch", default=None, help="Epoch timestamp for LastUpdated")
     return parser.parse_args()
 
@@ -88,7 +91,7 @@ def build_rulesets(geosite_dir: str, rules_dir: str, repo: str, updated_str: str
         print(f"Generated {dst_path} ({rule_count} rules)")
 
     # Generate whitelist-ips.list from geoip/CUSTOM-WHITELIST.txt
-    custom_whitelist_path = os.path.join("geoip", "CUSTOM-WHITELIST.txt")
+    custom_whitelist_path = os.path.join(REPO_ROOT, "geoip", "CUSTOM-WHITELIST.txt")
     if os.path.isfile(custom_whitelist_path):
         ip_lines = []
         ip_count = 0
@@ -272,7 +275,7 @@ def main():
 
     epoch = args.epoch
     if not epoch:
-        happ_default = os.path.join("HAPP", "DEFAULT.JSON")
+        happ_default = os.path.join(REPO_ROOT, "HAPP", "DEFAULT.JSON")
         if os.path.isfile(happ_default):
             with open(happ_default, "r", encoding="utf-8") as f:
                 data = json.load(f)

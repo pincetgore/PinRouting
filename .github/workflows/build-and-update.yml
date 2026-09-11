@@ -219,7 +219,7 @@ jobs:
           set -euo pipefail
           EPOCH="${{ steps.meta.outputs.epoch }}"
           REPO="${{ github.repository }}"
-          python3 tools/build_shadowrocket.py --repo "$REPO" --epoch "$EPOCH"
+          python3 SHADOWROCKET/tools/build_shadowrocket.py --repo "$REPO" --epoch "$EPOCH"
 
       # -----------------------------------------------------------------------
       # Commit to main & Push Tag
