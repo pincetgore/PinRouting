@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 1004
+# TOTAL: 1003
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:40:48 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -651,7 +651,6 @@ DOMAIN-SUFFIX,clamav.net
 DOMAIN-SUFFIX,clarabridge.net
 DOMAIN-SUFFIX,clevelandclinic.org
 DOMAIN-SUFFIX,cmems-du.eu
-DOMAIN-SUFFIX,co.nz
 DOMAIN-SUFFIX,cocalc.com
 DOMAIN-SUFFIX,codebrowser.dev
 DOMAIN-SUFFIX,cohere.com

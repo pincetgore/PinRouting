@@ -1,5 +1,5 @@
 # NAME: torrent.list
-# TOTAL: 434
+# TOTAL: 431
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-11 17:40:48 UTC
 DOMAIN-SUFFIX,dht.aelitis.com
@@ -314,7 +314,6 @@ DOMAIN-SUFFIX,tracker.vulnix.sh
 DOMAIN-SUFFIX,tracker.ygsub.com
 DOMAIN-SUFFIX,tracker.yoshi210.com
 DOMAIN-SUFFIX,tracker.zemoj.com
-DOMAIN-SUFFIX,tracker.zerobytes.xyz
 DOMAIN-SUFFIX,tracker.zum.bi
 DOMAIN-SUFFIX,tracker0.ufibox.com
 DOMAIN-SUFFIX,tracker01.loveapp.com
@@ -343,10 +342,8 @@ DOMAIN-SUFFIX,w.wwwww.wtf
 DOMAIN-SUFFIX,wareztorrent.com
 DOMAIN-SUFFIX,wassermann.online
 DOMAIN-SUFFIX,worldboxingvideoarchive.com
-DOMAIN-SUFFIX,loushao.net
 DOMAIN-SUFFIX,midea123.z-media.com.cn
 DOMAIN-SUFFIX,torrent.eu.org
-DOMAIN-SUFFIX,wareztorrent.com
 DOMAIN-SUFFIX,xwt-classics.net
 DOMAIN-SUFFIX,xxxtor.com
 DOMAIN-SUFFIX,yuwabits.net
