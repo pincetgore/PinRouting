@@ -1,7 +1,7 @@
 # NAME: android-push.list
 # TOTAL: 24
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-11 16:49:26 UTC
+# UPDATED: 2026-09-11 17:11:57 UTC
 # Android push notifications, vendor services, and connectivity checks.
 #
 # These must stay DIRECT: routing them through a tunnel adds delivery latency,
