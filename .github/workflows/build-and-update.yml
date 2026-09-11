@@ -187,7 +187,7 @@ jobs:
           echo "  Geosite: $GEOSITE_URL"
           echo "  Epoch:   $EPOCH"
 
-          for type in DEFAULT WHITELIST JSONSUB; do
+          for type in DEFAULT WHITELIST BASIC; do
             file="HAPP/${type}.JSON"
             tmp="$(mktemp)"
             jq \
@@ -203,7 +203,7 @@ jobs:
           cp HAPP/*.JSON INCY/
 
           echo "Generating Deeplinks..."
-          for type in DEFAULT WHITELIST JSONSUB; do
+          for type in DEFAULT WHITELIST BASIC; do
             happ_b64="$(jq -c . "HAPP/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
             printf 'happ://routing/onadd/%s\n' "$happ_b64" > "HAPP/${type}.DEEPLINK"
 

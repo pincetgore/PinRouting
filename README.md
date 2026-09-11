@@ -31,9 +31,9 @@
   <td><b>Белый список:</b> Напрямую идут <i>только</i> проверенные ресурсы из <code>geosite:whitelist</code> и <code>geoip:whitelist</code> (банки, Госуслуги и др.). Весь остальной интернет — через прокси.</td>
 </tr>
 <tr>
-  <td><b>JSONSUB</b></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.DEEPLINK">JSONSUB.DEEPLINK</a></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/JSONSUB.JSON">JSONSUB.JSON</a></td>
+  <td><b>BASIC</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/BASIC.DEEPLINK">BASIC.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/BASIC.JSON">BASIC.JSON</a></td>
   <td><b>Базовый профиль:</b> Настроены DoH DNS, ссылки на кастомные базы geodata и прямой доступ для системных пуш-уведомлений (<code>geosite:apple-push</code>, <code>geosite:android-push</code>), без других правил (для ручной настройки).</td>
 </tr>
 </tbody>
@@ -57,9 +57,9 @@
   <td><b>Белый список:</b> Прямой доступ только к доверенным белым спискам РФ, остальное через прокси.</td>
 </tr>
 <tr>
-  <td><b>JSONSUB</b></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.DEEPLINK">JSONSUB.DEEPLINK</a></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/JSONSUB.JSON">JSONSUB.JSON</a></td>
+  <td><b>BASIC</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.DEEPLINK">BASIC.DEEPLINK</a></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.JSON">BASIC.JSON</a></td>
   <td><b>Базовый профиль:</b> DNS + базы геоданных + прямой доступ для системных пуш-уведомлений (<code>geosite:apple-push</code>, <code>geosite:android-push</code>).</td>
 </tr>
 </tbody>
@@ -83,9 +83,9 @@
   <td><b>Белый список:</b> Полный аналог WHITELIST.JSON. Напрямую идут <i>только</i> проверенные ресурсы РФ и 17 900+ банковских IP. Весь остальной трафик — через прокси.</td>
 </tr>
 <tr>
-  <td><b>JSONSUB</b></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/JSONSUB.CONF">JSONSUB.CONF</a></td>
-  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/JSONSUB.CONF">Импорт в Shadowrocket</a></td>
+  <td><b>BASIC</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/BASIC.CONF">BASIC.CONF</a></td>
+  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/BASIC.CONF">Импорт в Shadowrocket</a></td>
   <td><b>Базовый профиль:</b> DoH DNS + прямой доступ для системных пуш-уведомлений (Apple APNs/iCloud). Остальной трафик через прокси.</td>
 </tr>
 <tr>
@@ -261,15 +261,15 @@
 ├── HAPP/                      # Конфигурации и диплинки для клиента Happ
 │   ├── DEFAULT.JSON / .DEEPLINK
 │   ├── WHITELIST.JSON / .DEEPLINK
-│   └── JSONSUB.JSON / .DEEPLINK
+│   └── BASIC.JSON / .DEEPLINK
 ├── INCY/                      # Зеркальные конфигурации для клиента INCY
 │   ├── DEFAULT.JSON / .DEEPLINK
 │   ├── WHITELIST.JSON / .DEEPLINK
-│   └── JSONSUB.JSON / .DEEPLINK
+│   └── BASIC.JSON / .DEEPLINK
 ├── SHADOWROCKET/              # Конфигурации и списки правил для Shadowrocket
 │   ├── DEFAULT.CONF           # Основной профиль маршрутизации
 │   ├── WHITELIST.CONF         # Профиль белого списка РФ
-│   ├── JSONSUB.CONF           # Базовый профиль для подписки
+│   ├── BASIC.CONF             # Базовый профиль для подписки
 │   ├── EXTENDED.CONF          # Шаблон пользовательских правил (include)
 │   ├── rules/                 # Сгенерированные списки правил (.list)
 │   └── tools/                 # Скрипты генерации конфигураций и правил

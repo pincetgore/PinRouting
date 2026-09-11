@@ -4,7 +4,7 @@ Shadowrocket Configuration and Rules Generator for PinRouting.
 
 Translates geosite/data and geoip lists into Shadowrocket-compatible .list
 rulesets and builds configuration profiles (DEFAULT.CONF, WHITELIST.CONF,
-JSONSUB.CONF, EXTENDED.CONF) with 100% parameter parity to HAPP and INCY.
+BASIC.CONF, EXTENDED.CONF) with 100% parameter parity to HAPP and INCY.
 """
 
 import os
@@ -239,9 +239,9 @@ FINAL,PROXY
         f.write(content)
     print(f"Generated {out_path}")
 
-def build_jsonsub_conf(out_path: str, repo: str, branch: str, epoch: str, updated_str: str):
+def build_basic_conf(out_path: str, repo: str, branch: str, epoch: str, updated_str: str):
     rules_base = f"https://raw.githubusercontent.com/{repo}/{branch}/SHADOWROCKET/rules"
-    content = get_general_and_host_section("JSONSUB (Базовый для подписки)", "JSONSUB.CONF", repo, branch, epoch, updated_str)
+    content = get_general_and_host_section("BASIC (Базовый профиль)", "BASIC.CONF", repo, branch, epoch, updated_str)
     content += f"""
 [Rule]
 # --- Прямое подключение (DirectSites: системные пуш-уведомления) ---
@@ -296,7 +296,7 @@ def main():
     print("Building Shadowrocket configuration profiles...")
     build_default_conf(os.path.join(args.output_dir, "DEFAULT.CONF"), args.repo, args.branch, epoch, updated_str)
     build_whitelist_conf(os.path.join(args.output_dir, "WHITELIST.CONF"), args.repo, args.branch, epoch, updated_str)
-    build_jsonsub_conf(os.path.join(args.output_dir, "JSONSUB.CONF"), args.repo, args.branch, epoch, updated_str)
+    build_basic_conf(os.path.join(args.output_dir, "BASIC.CONF"), args.repo, args.branch, epoch, updated_str)
     build_extended_conf(os.path.join(args.output_dir, "EXTENDED.CONF"))
 
     print("Shadowrocket build completed successfully!")
