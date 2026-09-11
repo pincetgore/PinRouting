@@ -127,7 +127,6 @@
 <tr><td>🌐 <code>geosite:youtube</code></td><td>Обход замедлений ТСПУ и стабильное воспроизведение YouTube</td></tr>
 <tr><td>🌐 <code>geosite:telegram</code></td><td>Стабильное подключение к дата-центрам Telegram в обход блокировок</td></tr>
 <tr><td>🌐 <code>geosite:github</code></td><td>Обход фильтрации ресурсов и ассетов GitHub</td></tr>
-<tr><td>🌐 <code>geosite:twitch-ads</code></td><td>Обход рекламы Twitch для сохранения максимального исходного качества (Source) трансляций</td></tr>
 <tr><td>🌐 <b>Весь остальной зарубежный трафик</b></td><td>Все сайты и сервисы, не вошедшие в Direct-списки, направляются через прокси</td></tr>
 </tbody>
 </table>
@@ -226,7 +225,7 @@
 
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
-* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `apple-push`, `android-push`, `youtube`, `telegram`, `github`, `microsoft`, `steam`, `twitch`, `twitch-ads`, `pinterest`, `domains-geo-detect`, `category-ads`, `torrent`, `win-spy`, `private`).
+* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `apple-push`, `android-push`, `youtube`, `telegram`, `github`, `microsoft`, `steam`, `twitch`, `pinterest`, `domains-geo-detect`, `category-ads`, `torrent`, `win-spy`, `private`).
 * **База `whitelist`**: более **850 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков, [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) и официального реестра ЦБ РФ.
 * **Утилиты валидации и дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**:
   * `lint_rules.py`: статический анализатор синтаксиса, дубликатов, избыточных поддоменов и валидации CIDR в CI/CD:

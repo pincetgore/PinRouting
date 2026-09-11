@@ -197,7 +197,6 @@ RULE-SET,{rules_base}/category-ads.list,REJECT
 # --- Проксируемые зарубежные сервисы (ProxySites) ---
 RULE-SET,{rules_base}/category-geoblock-ru.list,PROXY
 RULE-SET,{rules_base}/github.list,PROXY
-RULE-SET,{rules_base}/twitch-ads.list,PROXY
 RULE-SET,{rules_base}/youtube.list,PROXY
 RULE-SET,{rules_base}/telegram.list,PROXY
 

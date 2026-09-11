@@ -37,7 +37,6 @@
   "ProxySites": [
     "geosite:category-geoblock-ru",
     "geosite:github",
-    "geosite:twitch-ads",
     "geosite:youtube",
     "geosite:telegram"
   ],
