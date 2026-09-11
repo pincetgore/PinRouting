@@ -86,7 +86,7 @@
   <td><b>JSONSUB</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/JSONSUB.CONF">JSONSUB.CONF</a></td>
   <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/JSONSUB.CONF">Импорт в Shadowrocket</a></td>
-  <td><b>Базовый профиль:</b> DoH DNS + прямой доступ для системных пуш-уведомлений (Apple APNs / Google FCM). Остальной трафик через прокси.</td>
+  <td><b>Базовый профиль:</b> DoH DNS + прямой доступ для системных пуш-уведомлений (Apple APNs/iCloud). Остальной трафик через прокси.</td>
 </tr>
 <tr>
   <td><b>EXTENDED</b></td>

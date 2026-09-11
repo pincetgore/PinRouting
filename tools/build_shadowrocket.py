@@ -65,7 +65,7 @@ def build_rulesets(geosite_dir: str, rules_dir: str, repo: str, updated_str: str
 
     for cat in categories:
         src_path = os.path.join(geosite_dir, cat)
-        if not os.path.isfile(src_path) or cat.startswith("."):
+        if not os.path.isfile(src_path) or cat.startswith(".") or cat == "android-push":
             continue
 
         out_lines = []
@@ -188,7 +188,6 @@ RULE-SET,{rules_base}/telegram.list,PROXY
 # --- Прямое подключение (DirectSites) ---
 RULE-SET,{rules_base}/private.list,DIRECT
 RULE-SET,{rules_base}/apple-push.list,DIRECT
-RULE-SET,{rules_base}/android-push.list,DIRECT
 RULE-SET,{rules_base}/category-ru.list,DIRECT
 RULE-SET,{rules_base}/whitelist.list,DIRECT
 RULE-SET,{rules_base}/domains-geo-detect.list,DIRECT
@@ -222,7 +221,6 @@ RULE-SET,{rules_base}/category-ads.list,REJECT
 # --- Прямое подключение: только белые списки (DirectSites) ---
 RULE-SET,{rules_base}/private.list,DIRECT
 RULE-SET,{rules_base}/apple-push.list,DIRECT
-RULE-SET,{rules_base}/android-push.list,DIRECT
 RULE-SET,{rules_base}/whitelist.list,DIRECT
 
 # --- Прямое подключение: IP белого списка РФ (DirectIp) ---
@@ -245,7 +243,6 @@ def build_jsonsub_conf(out_path: str, repo: str, branch: str, epoch: str, update
 [Rule]
 # --- Прямое подключение (DirectSites: системные пуш-уведомления) ---
 RULE-SET,{rules_base}/apple-push.list,DIRECT
-RULE-SET,{rules_base}/android-push.list,DIRECT
 
 # --- Финальное правило (весь остальной трафик в VPN) ---
 FINAL,PROXY
