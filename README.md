@@ -65,10 +65,43 @@
 </tbody>
 </table>
 
+### Для Shadowrocket
+
+<table width="100%">
+<thead><tr><th align="left">Профиль</th><th align="left">Конфигурационный файл (.CONF)</th><th align="left">Ссылка для импорта в один клик</th><th align="left">Описание</th></tr></thead>
+<tbody>
+<tr>
+  <td><b>DEFAULT</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/DEFAULT.CONF">DEFAULT.CONF</a></td>
+  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/DEFAULT.CONF">Импорт в Shadowrocket</a></td>
+  <td><b>Основной профиль:</b> Полный аналог DEFAULT.JSON. Российский трафик (RU/BY, банки, Госуслуги, Steam, Twitch) напрямую. Заблокированные ресурсы и остальной интернет — через прокси. Реклама и телеметрия заблокированы.</td>
+</tr>
+<tr>
+  <td><b>WHITELIST</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/WHITELIST.CONF">WHITELIST.CONF</a></td>
+  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/WHITELIST.CONF">Импорт в Shadowrocket</a></td>
+  <td><b>Белый список:</b> Полный аналог WHITELIST.JSON. Напрямую идут <i>только</i> проверенные ресурсы РФ и 17 900+ банковских IP. Весь остальной трафик — через прокси.</td>
+</tr>
+<tr>
+  <td><b>JSONSUB</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/JSONSUB.CONF">JSONSUB.CONF</a></td>
+  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/JSONSUB.CONF">Импорт в Shadowrocket</a></td>
+  <td><b>Базовый профиль:</b> DoH DNS + прямой доступ для системных пуш-уведомлений (Apple APNs / Google FCM). Остальной трафик через прокси.</td>
+</tr>
+<tr>
+  <td><b>EXTENDED</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/EXTENDED.CONF">EXTENDED.CONF</a></td>
+  <td>—</td>
+  <td><b>Пользовательский файл:</b> Подключается через <code>include = EXTENDED.CONF</code>. Добавленные в него личные правила имеют наивысший приоритет и не затираются при автообновлении.</td>
+</tr>
+</tbody>
+</table>
+
 > [!TIP]
 > **Как подключить в приложении:**
 > 1. **Через диплинк:** откройте ссылку на файл `.DEEPLINK`, скопируйте текстовую строку схемы (`happ://routing/onadd/...` или `incy://routing/onadd/...`) и откройте её в адресной строке браузера на устройстве (браузер предложит открыть клиент).
 > 2. **Через URL подписки:** скопируйте прямую ссылку на `.JSON` файл и укажите её в клиенте как внешний URL правил маршрутизации (с поддержкой автообновления).
+> 3. **В Shadowrocket:** нажмите «Импорт в Shadowrocket» или скопируйте URL `.CONF` файла, перейдите в **Config** ➔ **«+»**, вставьте ссылку и нажмите **Download**. Включите автообновление: **Settings** ➔ **Update** ➔ **Config** (или через параметр `update-url`).
 
 ---
 

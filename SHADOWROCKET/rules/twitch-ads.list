@@ -1,0 +1,9 @@
+# NAME: twitch-ads.list
+# TOTAL: 5
+# REPO: https://github.com/pincetgore/PinRouting
+# UPDATED: 2026-09-11 16:49:26 UTC
+DOMAIN-SUFFIX,gql.twitch.tv
+DOMAIN-SUFFIX,usher.ttvnw.net
+DOMAIN-SUFFIX,ads.twitch.tv
+DOMAIN-SUFFIX,playlist.ttvnw.net
+DOMAIN-SUFFIX,static-cdn.jtvnw.net

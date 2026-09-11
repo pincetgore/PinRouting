@@ -212,6 +212,16 @@ jobs:
           done
 
       # -----------------------------------------------------------------------
+      # Build Shadowrocket Configs & Rules
+      # -----------------------------------------------------------------------
+      - name: Build Shadowrocket Configs and Rules
+        run: |
+          set -euo pipefail
+          EPOCH="${{ steps.meta.outputs.epoch }}"
+          REPO="${{ github.repository }}"
+          python3 tools/build_shadowrocket.py --repo "$REPO" --epoch "$EPOCH"
+
+      # -----------------------------------------------------------------------
       # Commit to main & Push Tag
       # -----------------------------------------------------------------------
       - name: Commit and Push Main Changes
@@ -220,7 +230,7 @@ jobs:
           TAG="${{ steps.meta.outputs.tag }}"
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add HAPP/ INCY/
+          git add HAPP/ INCY/ SHADOWROCKET/
           if ! git diff --cached --quiet; then
             git commit -m "Auto-update routing configs and geodata [${TAG}] [skip ci]"
             git pull --rebase origin main

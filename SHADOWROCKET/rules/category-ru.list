@@ -1,0 +1,177 @@
+# NAME: category-ru.list
+# TOTAL: 130
+# REPO: https://github.com/pincetgore/PinRouting
+# UPDATED: 2026-09-11 16:49:26 UTC
+# Direct for checkers
+DOMAIN-SUFFIX,ipify.org
+DOMAIN-SUFFIX,checkip.amazonaws.com
+DOMAIN-SUFFIX,ifconfig.me
+DOMAIN-SUFFIX,ipapi.is
+DOMAIN-SUFFIX,iplocate.io
+DOMAIN-SUFFIX,ip.sb
+DOMAIN-SUFFIX,2ip.ru
+# custom ru only
+DOMAIN-SUFFIX,mangalib.me
+DOMAIN-SUFFIX,animego.me
+DOMAIN-SUFFIX,showip.net
+DOMAIN-SUFFIX,avtoto.ru
+DOMAIN-SUFFIX,tilda.cc
+DOMAIN-SUFFIX,kinescope.io
+DOMAIN-SUFFIX,kinescopecdn.net
+DOMAIN-SUFFIX,redheadsound.studio
+# VTB
+DOMAIN-SUFFIX,vtbglobalperspectives.com
+DOMAIN-SUFFIX,vtb-direct.com
+# Sberbank / Sber
+DOMAIN-SUFFIX,sber.world
+DOMAIN-SUFFIX,sber.ws
+DOMAIN-SUFFIX,sbercoin.com
+# -----------------------------------------------------------
+# CBR Official Bank Website (10.03.2026 Snapshot)
+# -----------------------------------------------------------
+# ООО "СПЕЦСТРОЙБАНК" (Рег. № 236)
+DOMAIN-SUFFIX,ssb.msk.ru
+# АО "Великие Луки банк" (Рег. № 598)
+DOMAIN-SUFFIX,vlb100.ru
+# АО НКБ "СЛАВЯНБАНК" (Рег. № 804)
+DOMAIN-SUFFIX,slavbank.ru
+# АО "ПЕРВОУРАЛЬСКБАНК" (Рег. № 965)
+DOMAIN-SUFFIX,prvbank.ru
+DOMAIN-SUFFIX,pvubank.com
+# Банк ВТБ (ПАО) (Рег. № 1000)
+DOMAIN-SUFFIX,vtb-grants.fut.ru
+# ООО "Костромаселькомбанк" (Рег. № 1115)
+DOMAIN-SUFFIX,selkombank.ru
+# "Братский АНКБ" АО (Рег. № 1144)
+DOMAIN-SUFFIX,ankb.ru
+# АО комбанк "Арзамас" (Рег. № 1281)
+DOMAIN-SUFFIX,bank-arzamas.ru
+# АО БАНК "Ермак" (Рег. № 1809)
+DOMAIN-SUFFIX,bankermak.ru
+# АО АКБ "Алеф-Банк" (Рег. № 2119)
+DOMAIN-SUFFIX,alefbank.com
+# АКБ "Форштадт" (АО) (Рег. № 2208)
+DOMAIN-SUFFIX,forshtadt.ru
+# ПАО "БАНК УРАЛСИБ" (Рег. № 2275)
+DOMAIN-SUFFIX,bfa.ru
+# АО "Банк ДОМ.РФ" (Рег. № 2312)
+DOMAIN-SUFFIX,rkbank.ru
+# ООО КБ "МВС Банк" (Рег. № 2407)
+DOMAIN-SUFFIX,mvs-bank.ru
+# АО "Банк Кредит Свисс (Москва)" (Рег. № 2494)
+DOMAIN-SUFFIX,bank-credit-suisse-moscow.ru
+# "ЗИРААТ БАНК (МОСКВА)" (АО) (Рег. № 2559)
+DOMAIN-SUFFIX,ziraatbank.ru
+# КБ "Дж.П. Морган Банк Интернешнл" (ООО) (Рег. № 2629)
+DOMAIN-SUFFIX,jpmorgan.ru
+# АКБ "НООСФЕРА" (АО) (Рег. № 2650)
+DOMAIN-SUFFIX,noosferabank.ru
+# ООО "НКО "Вестерн Юнион ДП Восток" (Рег. № 2726)
+DOMAIN-SUFFIX,westernunion.ru
+# АО "Таганрогбанк" (Рег. № 3136)
+DOMAIN-SUFFIX,tagbank.ru
+# РНКО "Платежный Центр" (ООО) (Рег. № 3166)
+DOMAIN-SUFFIX,korona.com
+# ПАО Банк ЗЕНИТ (Рег. № 3255)
+DOMAIN-SUFFIX,credit-zenit.ru
+DOMAIN-SUFFIX,zenit-card.ru
+# ООО "Дойче Банк" (Рег. № 3328)
+DOMAIN-SUFFIX,autobahn.db.com
+# АО "КОММЕРЦБАНК (ЕВРАЗИЯ)" (Рег. № 3333)
+DOMAIN-SUFFIX,commerzbank.ru
+# АО "Мидзухо Банк (Москва)" (Рег. № 3337)
+DOMAIN-SUFFIX,mizuhogroup.com
+# "Банк "МБА-МОСКВА" ООО (Рег. № 3395)
+DOMAIN-SUFFIX,ibamoscow.ru
+# ООО "Ю Би Эс Банк" (Рег. № 3463)
+DOMAIN-SUFFIX,ubs.com
+# АО "СМБСР Банк" (Рег. № 3494)
+DOMAIN-SUFFIX,smbcr-bank.ru
+# ООО НКО "ЮМани" (Рег. № 3510)
+DOMAIN-SUFFIX,yoobusiness.ru
+# ООО "Чайна Констракшн Банк" (Рег. № 3515)
+DOMAIN-SUFFIX,ru.ccb.com
+# АО "Банк 131" (Рег. № 3538)
+DOMAIN-SUFFIX,bank131.com
+# РНКО АЗИЯПЭЙ ООО (Рег. № 3544)
+DOMAIN-SUFFIX,asia-pay.ru
+# РНКО Люминис (АО) (Рег. № 3551)
+DOMAIN-SUFFIX,rncoluminis.ru
+# Major banks and retail
+DOMAIN-SUFFIX,sberbank.ru
+DOMAIN-SUFFIX,sber.ru
+DOMAIN-SUFFIX,tinkoff.ru
+DOMAIN-SUFFIX,raiffeisen.ru
+DOMAIN-SUFFIX,psbank.ru
+DOMAIN-SUFFIX,sovcombank.ru
+DOMAIN-SUFFIX,rosbank.ru
+DOMAIN-SUFFIX,pochtabank.ru
+DOMAIN-SUFFIX,mtsbank.ru
+DOMAIN-SUFFIX,homecredit.ru
+DOMAIN-SUFFIX,akbars.ru
+DOMAIN-SUFFIX,rsb.ru
+DOMAIN-SUFFIX,mkb.ru
+DOMAIN-SUFFIX,uralsib.ru
+DOMAIN-SUFFIX,magnit.ru
+# Services and apps
+DOMAIN-SUFFIX,happ.su
+DOMAIN-SUFFIX,happ.info
+DOMAIN-SUFFIX,aliexpress.ru
+DOMAIN-SUFFIX,aviasales.ru
+DOMAIN-SUFFIX,aviasales.com
+DOMAIN-SUFFIX,lava.ru
+DOMAIN-SUFFIX,usmall.ru
+DOMAIN-SUFFIX,rdp-onedash.ru
+DOMAIN-SUFFIX,autowp.ru
+DOMAIN-SUFFIX,appstorrent.ru
+DOMAIN-SUFFIX,zr.ru
+# CBR Official Non-RU Bank & Fintech Domains
+DOMAIN-SUFFIX,absolutbank.com
+DOMAIN-SUFFIX,altbank.com
+DOMAIN-SUFFIX,altynbank.com
+DOMAIN-SUFFIX,ard.moscow
+DOMAIN-SUFFIX,astrasend.net
+DOMAIN-SUFFIX,baltinvestbank.com
+DOMAIN-SUFFIX,corona-perevod.com
+DOMAIN-SUFFIX,coronaperevod.com
+DOMAIN-SUFFIX,eleksir.finance
+DOMAIN-SUFFIX,energotransbank.com
+DOMAIN-SUFFIX,er-fin.com
+DOMAIN-SUFFIX,halva.im
+DOMAIN-SUFFIX,halva.promo
+DOMAIN-SUFFIX,home.bank
+DOMAIN-SUFFIX,kk.bank
+DOMAIN-SUFFIX,korona-perevod.com
+DOMAIN-SUFFIX,koronaperevod.com
+DOMAIN-SUFFIX,kuban-credit.biz
+DOMAIN-SUFFIX,kuban-credit.com
+DOMAIN-SUFFIX,kuban-credit.net
+DOMAIN-SUFFIX,kuban.credit
+DOMAIN-SUFFIX,kubancredit.biz
+DOMAIN-SUFFIX,kubancredit.com
+DOMAIN-SUFFIX,kubancredit.net
+DOMAIN-SUFFIX,locko-bank.info
+DOMAIN-SUFFIX,maritimebank.com
+DOMAIN-SUFFIX,nationalclearingcenter.com
+DOMAIN-SUFFIX,nationalclearingcentre.com
+DOMAIN-SUFFIX,ncc-qccp.com
+DOMAIN-SUFFIX,noda.finance
+DOMAIN-SUFFIX,perevod-korona.biz
+DOMAIN-SUFFIX,perevod-korona.info
+DOMAIN-SUFFIX,perevod-korona.org
+DOMAIN-SUFFIX,perevod-korona.pro
+DOMAIN-SUFFIX,perevodkorona.com
+DOMAIN-SUFFIX,probank.pro
+DOMAIN-SUFFIX,prostobank.online
+DOMAIN-SUFFIX,pskb.com
+DOMAIN-SUFFIX,roscap.com
+DOMAIN-SUFFIX,rshb.pro
+DOMAIN-SUFFIX,slavia-bank.com
+DOMAIN-SUFFIX,slaviabank.com
+DOMAIN-SUFFIX,sovcombank.business
+DOMAIN-SUFFIX,sovcombank.com
+DOMAIN-SUFFIX,sovcombank.credit
+DOMAIN-SUFFIX,sovcombank.info
+DOMAIN-SUFFIX,spbbank.com
+DOMAIN-SUFFIX,unistream.com
+DOMAIN-SUFFIX,vakobank.com

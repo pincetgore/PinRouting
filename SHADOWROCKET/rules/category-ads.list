@@ -1,0 +1,6 @@
+# NAME: category-ads.list
+# TOTAL: 2
+# REPO: https://github.com/pincetgore/PinRouting
+# UPDATED: 2026-09-11 16:49:26 UTC
+DOMAIN-SUFFIX,ad.mail.ru
+DOMAIN-SUFFIX,alt-ad.mail.ru
