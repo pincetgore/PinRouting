@@ -1,7 +1,7 @@
 # NAME: domains-ipchecker.list
 # TOTAL: 6
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-11 17:11:57 UTC
+# UPDATED: 2026-09-11 17:22:51 UTC
 # IP checkers used by Russian applications
 DOMAIN-SUFFIX,checkip.amazonaws.com
 DOMAIN-SUFFIX,eu.2gis.com
