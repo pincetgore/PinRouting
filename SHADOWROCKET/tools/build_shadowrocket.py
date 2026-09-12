@@ -11,7 +11,7 @@ import argparse
 import json
 import os
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
@@ -325,7 +325,7 @@ def main():
         else:
             epoch = str(int(time.time()))
 
-    updated_dt = datetime.fromtimestamp(int(epoch), tz=timezone.utc)
+    updated_dt = datetime.fromtimestamp(int(epoch), tz=UTC)
     updated_str = updated_dt.strftime("%Y-%m-%d %H:%M:%S UTC")
 
     rules_dir = os.path.join(args.output_dir, "rules")

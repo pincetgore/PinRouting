@@ -18,15 +18,12 @@ import argparse
 import ipaddress
 import sys
 from pathlib import Path
-from typing import TypeVar
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 GEOSITE_DIR = REPO_ROOT / "geosite" / "data"
 GEOIP_DIR = REPO_ROOT / "geoip"
 
 VALID_GEOSITE_TYPES = {"domain", "full", "keyword", "regexp"}
-
-TNetwork = TypeVar("TNetwork", ipaddress.IPv4Network, ipaddress.IPv6Network)
 
 
 def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
@@ -121,9 +118,11 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     return errors, warnings
 
 
-def _format_collapse_details(nets: list[TNetwork],
-                             collapsed: list[TNetwork],
-                             line_map: dict[str, int]) -> str:
+def _format_collapse_details[TNetwork: (ipaddress.IPv4Network, ipaddress.IPv6Network)](
+    nets: list[TNetwork],
+    collapsed: list[TNetwork],
+    line_map: dict[str, int],
+) -> str:
     """Helper to format detailed information about collapsed subnets."""
     orig_set = set(nets)
     details = []
