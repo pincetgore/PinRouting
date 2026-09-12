@@ -17,11 +17,12 @@ import json
 import re
 import struct
 import time
-import urllib.request
 import urllib.error
+import urllib.request
 from bisect import bisect_right
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Any
 
 # Ссылка на файл со списком IP-диапазонов (direct.txt или whitelist.txt) в GitHub
 DIRECT_TXT_URL = "https://raw.githubusercontent.com/pincetgore/PinRouting/release/text/direct.txt"
@@ -60,12 +61,12 @@ def http_get(url: str, timeout: int = 5, headers: dict[str, str] | None = None, 
     if headers:
         req_headers.update(headers)
     req = urllib.request.Request(url, headers=req_headers)
-    last_err = None
+    last_err: Exception | None = None
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 return resp.read().decode("utf-8", errors="replace")
-        except Exception as e:
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
             last_err = e
             if attempt < retries - 1:
                 time.sleep(1)
@@ -79,12 +80,13 @@ def curl_get(url: str, timeout: int = 5) -> str:
     return http_get(url, timeout=timeout)
 
 
-def curl_json(url: str) -> dict | None:
+def curl_json(url: str) -> dict[str, Any] | None:
     """Скачивает JSON по ссылке. При ошибке возвращает None."""
     try:
         data_str = http_get(url, timeout=5, headers={"Accept": "application/json"}, retries=3)
-        return json.loads(data_str)
-    except Exception:
+        res = json.loads(data_str)
+        return res if isinstance(res, dict) else None
+    except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError):
         return None
 
 
@@ -169,24 +171,20 @@ def check_dns(domain: str, nodes: list[str]) -> str | None:
     Возвращает идентификатор запроса или None при ошибке."""
     node_params = "&".join(f"node={n}" for n in nodes)
     url = f"{API_BASE}/check-dns?host={domain}&{node_params}"
-    try:
-        data = curl_json(url)
-        return data.get("request_id") if data else None
-    except Exception:
-        return None
+    data = curl_json(url)
+    if data and isinstance(data.get("request_id"), str):
+        return data["request_id"]
+    return None
 
 
-def poll_results(request_id: str, nodes: list[str]) -> dict | None:
+def poll_results(request_id: str, nodes: list[str]) -> dict[str, Any] | None:
     """Ждёт, пока все серверы вернут результат проверки DNS.
     Если не все ответили за отведённое время — возвращает то, что есть."""
     url = f"{API_BASE}/check-result/{request_id}"
-    last_data = None
+    last_data: dict[str, Any] | None = None
     for _ in range(POLL_MAX_ATTEMPTS):
         time.sleep(POLL_INTERVAL)
-        try:
-            data = curl_json(url)
-        except Exception:
-            continue
+        data = curl_json(url)
         if data:
             last_data = data
             if all(data.get(n) is not None for n in nodes):
@@ -194,7 +192,7 @@ def poll_results(request_id: str, nodes: list[str]) -> dict | None:
     return last_data
 
 
-def extract_a_records(node_result) -> list[str] | None:
+def extract_a_records(node_result: Any) -> list[str] | None:
     """Достаёт IPv4-адреса (A-записи) из ответа одного сервера.
     Возвращает список IP или None, если записей нет."""
     if not isinstance(node_result, list):
@@ -278,7 +276,7 @@ def parse_entry(line: str) -> tuple[str | None, str | None]:
     """Разбирает строку geosite-файла. Если строка содержит domain: или full: —
     возвращает (тип, домен). Иначе возвращает (None, None)."""
     s = line.strip()
-    if not s or s.startswith("#") or s.startswith("//"):
+    if not s or s.startswith(("#", "//")):
         return None, None
     s = _INLINE_STRIP.sub("", s).strip()
     if s.startswith("domain:"):
@@ -428,9 +426,7 @@ def main() -> None:
             pool.submit(check_one_domain, idx, pfx, domain, intervals, starts): seq
             for seq, (idx, pfx, domain) in enumerate(entries)
         }
-        done = 0
-        for future in as_completed(futures):
-            done += 1
+        for done, future in enumerate(as_completed(futures), 1):
             seq = futures[future]
             results[seq] = future.result()
             # Показываем прогресс (номер без деталей, детали потом)

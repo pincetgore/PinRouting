@@ -95,8 +95,7 @@ def main() -> None:
         out_path = args.output_dir / out_filename
 
         with open(out_path, "w", encoding="utf-8", newline="\n") as out_f:
-            for net in unique_nets:
-                out_f.write(f"{net}\n")
+            out_f.writelines(f"{net}\n" for net in unique_nets)
 
         print(f"  -> Wrote {len(unique_nets):>6} CIDRs to '{out_path}'")
 
@@ -119,7 +118,7 @@ def _process_row(
     try:
         start_ip = ipaddress.ip_address(start_str)
         end_ip = ipaddress.ip_address(end_str)
-        if start_ip.version != end_ip.version or start_ip > end_ip:
+        if start_ip.version != end_ip.version or int(start_ip) > int(end_ip):
             return
 
         for net in ipaddress.summarize_address_range(start_ip, end_ip):

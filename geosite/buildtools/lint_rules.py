@@ -16,16 +16,17 @@ Usage:
 
 import argparse
 import ipaddress
-import os
-import re
 import sys
 from pathlib import Path
+from typing import TypeVar
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 GEOSITE_DIR = REPO_ROOT / "geosite" / "data"
 GEOIP_DIR = REPO_ROOT / "geoip"
 
 VALID_GEOSITE_TYPES = {"domain", "full", "keyword", "regexp"}
+
+TNetwork = TypeVar("TNetwork", ipaddress.IPv4Network, ipaddress.IPv6Network)
 
 
 def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
@@ -71,7 +72,7 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
 
             # Syntax validation for domain and full rules
             if rtype in ("domain", "full"):
-                if val.startswith("http://") or val.startswith("https://"):
+                if val.startswith(("http://", "https://")):
                     print(f"[ERROR] [{fn}:{idx}] Rule should not include URL scheme: '{line}'")
                     errors += 1
                     continue
@@ -94,11 +95,10 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
 
             if rtype == "domain":
                 domain_rules[val] = idx
-            elif rtype == "keyword":
+            elif rtype == "keyword" and "." in val and not val.endswith("."):
                 # Check if keyword contains domain-like syntax (dot with valid TLD)
-                if "." in val and not val.endswith("."):
-                    print(f"[WARN] [{fn}:{idx}] 'keyword:{val}' looks like a domain. Use 'domain:{val}' for Trie optimization.")
-                    warnings += 1
+                print(f"[WARN] [{fn}:{idx}] 'keyword:{val}' looks like a domain. Use 'domain:{val}' for Trie optimization.")
+                warnings += 1
 
             rules.append((idx, rtype, val, line))
 
@@ -121,8 +121,8 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     return errors, warnings
 
 
-def _format_collapse_details(nets: list[ipaddress.IPv4Network | ipaddress.IPv6Network],
-                             collapsed: list[ipaddress.IPv4Network | ipaddress.IPv6Network],
+def _format_collapse_details(nets: list[TNetwork],
+                             collapsed: list[TNetwork],
                              line_map: dict[str, int]) -> str:
     """Helper to format detailed information about collapsed subnets."""
     orig_set = set(nets)
@@ -141,8 +141,8 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     warnings = 0
     fn = filepath.name
 
-    v4_nets = []
-    v6_nets = []
+    v4_nets: list[ipaddress.IPv4Network] = []
+    v6_nets: list[ipaddress.IPv6Network] = []
     seen = {}
     line_map = {}
 
@@ -167,7 +167,7 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
                 seen[cidr_str] = idx
                 line_map[str(net)] = idx
 
-            if net.version == 4:
+            if isinstance(net, ipaddress.IPv4Network):
                 v4_nets.append(net)
             else:
                 v6_nets.append(net)

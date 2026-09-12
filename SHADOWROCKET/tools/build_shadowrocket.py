@@ -7,12 +7,11 @@ rulesets and builds configuration profiles (DEFAULT.CONF, WHITELIST.CONF,
 BASIC.CONF, EXTENDED.CONF) with 100% parameter parity to HAPP and INCY.
 """
 
-import os
-import sys
+import argparse
 import json
+import os
 import time
 from datetime import datetime, timezone
-import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
@@ -150,7 +149,7 @@ def load_dns_hosts(repo_root: str) -> str:
             data = json.load(f)
         hosts = data.get("DnsHosts", {})
         return "\n".join(f"{domain} = {ip}" for domain, ip in hosts.items())
-    except Exception as e:
+    except (json.JSONDecodeError, OSError) as e:
         print(f"Warning: failed to read DnsHosts from {happ_default}: {e}")
         return ""
 
@@ -297,7 +296,7 @@ FINAL,PROXY
 def build_extended_conf(out_path: str):
     content = """# Пользовательские правила маршрутизации Shadowrocket
 # Этот файл подключается в основные конфигурации через 'include = EXTENDED.CONF'
-# Добавленные сюда правила имеют приоритет и НЕ затираются при автообновлении подписки.
+# Добавленные сюда правила имеют приоритет и не затираются при автообновлении подписки.
 
 [Rule]
 # Примеры добавления собственных правил:
@@ -317,9 +316,12 @@ def main():
     if not epoch:
         happ_default = os.path.join(REPO_ROOT, "HAPP", "DEFAULT.JSON")
         if os.path.isfile(happ_default):
-            with open(happ_default, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                epoch = str(data.get("LastUpdated", int(time.time())))
+            try:
+                with open(happ_default, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    epoch = str(data.get("LastUpdated", int(time.time())))
+            except (json.JSONDecodeError, OSError):
+                epoch = str(int(time.time()))
         else:
             epoch = str(int(time.time()))
 
