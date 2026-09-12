@@ -1,7 +1,7 @@
 # NAME: whitelist.list
 # TOTAL: 854
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-12 08:18:07 UTC
+# UPDATED: 2026-09-12 10:43:05 UTC
 # Direct for checkers
 DOMAIN-SUFFIX,ipify.org
 DOMAIN-SUFFIX,checkip.amazonaws.com
