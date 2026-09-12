@@ -70,7 +70,7 @@ def main() -> None:
 
         # Skip header if present
         first_row = next(reader, None)
-        if first_row:
+        if first_row and len(first_row) >= 3:
             try:
                 ipaddress.ip_address(first_row[0].strip())
                 # First row is data, process it
@@ -85,10 +85,11 @@ def main() -> None:
     # Write output files
     for country_code in sorted(target_countries):
         raw_list = networks_by_country[country_code]
-        # Deduplicate and sort by IP address
+        # Deduplicate and sort by IP address (parsing once to avoid repeated object creation)
+        parsed_nets = {ipaddress.ip_network(x) for x in raw_list}
         unique_nets = sorted(
-            set(raw_list),
-            key=lambda x: (ipaddress.ip_network(x).version, int(ipaddress.ip_network(x).network_address), ipaddress.ip_network(x).prefixlen)
+            parsed_nets,
+            key=lambda net: (net.version, int(net.network_address), net.prefixlen)
         )
         out_filename = f"{args.prefix}{country_code.lower()}.lst"
         out_path = args.output_dir / out_filename

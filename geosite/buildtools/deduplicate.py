@@ -52,7 +52,7 @@ POLL_MAX_ATTEMPTS = 5
 WORKERS = 8
 
 
-# ── Скачивание и работа с IP-диапазонами ──────────────────────────────────
+# ── Скачивание и работа с IP-диапазонами ──────────────────────────────────────
 
 def http_get(url: str, timeout: int = 5, headers: dict[str, str] | None = None, retries: int = 3) -> str:
     """Скачивает содержимое по ссылке через urllib с повторными попытками."""
@@ -88,9 +88,25 @@ def curl_json(url: str) -> dict | None:
         return None
 
 
+def merge_intervals(intervals: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Объединяет перекрывающиеся и смежные интервалы в непрерывные непересекающиеся диапазоны."""
+    if not intervals:
+        return []
+    intervals.sort()
+    merged = [intervals[0]]
+    for start, end in intervals[1:]:
+        prev_start, prev_end = merged[-1]
+        if start <= prev_end + 1:
+            merged[-1] = (prev_start, max(prev_end, end))
+        else:
+            merged.append((start, end))
+    return merged
+
+
 def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
-    """Разбирает текст с IP-диапазонами/CIDR и возвращает отсортированный список диапазонов и список начал."""
-    intervals: list[tuple[int, int]] = []
+    """Разбирает текст с IP-диапазонами/CIDR и возвращает отсортированный объединенный
+    список непересекающихся диапазонов и список начал."""
+    raw_intervals: list[tuple[int, int]] = []
     for line in data.splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
@@ -100,8 +116,8 @@ def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
         except ValueError:
             continue
         if net.version == 4:
-            intervals.append((int(net.network_address), int(net.broadcast_address)))
-    intervals.sort()
+            raw_intervals.append((int(net.network_address), int(net.broadcast_address)))
+    intervals = merge_intervals(raw_intervals)
     starts = [iv[0] for iv in intervals]
     return intervals, starts
 
@@ -136,7 +152,7 @@ def ip_to_int(ip_str: str) -> int | None:
 
 def ip_in_direct(ip_str: str, intervals: list[tuple[int, int]], starts: list[int]) -> bool:
     """Проверяет, входит ли IP-адрес в один из диапазонов direct.
-    Использует быстрый поиск по отсортированному списку."""
+    Использует быстрый поиск по отсортированному списку непересекающихся диапазонов."""
     val = ip_to_int(ip_str)
     if val is None:
         return False
@@ -146,7 +162,7 @@ def ip_in_direct(ip_str: str, intervals: list[tuple[int, int]], starts: list[int
     return intervals[idx][0] <= val <= intervals[idx][1]
 
 
-# ── Работа с API check-host.net ──────────────────────────────────────────
+# ── Работа с API check-host.net ──────────────────────────────────────────────
 
 def check_dns(domain: str, nodes: list[str]) -> str | None:
     """Отправляет запрос на проверку DNS домена через указанные серверы.
@@ -252,7 +268,7 @@ def resolve_domain(domain: str) -> dict[str, list[str] | None]:
     return node_ips
 
 
-# ── Разбор строк geosite-файла ────────────────────────────────────────────
+# ── Разбор строк geosite-файла ──────────────────────────────────────────────
 
 # Регулярка для удаления комментариев и атрибутов из строки (всё после @, # или //)
 _INLINE_STRIP = re.compile(r"\s*[@#].*|[ \t]*//.*")
@@ -272,7 +288,7 @@ def parse_entry(line: str) -> tuple[str | None, str | None]:
     return None, None
 
 
-# ── Проверка одного домена ─────────────────────────────────────────────────
+# ── Проверка одного домена ──────────────────────────────────────────────────
 
 def classify_node(ips: list[str] | None, tag: str,
                   intervals: list[tuple[int, int]], starts: list[int],
@@ -361,7 +377,7 @@ def check_one_domain(
     return idx, header, f"  → KEEP    [{nodes_ok}/{responded} direct]  {detail}", False
 
 
-# ── Основная логика ────────────────────────────────────────────────────────
+# ── Основная логика ─────────────────────────────────────────────────────────
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Deduplicate geosite domains covered by geoip:direct/geoip:whitelist")

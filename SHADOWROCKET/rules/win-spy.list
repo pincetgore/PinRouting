@@ -1,5 +1,5 @@
 # NAME: win-spy.list
-# TOTAL: 323
+# TOTAL: 322
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-12 08:18:07 UTC
 DOMAIN-SUFFIX,1oavsblobprodcus350.blob.core.windows.net
@@ -269,7 +269,6 @@ DOMAIN-SUFFIX,lb1.www.ms.akadns.net
 DOMAIN-SUFFIX,live.rads.msn.com
 DOMAIN-SUFFIX,mobile.pipe.aria.microsoft.com
 DOMAIN-SUFFIX,modern.watson.data.microsoft.com.akadns.net
-DOMAIN-SUFFIX,msedge.net
 DOMAIN-SUFFIX,msntest.serving-sys.com
 DOMAIN-SUFFIX,nexus.officeapps.live.com
 DOMAIN-SUFFIX,nexusrules.officeapps.live.com

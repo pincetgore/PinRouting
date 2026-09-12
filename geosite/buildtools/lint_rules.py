@@ -8,7 +8,7 @@ Checks:
 - Redundant subdomains within the same file (e.g., sub.example.com when example.com is present).
 - Overly broad or misplaced keyword rules (e.g., keyword:example.com instead of domain:example.com).
 - CIDR syntax validity in GeoIP text files.
-- Collapsible/redundant CIDR blocks in GeoIP text files.
+- Collapsible/redundant CIDR blocks in GeoIP text files with detailed suggestions.
 
 Usage:
   python3 lint_rules.py [--fail-on-error] [--strict]
@@ -69,6 +69,21 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
                 errors += 1
                 continue
 
+            # Syntax validation for domain and full rules
+            if rtype in ("domain", "full"):
+                if val.startswith("http://") or val.startswith("https://"):
+                    print(f"[ERROR] [{fn}:{idx}] Rule should not include URL scheme: '{line}'")
+                    errors += 1
+                    continue
+                if "/" in val:
+                    print(f"[ERROR] [{fn}:{idx}] Domain rule should not include path: '{line}'")
+                    errors += 1
+                    continue
+                if any(ch.isspace() for ch in val):
+                    print(f"[ERROR] [{fn}:{idx}] Domain rule contains whitespace: '{line}'")
+                    errors += 1
+                    continue
+
             # Check exact duplicates
             key = f"{rtype}:{val}"
             if key in seen_exact:
@@ -106,6 +121,20 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     return errors, warnings
 
 
+def _format_collapse_details(nets: list[ipaddress.IPv4Network | ipaddress.IPv6Network],
+                             collapsed: list[ipaddress.IPv4Network | ipaddress.IPv6Network],
+                             line_map: dict[str, int]) -> str:
+    """Helper to format detailed information about collapsed subnets."""
+    orig_set = set(nets)
+    details = []
+    for net in collapsed:
+        subs = [s for s in orig_set if s.subnet_of(net) and s != net]
+        if subs:
+            subs_str = ", ".join(f"{s} (line {line_map.get(str(s), '?')})" for s in sorted(subs))
+            details.append(f"'{net}' can cover: {subs_str}")
+    return "; ".join(details)
+
+
 def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     """Lints a GeoIP CIDR text file. Returns (error_count, warning_count)."""
     errors = 0
@@ -115,6 +144,7 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     v4_nets = []
     v6_nets = []
     seen = {}
+    line_map = {}
 
     with open(filepath, "r", encoding="utf-8") as f:
         for idx, line in enumerate(f, 1):
@@ -135,6 +165,7 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
                 errors += 1
             else:
                 seen[cidr_str] = idx
+                line_map[str(net)] = idx
 
             if net.version == 4:
                 v4_nets.append(net)
@@ -145,7 +176,8 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     c4 = list(ipaddress.collapse_addresses(v4_nets))
     if len(c4) < len(v4_nets):
         diff = len(v4_nets) - len(c4)
-        msg = f"[{fn}] {diff} IPv4 networks can be collapsed into larger/adjacent CIDR blocks."
+        details = _format_collapse_details(v4_nets, c4, line_map)
+        msg = f"[{fn}] {diff} IPv4 network(s) can be collapsed: {details}"
         if strict:
             print(f"[ERROR] {msg}")
             errors += 1
@@ -156,7 +188,8 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     c6 = list(ipaddress.collapse_addresses(v6_nets))
     if len(c6) < len(v6_nets):
         diff = len(v6_nets) - len(c6)
-        msg = f"[{fn}] {diff} IPv6 networks can be collapsed into larger/adjacent CIDR blocks."
+        details = _format_collapse_details(v6_nets, c6, line_map)
+        msg = f"[{fn}] {diff} IPv6 network(s) can be collapsed: {details}"
         if strict:
             print(f"[ERROR] {msg}")
             errors += 1
@@ -189,12 +222,10 @@ def main():
 
     print("\n=== Linting GeoIP Custom Text Lists ===")
     if GEOIP_DIR.is_dir():
-        for fn in ["CUSTOM-WHITELIST.txt", "CUSTOM-LIST-ADD.txt", "CUSTOM-FIX-ADD.txt"]:
-            item = GEOIP_DIR / fn
-            if item.is_file():
-                errs, warns = lint_geoip_file(item, strict=args.strict)
-                total_errors += errs
-                total_warnings += warns
+        for item in sorted(GEOIP_DIR.glob("*.txt")):
+            errs, warns = lint_geoip_file(item, strict=args.strict)
+            total_errors += errs
+            total_warnings += warns
 
     print("\n=== Lint Summary ===")
     print(f"Total Errors:   {total_errors}")

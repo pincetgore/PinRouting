@@ -49,7 +49,7 @@ def convert_geosite_line(line: str) -> str:
     if ":" in line:
         rule_type, val = line.split(":", 1)
         rule_type = rule_type.strip().lower()
-        val = val.strip().split()[0].lower() # take domain without attributes
+        val = val.split("@")[0].strip().split()[0].lower() # take domain without attributes
         if rule_type == "full":
             return f"DOMAIN,{val}{comment}"
         elif rule_type == "keyword":
@@ -59,7 +59,7 @@ def convert_geosite_line(line: str) -> str:
         else:
             return f"DOMAIN-SUFFIX,{val}{comment}"
     else:
-        val = line.split()[0].lower()
+        val = line.split("@")[0].strip().split()[0].lower()
         return f"DOMAIN-SUFFIX,{val}{comment}"
 
 def build_rulesets(geosite_dir: str, rules_dir: str, repo: str, updated_str: str):
@@ -112,6 +112,34 @@ def build_rulesets(geosite_dir: str, rules_dir: str, repo: str, updated_str: str
             f.write(f"# UPDATED: {updated_str}\n")
             f.write("\n".join(ip_lines) + "\n")
         print(f"Generated {dst_path} ({ip_count} IP CIDR rules)")
+
+    # Generate direct-ips.list from geoip/CUSTOM-LIST-ADD.txt and geoip/CUSTOM-FIX-ADD.txt
+    direct_ips_sources = [
+        os.path.join(REPO_ROOT, "geoip", "CUSTOM-LIST-ADD.txt"),
+        os.path.join(REPO_ROOT, "geoip", "CUSTOM-FIX-ADD.txt")
+    ]
+    direct_ip_lines = []
+    seen_cidrs = set()
+    for src in direct_ips_sources:
+        if os.path.isfile(src):
+            with open(src, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    cidr = line.split()[0].split("#")[0].strip()
+                    if cidr and cidr not in seen_cidrs:
+                        seen_cidrs.add(cidr)
+                        direct_ip_lines.append(f"IP-CIDR,{cidr},no-resolve")
+
+    dst_path = os.path.join(rules_dir, "direct-ips.list")
+    with open(dst_path, "w", encoding="utf-8") as f:
+        f.write("# NAME: direct-ips.list\n")
+        f.write(f"# TOTAL: {len(direct_ip_lines)}\n")
+        f.write(f"# REPO: https://github.com/{repo}\n")
+        f.write(f"# UPDATED: {updated_str}\n")
+        f.write("\n".join(direct_ip_lines) + "\n")
+    print(f"Generated {dst_path} ({len(direct_ip_lines)} IP CIDR rules)")
 
 def load_dns_hosts(repo_root: str) -> str:
     happ_default = os.path.join(repo_root, "HAPP", "DEFAULT.JSON")
@@ -212,6 +240,7 @@ RULE-SET,{rules_base}/twitch.list,DIRECT
 RULE-SET,{rules_base}/pinterest.list,DIRECT
 
 # --- Прямое подключение по IP (DirectIp) ---
+RULE-SET,{rules_base}/direct-ips.list,DIRECT,no-resolve
 GEOIP,RU,DIRECT
 GEOIP,BY,DIRECT
 
