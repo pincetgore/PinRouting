@@ -274,13 +274,22 @@ jobs:
           cd ..
 
       - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ steps.meta.outputs.tag }}
-          name: ${{ steps.meta.outputs.tag }}
-          prerelease: false
-          draft: false
-          files: /tmp/dist/*
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+
+          echo "Publishing release for tag ${TAG}..."
+          for i in 1 2 3; do
+            if gh release create "${TAG}" /tmp/dist/* --title "${TAG}" --notes "Automated release ${TAG}" --clobber; then
+              echo "Release published successfully!"
+              exit 0
+            fi
+            echo "Failed to publish release (attempt $i/3). Retrying in 10s..."
+            sleep 10
+          done
+          exit 1
 
       # -----------------------------------------------------------------------
       # Keep Only Latest Release & Tag
