@@ -4,6 +4,11 @@
 [![GitHub Release](https://img.shields.io/github/v/release/pincetgore/PinRouting?style=flat-square&color=blue)](https://github.com/pincetgore/PinRouting/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 [![Clients](https://img.shields.io/badge/Clients-Happ%20%7C%20INCY%20%7C%20Shadowrocket-blueviolet?style=flat-square)](#-быстрая-установка)
+<p align="center">
+  <a href="https://yoomoney.ru/to/4100119554027650">
+    <img src="https://img.shields.io/badge/Поддержать-ЮMoney-8B3FFD?style=for-the-badge&logo=yoomoney&logoColor=white" alt="Поддержать" />
+  </a>
+</p>
 
 Оптимизированные конфигурации маршрутизации (роутинга) для клиентов **Happ**, **INCY** и **Shadowrocket** на базе кастомных легковесных баз GeoIP и Geosite.
 
@@ -329,3 +334,14 @@
 
 Проект распространяется под открытой лицензией [MIT](LICENSE). Вы можете свободно использовать, модифицировать и распространять его как в личных, так и в коммерческих целях с обязательным сохранением указания авторства.
 
+---
+
+## ☕ Поддержка автора
+
+Если проект оказался вам полезен и помогает удобно маршрутизировать трафик, вы можете поддержать его развитие и поблагодарить автора:
+
+<p align="center">
+  <a href="https://yoomoney.ru/to/4100119554027650">
+    <img src="https://img.shields.io/badge/Поддержать_проект-ЮMoney-8B3FFD?style=for-the-badge&logo=yoomoney&logoColor=white" alt="Поддержать проект" />
+  </a>
+</p>
