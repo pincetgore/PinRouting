@@ -282,8 +282,11 @@ jobs:
 
           echo "Publishing release for tag ${TAG}..."
           for i in 1 2 3; do
-            if gh release create "${TAG}" /tmp/dist/* --title "${TAG}" --notes "Automated release ${TAG}" --clobber; then
+            if gh release create "${TAG}" /tmp/dist/* --title "${TAG}" --notes "Automated release ${TAG}"; then
               echo "Release published successfully!"
+              exit 0
+            elif gh release upload "${TAG}" /tmp/dist/* --clobber; then
+              echo "Release already existed; assets uploaded successfully!"
               exit 0
             fi
             echo "Failed to publish release (attempt $i/3). Retrying in 10s..."
