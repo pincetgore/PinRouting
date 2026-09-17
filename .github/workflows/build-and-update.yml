@@ -8,10 +8,11 @@ on:
       - main
     paths:
       - "geoip/**"
-      - "geosite/data/**"
+      - "geosite/**"
       - "HAPP/*.JSON"
       - "INCY/*.JSON"
       - "SHADOWROCKET/tools/**"
+      - "pyproject.toml"
       - ".github/workflows/build-and-update.yml"
   workflow_dispatch:
 
@@ -58,6 +59,14 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.14"
+
+      # -----------------------------------------------------------------------
+      # Lint Python Code
+      # -----------------------------------------------------------------------
+      - name: Lint Python Code
+        run: |
+          pip install --upgrade ruff
+          ruff check .
 
       - name: Setup Go
         uses: actions/setup-go@v7
