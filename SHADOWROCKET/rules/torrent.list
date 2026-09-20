@@ -1,7 +1,7 @@
 # NAME: torrent.list
-# TOTAL: 418
+# TOTAL: 451
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-20 17:38:44 UTC
+# UPDATED: 2026-09-20 17:52:24 UTC
 DOMAIN-SUFFIX,dht.aelitis.com
 DOMAIN-SUFFIX,dht.transmissionbt.com
 DOMAIN-SUFFIX,dht.vuze.com
@@ -420,3 +420,37 @@ DOMAIN-SUFFIX,buny.uk
 DOMAIN-SUFFIX,bt1.xxxxbt.cc
 DOMAIN-SUFFIX,bt.poletracker.org
 DOMAIN-SUFFIX,aboutbeautifulgallopinghorsesinthegreenpasture.online
+# Trackers from ngosang/trackerslist
+DOMAIN-SUFFIX,004430.xyz
+DOMAIN-SUFFIX,admin.52ywp.com
+DOMAIN-SUFFIX,anime-tracker.aruku.kro.kr
+DOMAIN-SUFFIX,evan.im
+DOMAIN-SUFFIX,kolanopentracker.airdns.org
+DOMAIN-SUFFIX,mail.segso.net
+DOMAIN-SUFFIX,ns575949.ip-51-222-82.net
+DOMAIN-SUFFIX,open.ftorrent.com
+DOMAIN-SUFFIX,pybittrack.retiolus.net
+DOMAIN-SUFFIX,seedpeer.net
+DOMAIN-SUFFIX,tr3.ysagin.top
+DOMAIN-SUFFIX,tracker.004430.xyz
+DOMAIN-SUFFIX,tracker.0x7c0.com
+DOMAIN-SUFFIX,tracker.7471.top
+DOMAIN-SUFFIX,tracker.aruku.ovh
+DOMAIN-SUFFIX,tracker.cn.nyaa.net
+DOMAIN-SUFFIX,tracker.ddunlimited.net
+DOMAIN-SUFFIX,tracker.dler.com
+DOMAIN-SUFFIX,tracker.farted.net
+DOMAIN-SUFFIX,tracker.foreverpirates.co
+DOMAIN-SUFFIX,tracker.govt.hu
+DOMAIN-SUFFIX,tracker.ilibr.org
+DOMAIN-SUFFIX,tracker.k.vu
+DOMAIN-SUFFIX,tracker.nekomi.cn
+DOMAIN-SUFFIX,tracker.nyaa.net
+DOMAIN-SUFFIX,tracker.nyaa.vc
+DOMAIN-SUFFIX,tracker.onetracker.net
+DOMAIN-SUFFIX,tracker.opentrackr.com
+DOMAIN-SUFFIX,tracker.playground.ru
+DOMAIN-SUFFIX,tracker.torrents.observer
+DOMAIN-SUFFIX,tracker.wildkat.net
+DOMAIN-SUFFIX,tracker.zhuqiy.dgj055.icu
+DOMAIN-SUFFIX,yuptracker-eu.gaijinent.com
