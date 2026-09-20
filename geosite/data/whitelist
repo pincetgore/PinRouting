@@ -619,7 +619,10 @@ domain:vakobank.com
 domain:b2b-center.ru
 domain:cryptopro.ru
 domain:diadoc.ru
+domain:evotor.ru
+domain:hrlink.ru
 domain:kontur.ru
+domain:ofd.ru
 domain:roseltorg.ru
 domain:rts-tender.ru
 domain:sberbank-ast.ru
@@ -807,8 +810,10 @@ domain:gb.ru
 domain:geekbrains.ru
 domain:netology.ru
 domain:sferum.ru
+domain:sirius.online
 domain:skillbox.ru
 domain:skyeng.ru
+domain:sochisirius.ru
 domain:uchi.ru
 
 # Страхование и РСА
@@ -884,6 +889,7 @@ domain:ria.ru
 domain:rossiyasegodnya.com
 domain:russia.tv
 domain:smotrim.ru
+domain:sportmail.ru
 domain:start.ru
 domain:start.video
 domain:tenchat.ru
@@ -895,3 +901,8 @@ domain:vkclips.app
 domain:vkplay.ru
 domain:wink.tv
 domain:zvuk.ru
+
+# Общественные, волонтерские и поисковые организации
+domain:dobro.ru
+domain:lizaalert.org
+domain:onf.ru
