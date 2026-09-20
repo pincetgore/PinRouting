@@ -1,7 +1,7 @@
 # NAME: whitelist.list
-# TOTAL: 854
+# TOTAL: 863
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-20 17:20:29 UTC
+# UPDATED: 2026-09-20 17:26:59 UTC
 # Direct for checkers
 DOMAIN-SUFFIX,ipify.org
 DOMAIN-SUFFIX,checkip.amazonaws.com
@@ -609,7 +609,10 @@ DOMAIN-SUFFIX,vakobank.com
 DOMAIN-SUFFIX,b2b-center.ru
 DOMAIN-SUFFIX,cryptopro.ru
 DOMAIN-SUFFIX,diadoc.ru
+DOMAIN-SUFFIX,evotor.ru
+DOMAIN-SUFFIX,hrlink.ru
 DOMAIN-SUFFIX,kontur.ru
+DOMAIN-SUFFIX,ofd.ru
 DOMAIN-SUFFIX,roseltorg.ru
 DOMAIN-SUFFIX,rts-tender.ru
 DOMAIN-SUFFIX,sberbank-ast.ru
@@ -791,8 +794,10 @@ DOMAIN-SUFFIX,gb.ru
 DOMAIN-SUFFIX,geekbrains.ru
 DOMAIN-SUFFIX,netology.ru
 DOMAIN-SUFFIX,sferum.ru
+DOMAIN-SUFFIX,sirius.online
 DOMAIN-SUFFIX,skillbox.ru
 DOMAIN-SUFFIX,skyeng.ru
+DOMAIN-SUFFIX,sochisirius.ru
 DOMAIN-SUFFIX,uchi.ru
 # Страхование и РСА
 DOMAIN-SUFFIX,alfastrah.ru
@@ -864,6 +869,7 @@ DOMAIN-SUFFIX,ria.ru
 DOMAIN-SUFFIX,rossiyasegodnya.com
 DOMAIN-SUFFIX,russia.tv
 DOMAIN-SUFFIX,smotrim.ru
+DOMAIN-SUFFIX,sportmail.ru
 DOMAIN-SUFFIX,start.ru
 DOMAIN-SUFFIX,start.video
 DOMAIN-SUFFIX,tenchat.ru
@@ -875,3 +881,7 @@ DOMAIN-SUFFIX,vkclips.app
 DOMAIN-SUFFIX,vkplay.ru
 DOMAIN-SUFFIX,wink.tv
 DOMAIN-SUFFIX,zvuk.ru
+# Общественные, волонтерские и поисковые организации
+DOMAIN-SUFFIX,dobro.ru
+DOMAIN-SUFFIX,lizaalert.org
+DOMAIN-SUFFIX,onf.ru
