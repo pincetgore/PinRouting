@@ -2,8 +2,6 @@
   "Name": "PinRouting Whitelist",
   "GlobalProxy": "true",
   "UseChunkFiles": "true",
-  "RemoteDns": "9.9.9.9",
-  "DomesticDns": "77.88.8.8",
   "RemoteDNSType": "DoH",
   "RemoteDNSDomain": "https://dns.quad9.net/dns-query",
   "RemoteDNSIP": "9.9.9.9",
