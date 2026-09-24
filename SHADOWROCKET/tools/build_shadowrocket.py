@@ -217,7 +217,6 @@ def build_default_conf(out_path: str, repo: str, branch: str, epoch: str, update
     content += f"""
 [Rule]
 # --- Блокировка (BlockSites) ---
-RULE-SET,{rules_base}/win-spy.list,REJECT
 RULE-SET,{rules_base}/torrent.list,REJECT
 RULE-SET,{rules_base}/category-ads.list,REJECT
 
@@ -256,7 +255,6 @@ def build_whitelist_conf(out_path: str, repo: str, branch: str, epoch: str, upda
     content += f"""
 [Rule]
 # --- Блокировка (BlockSites) ---
-RULE-SET,{rules_base}/win-spy.list,REJECT
 RULE-SET,{rules_base}/torrent.list,REJECT
 RULE-SET,{rules_base}/category-ads.list,REJECT
 

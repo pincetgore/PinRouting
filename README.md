@@ -118,7 +118,6 @@
 <table width="100%">
 <thead><tr><th align="left">Категория</th><th align="left">Зачем</th></tr></thead>
 <tbody>
-<tr><td>🚫 <code>geosite:win-spy</code></td><td>Отключение телеметрии и слежки компонентов ОС Windows</td></tr>
 <tr><td>🚫 <code>geosite:torrent</code></td><td>Блокировка публичных BitTorrent DHT-серверов и трекеров (защита VPS от абуз хостера)</td></tr>
 <tr><td>🚫 <code>geosite:category-ads</code></td><td>Блокировка рекламы (Google Ads, РСЯ, AdFox, MyTarget, VK, Sber Ads, агрессивные баннерные сети и попандеры)</td></tr>
 </tbody>
@@ -164,7 +163,6 @@
 Порядок применения правил (`RouteOrder`): **`block-proxy-direct`**.
 
 ### 🔴 BLOCK (блокировка)
-* 🚫 `geosite:win-spy` — телеметрия и слежка компонентов ОС Windows
 * 🚫 `geosite:torrent` — публичные BitTorrent трекеры и DHT (защита VPS)
 * 🚫 `geosite:category-ads` — реклама и трекеры
 
