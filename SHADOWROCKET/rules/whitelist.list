@@ -1,5 +1,5 @@
 # NAME: whitelist.list
-# TOTAL: 863
+# TOTAL: 864
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-09-24 18:21:19 UTC
 # Direct for checkers
@@ -809,6 +809,7 @@ DOMAIN-SUFFIX,rgs.ru
 DOMAIN-SUFFIX,soglasie.ru
 DOMAIN-SUFFIX,vsk.ru
 # Телеком, провайдеры связи и Умный дом
+DOMAIN-SUFFIX,3gppnetwork.org
 DOMAIN-SUFFIX,b2c-digest.ru
 DOMAIN-SUFFIX,domru.ru
 DOMAIN-SUFFIX,dreame.tech

@@ -131,6 +131,8 @@
 <tr><td>🌐 <code>geosite:youtube</code></td><td>Обход замедлений ТСПУ и стабильное воспроизведение YouTube</td></tr>
 <tr><td>🌐 <code>geosite:telegram</code></td><td>Стабильное подключение к дата-центрам Telegram в обход блокировок</td></tr>
 <tr><td>🌐 <code>geosite:github</code></td><td>Обход фильтрации ресурсов и ассетов GitHub</td></tr>
+<tr><td>🌐 <code>geosite:instagram</code></td><td>Официальные домены и медиа-CDN Instagram и Threads (мгновенная загрузка без DNS-задержек)</td></tr>
+<tr><td>🌐 <code>geosite:twitter</code></td><td>Социальная сеть X (Twitter), t.co и twimg.com (прямой резолв без блокировок)</td></tr>
 <tr><td>🌐 <b>Весь остальной зарубежный трафик</b></td><td>Все сайты и сервисы, не вошедшие в Direct-списки, направляются через прокси</td></tr>
 </tbody>
 </table>

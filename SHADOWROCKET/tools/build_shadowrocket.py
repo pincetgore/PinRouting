@@ -225,6 +225,8 @@ RULE-SET,{rules_base}/category-geoblock-ru.list,PROXY
 RULE-SET,{rules_base}/github.list,PROXY
 RULE-SET,{rules_base}/youtube.list,PROXY
 RULE-SET,{rules_base}/telegram.list,PROXY
+RULE-SET,{rules_base}/instagram.list,PROXY
+RULE-SET,{rules_base}/twitter.list,PROXY
 
 # --- Прямое подключение (DirectSites) ---
 RULE-SET,{rules_base}/private.list,DIRECT
@@ -268,6 +270,8 @@ RULE-SET,{rules_base}/whitelist-ips.list,DIRECT,no-resolve
 
 # --- Проксируемые сервисы (ProxySites) ---
 RULE-SET,{rules_base}/category-geoblock-ru.list,PROXY
+RULE-SET,{rules_base}/instagram.list,PROXY
+RULE-SET,{rules_base}/twitter.list,PROXY
 
 # --- Финальное правило (весь остальной трафик в VPN) ---
 FINAL,PROXY

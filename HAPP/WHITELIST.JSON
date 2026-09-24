@@ -27,7 +27,9 @@
     "geoip:whitelist"
   ],
   "ProxySites": [
-    "geosite:category-geoblock-ru"
+    "geosite:category-geoblock-ru",
+    "geosite:instagram",
+    "geosite:twitter"
   ],
   "ProxyIp": [],
   "BlockSites": [

@@ -36,7 +36,9 @@
     "geosite:category-geoblock-ru",
     "geosite:github",
     "geosite:youtube",
-    "geosite:telegram"
+    "geosite:telegram",
+    "geosite:instagram",
+    "geosite:twitter"
   ],
   "ProxyIp": [],
   "BlockSites": [
