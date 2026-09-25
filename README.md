@@ -110,7 +110,7 @@
 
 ---
 
-## 🗺 Маршрутизация в профиле DEFAULT
+## 🗺️ Маршрутизация в профиле DEFAULT
 
 Порядок применения правил (`RouteOrder`): **`block-proxy-direct`**.
 
@@ -127,7 +127,7 @@
 <table width="100%">
 <thead><tr><th align="left">Сервис / Направление</th><th align="left">Зачем</th></tr></thead>
 <tbody>
-<tr><td>🌐 <code>geosite:category-geoblock-ru</code></td><td>Зарубежные сервисы с геоблокировкой пользователей из РФ (Gemini, AI Studio, ChatGPT, Claude, Notion, Canva и др.)</td></tr>
+<tr><td>🌐 <code>geosite:category-geoblock-ru</code></td><td>Зарубежные сервисы с геоблокировкой пользователей из РФ (Gemini, AI Studio, ChatGPT, Claude, Microsoft Copilot, Notion, Canva и др.)</td></tr>
 <tr><td>🌐 <code>geosite:youtube</code></td><td>Обход замедлений ТСПУ и стабильное воспроизведение YouTube</td></tr>
 <tr><td>🌐 <code>geosite:telegram</code></td><td>Стабильное подключение к дата-центрам Telegram в обход блокировок</td></tr>
 <tr><td>🌐 <code>geosite:github</code></td><td>Обход фильтрации ресурсов и ассетов GitHub</td></tr>
@@ -142,7 +142,7 @@
 <thead><tr><th align="left">Сервис / Домены</th><th align="left">Зачем</th></tr></thead>
 <tbody>
 <tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
-<tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Доставка push-уведомлений Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei, Samsung) и проверка сетевого подключения (captive portal)</td></tr>
+<tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Доставка push-уведомлений Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei HMS <code>hicloud</code>/<code>dbankcloud</code>, Samsung), звонки Wi-Fi Calling (VoWiFi <code>3gppnetwork.org</code>) и проверка сетевого подключения (captive portal)</td></tr>
 <tr><td>✅ <code>geosite:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
 <tr><td>✅ <code>geosite:domains-geo-detect</code></td><td>225 сервисов проверки IP и сетевой геолокации (2ip, whoer, browserleaks, bgp.tools и др.) напрямую в обход VPN</td></tr>
 <tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
@@ -154,7 +154,7 @@
 </table>
 
 > [!NOTE]
-> **Приоритет Google vs Gemini:** Домен `google.com` включён в `whitelist` для быстрого прямого поиска без задержек VPN. При этом сервисы Gemini и AI Studio (`gemini.google.com`, `generativelanguage.googleapis.com`) гарантированно направляются в прокси, так как правило `geosite:category-geoblock-ru` имеет более высокий приоритет исполнения (`RouteOrder: block-proxy-direct`).
+> **Приоритет Google vs Gemini:** Домен `google.com` включён в `whitelist` для быстрого прямого поиска без задержек VPN. При этом сервисы Gemini и AI Studio (`gemini.google.com`, `gemini.gstatic.com`, `generativelanguage.googleapis.com`) гарантированно направляются в прокси, так как правило `geosite:category-geoblock-ru` имеет более высокий приоритет исполнения (`RouteOrder: block-proxy-direct`).
 
 ---
 
@@ -174,13 +174,15 @@
 <tbody>
 <tr><td>✅ <code>geosite:whitelist</code></td><td><b>860+ проверенных корневых доменов</b> ключевых российских сервисов (банки, Госуслуги, суды, ФНС, ЕМИАС, аптеки, маркетплейсы, доставка, транспорт, авиация, телеком, облака)</td></tr>
 <tr><td>✅ <code>geoip:whitelist</code></td><td><b>17 900+ доверенных IP-диапазонов РФ</b> для гарантированной работы банковских приложений и государственных порталов</td></tr>
-<tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Push-уведомления Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei, Samsung) и проверка сетевого подключения (captive portal)</td></tr>
+<tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Push-уведомления Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei HMS <code>hicloud</code>/<code>dbankcloud</code>, Samsung), звонки Wi-Fi Calling (VoWiFi <code>3gppnetwork.org</code>) и проверка сетевого подключения (captive portal)</td></tr>
 <tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, роутер, домашние устройства)</td></tr>
 </tbody>
 </table>
 
 ### 🔵 PROXY (через VPN)
-* 🌐 `geosite:category-geoblock-ru` — зарубежные сервисы с геоблокировкой пользователей из РФ
+* 🌐 `geosite:category-geoblock-ru` — зарубежные сервисы с геоблокировкой пользователей из РФ (OpenAI ChatGPT, Anthropic Claude, Google Gemini, Microsoft Copilot, Notion и др.)
+* 🌐 `geosite:instagram` — официальные домены и медиа-CDN Instagram и Threads
+* 🌐 `geosite:twitter` — социальная сеть X (Twitter), t.co и twimg.com
 * 🌐 **Весь остальной трафик** — все поисковики, зарубежные сайты, социальные сети, медиа и сервисы, не входящие в белый список, идут через защищённый туннель.
 
 ---
@@ -230,9 +232,13 @@
 
 ### 🌐 Geosite (`geosite.dat`)
 Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
-* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `apple-push`, `android-push`, `youtube`, `telegram`, `github`, `microsoft`, `steam`, `twitch`, `pinterest`, `domains-geo-detect`, `category-ads`, `torrent`, `win-spy`, `private`).
-* **База `whitelist`**: более **850 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков, [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) и официального реестра ЦБ РФ.
-* **Утилиты валидации и дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**:
+* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `apple-push`, `android-push`, `youtube`, `telegram`, `github`, `instagram`, `twitter`, `microsoft`, `steam`, `twitch`, `pinterest`, `domains-geo-detect`, `category-ads`, `torrent`, `private`).
+* **База `whitelist`**: более **860 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков, [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) и официального реестра ЦБ РФ.
+* **Утилиты валидации, тестирования и дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**:
+  * `test_routing.py`: сквозное симуляционное тестирование маршрутизации (Happ, INCY, Shadowrocket) на ключевом наборе доменов (банки, Госуслуги, VoWiFi, push-шлюзы, соцсети, AI-сервисы, трекеры) для защиты от регрессий в CI/CD:
+    ```bash
+    python3 geosite/buildtools/test_routing.py
+    ```
   * `lint_rules.py`: статический анализатор синтаксиса, дубликатов, избыточных поддоменов и валидации CIDR в CI/CD:
     ```bash
     python3 geosite/buildtools/lint_rules.py --fail-on-error
@@ -289,7 +295,10 @@
 │   ├── CUSTOM-LIST-ADD.txt    # Зарубежная инфраструктура Yandex, VK, Apple APNs
 │   └── CUSTOM-WHITELIST.txt   # Кастомный белый список подсетей
 ├── geosite/
-│   ├── buildtools/            # Скрипты тестирования и дедупликации доменов
+│   ├── buildtools/            # Скрипты тестирования, линтинга и дедупликации доменов
+│   │   ├── lint_rules.py      # Линтер синтаксиса и избыточности правил
+│   │   ├── test_routing.py    # Симуляция и регрессионное тестирование роутинга
+│   │   └── deduplicate.py     # Анализатор пересечений IP и доменов
 │   └── data/                  # Текстовые списки доменов по категориям
 ├── .gitignore                 # Исключение временных файлов и build artifacts (release/)
 ├── LICENSE                    # Лицензия MIT
@@ -302,7 +311,7 @@
 
 Проект агрегирует данные, списки и инструменты из следующих открытых источников:
 
-### 🛠 Инструменты сборки
+### 🛠️ Инструменты сборки
 * [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) — инструмент компиляции бинарных баз `geoip.dat`.
 * [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) — компилятор бинарных баз правил `geosite.dat`.
 
@@ -311,7 +320,7 @@
 * [Davoyan/ipinfo](https://github.com/Davoyan/ipinfo) — ежедневные списки IP-диапазонов IPinfo Lite для России и Беларуси.
 * [Netsyms / MaxMind](https://dl.netsyms.net/dbs/geolite2/) — зеркало базы GeoLite2 ASN для фильтрации подсетей по номерам автономных систем (ASN).
 
-### 🛡 Списки блокировок РКН (для исключения из прямого трафика)
+### 🛡️ Списки блокировок РКН (для исключения из прямого трафика)
 * [Re:filter](https://github.com/1andrevich/Re-filter-lists) — актуальные списки заблокированных ресурсов (ipsum, community).
 * [Antifilter.Network](https://antifilter.network) — выгрузка заблокированных IP-адресов.
 * [Antifilter Community](https://community.antifilter.download) — общественный список блокировок.
@@ -321,6 +330,7 @@
 * [mansourjabin/cdn-ip-database](https://github.com/mansourjabin/cdn-ip-database) — база IP-адресов сетей доставки контента.
 
 ### 📋 Белые списки и правила маршрутизации
+* [DigneZzZ/routing](https://github.com/DigneZzZ/routing) — архитектурные подходы к оптимизации мобильного роутинга и концепции сквозного тестирования правил.
 * [escapingworm/russia-whitelist](https://github.com/escapingworm/russia-whitelist) — проверенные белые списки подсетей РФ (CIDR).
 * [kirilllavrov/RU-domain-list-for-whitelist](https://github.com/kirilllavrov/RU-domain-list-for-whitelist) — списки российских доменов для белого списка.
 * [hxehex/russia-mobile-internet-whitelist](https://github.com/hxehex/russia-mobile-internet-whitelist) — белые списки ресурсов мобильного интернета РФ.
