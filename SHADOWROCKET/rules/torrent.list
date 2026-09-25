@@ -1,7 +1,7 @@
 # NAME: torrent.list
-# TOTAL: 451
+# TOTAL: 450
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-25 17:10:04 UTC
+# UPDATED: 2026-09-25 17:12:16 UTC
 DOMAIN-SUFFIX,dht.aelitis.com
 DOMAIN-SUFFIX,dht.transmissionbt.com
 DOMAIN-SUFFIX,dht.vuze.com
@@ -432,7 +432,6 @@ DOMAIN-SUFFIX,open.ftorrent.com
 DOMAIN-SUFFIX,pybittrack.retiolus.net
 DOMAIN-SUFFIX,seedpeer.net
 DOMAIN-SUFFIX,tr3.ysagin.top
-DOMAIN-SUFFIX,tracker.004430.xyz
 DOMAIN-SUFFIX,tracker.0x7c0.com
 DOMAIN-SUFFIX,tracker.7471.top
 DOMAIN-SUFFIX,tracker.aruku.ovh
