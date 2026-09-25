@@ -81,6 +81,10 @@ jobs:
         run: |
           python3 geosite/buildtools/lint_rules.py --fail-on-error
 
+      - name: Run Routing Simulation Tests
+        run: |
+          python3 geosite/buildtools/test_routing.py
+
       # -----------------------------------------------------------------------
       # Build GeoIP
       # -----------------------------------------------------------------------

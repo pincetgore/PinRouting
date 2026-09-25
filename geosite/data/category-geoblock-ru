@@ -193,6 +193,7 @@ domain:aistudio.google.com
 domain:bard.google.com
 domain:gemini.google
 domain:gemini.google.com
+domain:gemini.gstatic.com
 
 # Google DeepMind - Gemini Code Assist
 domain:cloudaicompanion.googleapis.com

@@ -30,5 +30,6 @@ domain:mipush.xiaomi.com
 domain:xmpush.xiaomi.com
 domain:connect.rom.miui.com
 domain:push.hicloud.com
+domain:dbankcloud.com
 domain:connectivitycheck.platform.hicloud.com
 domain:connectivitycheck.samsungcloud.com
