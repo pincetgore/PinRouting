@@ -1,7 +1,7 @@
 # NAME: microsoft.list
 # TOTAL: 66
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-25 16:07:55 UTC
+# UPDATED: 2026-09-25 17:01:12 UTC
 DOMAIN-SUFFIX,windowsupdate.com
 DOMAIN-SUFFIX,wns.windows.com
 DOMAIN-SUFFIX,adl.windows.com
