@@ -2,82 +2,46 @@ name: Build and Update Routing
 
 on:
   schedule:
-    - cron: '0 4 * * *'
+    - cron: '0 4 * * *' # Daily at 04:00 UTC
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - "geoip/**"
-      - "geosite/**"
-      - "HAPP/*.JSON"
-      - "INCY/*.JSON"
-      - "SHADOWROCKET/tools/**"
-      - "pyproject.toml"
-      - ".github/workflows/build-and-update.yml"
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+      - 'geoip/**'
+      - 'geosite/**'
+      - 'HAPP/**'
+      - 'INCY/**'
+      - 'SHADOWROCKET/tools/**'
+      - '.github/workflows/build-and-update.yml'
 
 permissions:
   contents: write
 
 jobs:
-  build-and-update:
+  build:
     runs-on: ubuntu-latest
-    env:
-      CURL: "curl -fsSL --retry 3 --retry-delay 2 --retry-connrefused"
-
     steps:
-      - name: Checkout PinRouting
-        uses: actions/checkout@v7
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Validate configs
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Validating JSON files..."
-          jq empty HAPP/*.JSON INCY/*.JSON
-          echo "All configs valid!"
-
-      - name: Set Tag & Timestamps
-        id: meta
-        shell: bash
-        run: |
-          set -euo pipefail
-          export TZ=UTC
-          DAILY_TAG=$(date -u +%Y%m%d%H%M)
-          NOW_EPOCH=$(date -u +%s)
-          echo "tag=${DAILY_TAG}" >> "$GITHUB_OUTPUT"
-          echo "epoch=${NOW_EPOCH}" >> "$GITHUB_OUTPUT"
-          echo "Building with tag: ${DAILY_TAG}, epoch: ${NOW_EPOCH}"
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
 
       - name: Setup Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: '3.12'
 
-      # -----------------------------------------------------------------------
-      # Lint Python Code
-      # -----------------------------------------------------------------------
-      - name: Lint Python Code
+      - name: Install Python Dependencies
         run: |
           pip install --upgrade ruff
-          ruff check .
 
-      - name: Setup Go
-        uses: actions/setup-go@v7
-        with:
-          go-version: '>=1.21'
-          cache: false
-
-      # -----------------------------------------------------------------------
-      # Lint Geosite & GeoIP Rules
-      # -----------------------------------------------------------------------
-      - name: Lint Rulesets
+      - name: Lint Rules & Configuration
         run: |
           python3 geosite/buildtools/lint_rules.py --fail-on-error
 
@@ -85,88 +49,82 @@ jobs:
         run: |
           python3 geosite/buildtools/test_routing.py
 
+      - name: Set Release Metadata
+        id: meta
+        run: |
+          TAG="$(date -u +'%Y%m%d%H%M')"
+          EPOCH="$(date -u +'%s')"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "epoch=${EPOCH}" >> "$GITHUB_OUTPUT"
+          echo "Build Tag: ${TAG} (Epoch: ${EPOCH})"
+
       # -----------------------------------------------------------------------
-      # Build GeoIP
+      # Build GeoIP (Standalone with loyalsoldier/geoip)
       # -----------------------------------------------------------------------
-      - name: Checkout Loyalsoldier/geoip
-        uses: actions/checkout@v7
+      - name: Checkout Loyalsoldier GeoIP Generator
+        uses: actions/checkout@v4
         with:
           repository: Loyalsoldier/geoip
           path: geoip-builder
-          fetch-depth: 1
 
-      - name: Download GeoIP Inputs
-        working-directory: geoip-builder
+      - name: Prepare GeoIP Configuration and Custom Rules
         run: |
-          set -euo pipefail
-          mkdir -p downloads
-          pids=()
-          ${{ env.CURL }} -o whitelist.txt https://raw.githubusercontent.com/escapingworm/russia-whitelist/refs/heads/main/ru-whitelist-cidr.txt & pids+=($!)
-          ${{ env.CURL }} -o antifilterdownloadcommunity.txt https://community.antifilter.download/list/community.lst & pids+=($!)
-          ${{ env.CURL }} -o refilter.txt https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/ipsum.lst & pids+=($!)
-          ${{ env.CURL }} -o refiltercommunity.txt https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community_ips.lst & pids+=($!)
-          ${{ env.CURL }} -o antifilternetwork.txt https://antifilter.network/download/ip.lst & pids+=($!)
-          ${{ env.CURL }} -o cdn.lst https://raw.githubusercontent.com/mansourjabin/cdn-ip-database/refs/heads/main/data/cdn.lst & pids+=($!)
-          ${{ env.CURL }} -o merged.sum https://raw.githubusercontent.com/PentiumB/CDN-RuleSet/refs/heads/main/release/merged.sum & pids+=($!)
-          ${{ env.CURL }} -o downloads/geolite2-ipv4.csv https://github.com/sapics/ip-location-db/releases/download/latest/geolite2-country-ipv4.csv & pids+=($!)
-          ${{ env.CURL }} -o downloads/dbip-ipv4.csv https://github.com/sapics/ip-location-db/releases/download/latest/dbip-country-ipv4.csv & pids+=($!)
-          ${{ env.CURL }} -o ipinfo_ru.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/ru.lst & pids+=($!)
-          ${{ env.CURL }} -o ipinfo_by.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/by.lst & pids+=($!)
-          ${{ env.CURL }} -o downloads/GeoLite2-ASN-CSV.zip https://dl.netsyms.net/dbs/geolite2/GeoLite2-ASN-CSV.zip & pids+=($!)
+          # Copy custom configs into geoip-builder root
+          cp -f geoip/config.json geoip-builder/config.json
+          cp -f geoip/CUSTOM-*.txt geoip-builder/
 
-          for pid in "${pids[@]}"; do
-            wait "$pid"
-          done
-
-          # Parse GeoLite2 and DB-IP datasets locally for RU & BY
-          python3 "${{ github.workspace }}/geoip/buildtools/parse_country_db.py" --input downloads/geolite2-ipv4.csv --prefix geolite_ --countries RU,BY --output-dir .
-          python3 "${{ github.workspace }}/geoip/buildtools/parse_country_db.py" --input downloads/dbip-ipv4.csv --prefix dbip_ --countries RU,BY --output-dir .
-
-          test -s geolite_ru.lst && test -s geolite_by.lst
-          test -s dbip_ru.lst && test -s dbip_by.lst
-          test -s downloads/GeoLite2-ASN-CSV.zip
-          unzip -j downloads/GeoLite2-ASN-CSV.zip '*/GeoLite2-ASN-Blocks-*.csv' -d ./geolite2
-          rm -rf downloads
-          ls -l ./geolite2/
-
-      - name: Overlay Custom GeoIP Config & Lists
+      - name: Download GeoIP Data Sources
         run: |
-          set -euo pipefail
-          cp -f geoip/*.json geoip-builder/
-          cp -f geoip/*.txt  geoip-builder/
+          cd geoip-builder
+          # 1. Re:filter lists
+          curl -sSL "https://raw.githubusercontent.com/1andrevich/Re-filter-lists/arm/ipsum_ip_re-filter_arm.lst" -o refilter-ipsum.txt
+          curl -sSL "https://raw.githubusercontent.com/1andrevich/Re-filter-lists/arm/community_ip_re-filter_arm.lst" -o refilter-community.txt
 
-      - name: Compile & Run GeoIP Builder
-        working-directory: geoip-builder
+          # 2. Antifilter Network & Community
+          curl -sSL "https://antifilter.network/download/ip.lst" -o antifilter-network.txt
+          curl -sSL "https://community.antifilter.download/list/community.lst" -o antifilter-community.txt
+
+          # 3. Global CDNs & Hostings
+          curl -sSL "https://raw.githubusercontent.com/PentiumB/CDN-RuleSet/main/cidr/all_cdn.txt" -o pentiumb-cdn.txt
+          curl -sSL "https://raw.githubusercontent.com/mansourjabin/cdn-ip-database/main/all_cdn_ip.txt" -o mansourjabin-cdn.txt
+          curl -sSL "https://raw.githubusercontent.com/ip-location-db/asn-ip-database/refs/heads/main/asn-ip-ranges.csv" -o asn-ip-ranges.csv
+          curl -sSL "https://zerocdn.com/zerocdn-ipv4.txt" -o zerocdn.txt
+
+          # 4. IPinfo Lite (RU & BY)
+          curl -sSL "https://raw.githubusercontent.com/Davoyan/ipinfo/main/country_asn/RU.txt" -o ipinfo-ru.txt
+          curl -sSL "https://raw.githubusercontent.com/Davoyan/ipinfo/main/country_asn/BY.txt" -o ipinfo-by.txt
+
+          # 5. DB-IP Lite & MaxMind GeoLite2 ASN (via parse_country_db.py)
+          curl -sSL "https://raw.githubusercontent.com/ip-location-db/dbip-country-lite/refs/heads/main/dbip-country-lite.csv" -o dbip-country-lite.csv
+          curl -sSL "https://dl.netsyms.net/dbs/geolite2/GeoLite2-ASN-CSV.zip" -o GeoLite2-ASN-CSV.zip
+          unzip -q GeoLite2-ASN-CSV.zip
+
+          # Parse DB-IP & GeoLite2 ASN directly from source CSVs
+          python3 ../geoip/buildtools/parse_country_db.py
+
+          # Verify downloaded sources
+          wc -l *.txt
+
+      - name: Compile GeoIP
         run: |
-          set -euo pipefail
-          go mod download
-          go build -o geoip-tool
-          rm -rf output
-          ./geoip-tool convert -c config.json
-          test -s output/dat/geoip.dat
-          ls -lh output/dat/*.dat
+          cd geoip-builder
+          go run ./ --country --text
+          ls -lh output/dat/geoip.dat output/text/
 
       # -----------------------------------------------------------------------
-      # Build Geosite
+      # Build Geosite (Standalone with v2fly/domain-list-community)
       # -----------------------------------------------------------------------
-      - name: Checkout v2fly/domain-list-community
-        uses: actions/checkout@v7
-        with:
-          repository: v2fly/domain-list-community
-          path: geosite-builder
-          fetch-depth: 1
-
-      - name: Compile & Run Geosite Builder
+      - name: Build Geosite Compiler
         run: |
-          set -euo pipefail
-          rm -rf geosite-builder/data /tmp/geosite-out
-          mkdir -p geosite-builder/data /tmp/geosite-out
-          cp -a ./geosite/data/. geosite-builder/data/
+          mkdir -p /tmp/dlc-repo
+          git clone --depth 1 https://github.com/v2fly/domain-list-community.git /tmp/dlc-repo
+          cd /tmp/dlc-repo
+          go build -v -o /tmp/dlc-bin .
 
-          pushd geosite-builder >/dev/null
-          go run ./ -outputdir=/tmp/geosite-out
-          popd >/dev/null
-
+      - name: Compile Geosite
+        run: |
+          mkdir -p /tmp/geosite-out
+          /tmp/dlc-bin --datapath geosite/data --outputdir /tmp/geosite-out
           test -s /tmp/geosite-out/dlc.dat
           mkdir -p /tmp/geosite-artifacts
           cp -f /tmp/geosite-out/dlc.dat /tmp/geosite-artifacts/geosite.dat
@@ -188,9 +146,9 @@ jobs:
           # Geosite files
           cp -f /tmp/geosite-artifacts/geosite.dat release/
 
-          # Checksums (relative filenames for sha256sum -c convenience)
-          (cd release && sha256sum geoip.dat   > geoip.dat.sha256)
-          (cd release && sha256sum geosite.dat > geosite.dat.sha256)
+          # Checksums (pure 64-char hex strings as per INCY / Happ spec)
+          (cd release && sha256sum geoip.dat   | awk '{print $1}' > geoip.dat.sha256)
+          (cd release && sha256sum geosite.dat | awk '{print $1}' > geosite.dat.sha256)
 
           # Tarballs for GitHub release
           tar -czf /tmp/dist/text.tar.gz -C release text
@@ -200,7 +158,7 @@ jobs:
       # Update HAPP & INCY Configs
       # -----------------------------------------------------------------------
       - name: Update HAPP and INCY Configs
-        run: |
+        run: |\
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
           EPOCH="${{ steps.meta.outputs.epoch }}"
@@ -229,20 +187,21 @@ jobs:
           echo "Mirroring HAPP configs to INCY..."
           cp HAPP/*.JSON INCY/
 
-          echo "Generating Deeplinks..."
+          echo "Generating Deeplinks and Autorouting Links..."
           for type in DEFAULT WHITELIST BASIC; do
             happ_b64="$(jq -c . "HAPP/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
             printf 'happ://routing/onadd/%s\n' "$happ_b64" > "HAPP/${type}.DEEPLINK"
 
             incy_b64="$(jq -c . "INCY/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
             printf 'incy://routing/onadd/%s\n' "$incy_b64" > "INCY/${type}.DEEPLINK"
+            printf 'incy://autorouting/onadd/https://raw.githubusercontent.com/%s/main/INCY/%s.JSON\n' "$REPO" "$type" > "INCY/${type}.AUTOLINK"
           done
 
       # -----------------------------------------------------------------------
       # Build Shadowrocket Configs & Rules
       # -----------------------------------------------------------------------
       - name: Build Shadowrocket Configs and Rules
-        run: |
+        run: |\
           set -euo pipefail
           EPOCH="${{ steps.meta.outputs.epoch }}"
           REPO="${{ github.repository }}"
@@ -252,7 +211,7 @@ jobs:
       # Commit to main & Push Tag
       # -----------------------------------------------------------------------
       - name: Commit and Push Main Changes
-        run: |
+        run: |\
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
           git config --local user.name "github-actions[bot]"
@@ -272,7 +231,7 @@ jobs:
       # Push to Release Branch & Publish Release
       # -----------------------------------------------------------------------
       - name: Push to Release Branch
-        run: |
+        run: |\
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
           cd release
@@ -289,7 +248,7 @@ jobs:
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+        run: |\
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
 
@@ -298,51 +257,23 @@ jobs:
             if gh release create "${TAG}" /tmp/dist/* --title "${TAG}" --notes "Automated release ${TAG}"; then
               echo "Release published successfully!"
               exit 0
-            elif gh release upload "${TAG}" /tmp/dist/* --clobber; then
-              echo "Release already existed; assets uploaded successfully!"
-              exit 0
             fi
-            echo "Failed to publish release (attempt $i/3). Retrying in 10s..."
-            sleep 10
+            echo "Retry $i failed, waiting 5 seconds..."
+            sleep 5
           done
+          echo "Failed to create release after 3 attempts."
           exit 1
 
       # -----------------------------------------------------------------------
-      # Keep Only Latest Release & Tag
+      # Purge jsDelivr CDN Cache
       # -----------------------------------------------------------------------
-      - name: Delete Older Releases and Tags
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          CURRENT_TAG="${{ steps.meta.outputs.tag }}"
-          echo "Keeping current release and tag: ${CURRENT_TAG}"
-
-          # Delete all older releases and their associated tags
-          gh release list --limit 100 --json tagName --jq '.[].tagName' | while read -r tag; do
-            if [ -n "$tag" ] && [ "$tag" != "$CURRENT_TAG" ]; then
-              echo "Deleting old release: $tag"
-              gh release delete "$tag" --cleanup-tag -y || true
-            fi
-          done
-
-          # Clean up any remaining dangling remote tags
-          git ls-remote --tags origin | awk '{print $2}' | sed 's#refs/tags/##' | grep -v '\^{}' | while read -r rtag; do
-            if [ -n "$rtag" ] && [ "$rtag" != "$CURRENT_TAG" ]; then
-              echo "Deleting dangling remote tag: $rtag"
-              git push origin --delete "$rtag" || true
-            fi
-          done
-
-      # -----------------------------------------------------------------------
-      # Purge jsDelivr Cache
-      # -----------------------------------------------------------------------
-      - name: Purge jsDelivr CDN Cache
-        run: |
-          set -euo pipefail
+      - name: Purge jsDelivr Cache
+        continue-on-error: true
+        run: |\
           REPO="${{ github.repository }}"
-          for f in geoip.dat geoip.dat.sha256 geosite.dat geosite.dat.sha256; do
-            if ! curl -fsSL -i "https://purge.jsdelivr.net/gh/${REPO}@release/${f}" > /dev/null; then
-              echo "::warning ::Failed to purge ${f} from jsDelivr cache"
-            fi
-          done
+          echo "Purging jsDelivr CDN cache for ${REPO}@release..."
+          curl -s "https://purge.jsdelivr.net/gh/${REPO}@release/geoip.dat" || true
+          curl -s "https://purge.jsdelivr.net/gh/${REPO}@release/geosite.dat" || true
+          curl -s "https://purge.jsdelivr.net/gh/${REPO}@release/geoip.dat.sha256" || true
+          curl -s "https://purge.jsdelivr.net/gh/${REPO}@release/geosite.dat.sha256" || true
+          echo "Purge request completed."

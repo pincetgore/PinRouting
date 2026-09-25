@@ -47,22 +47,25 @@
 ### Для INCY
 
 <table width="100%">
-<thead><tr><th align="left">Профиль</th><th align="left">Файл диплинка (.DEEPLINK)</th><th align="left">JSON-конфиг (для подписки)</th><th align="left">Описание</th></tr></thead>
+<thead><tr><th align="left">Профиль</th><th align="left">Автообновление (Autorouting)</th><th align="left">Разовый импорт (.DEEPLINK)</th><th align="left">JSON-конфиг</th><th align="left">Описание</th></tr></thead>
 <tbody>
 <tr>
   <td><b>DEFAULT</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/DEFAULT.AUTOLINK">DEFAULT.AUTOLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/DEFAULT.DEEPLINK">DEFAULT.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/DEFAULT.JSON">DEFAULT.JSON</a></td>
   <td><b>Основной профиль:</b> Полная маршрутизация с разделением RU-трафика и зарубежных ресурсов.</td>
 </tr>
 <tr>
   <td><b>WHITELIST</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.AUTOLINK">WHITELIST.AUTOLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.DEEPLINK">WHITELIST.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.JSON">WHITELIST.JSON</a></td>
   <td><b>Белый список:</b> Прямой доступ только к доверенным белым спискам РФ, остальное через прокси.</td>
 </tr>
 <tr>
   <td><b>BASIC</b></td>
+  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.AUTOLINK">BASIC.AUTOLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.DEEPLINK">BASIC.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.JSON">BASIC.JSON</a></td>
   <td><b>Базовый профиль:</b> DNS + базы геоданных + прямой доступ для системных пуш-уведомлений (<code>geosite:apple-push</code>, <code>geosite:android-push</code>).</td>
@@ -104,9 +107,10 @@
 
 > [!TIP]
 > **Как подключить в приложении:**
-> 1. **Через диплинк:** откройте ссылку на файл `.DEEPLINK`, скопируйте текстовую строку схемы (`happ://routing/onadd/...` или `incy://routing/onadd/...`) и откройте её в адресной строке браузера на устройстве (браузер предложит открыть клиент).
-> 2. **Через URL подписки:** скопируйте прямую ссылку на `.JSON` файл и укажите её в клиенте как внешний URL правил маршрутизации (с поддержкой автообновления).
-> 3. **В Shadowrocket:** нажмите «Импорт в Shadowrocket» или скопируйте URL `.CONF` файла, перейдите в **Config** ➔ **«+»**, вставьте ссылку и нажмите **Download**. Включите автообновление: **Settings** ➔ **Update** ➔ **Config** (или через параметр `update-url`).
+> 1. **Через автообновляемый диплинк (INCY Autorouting):** откройте ссылку на `.AUTOLINK`, скопируйте строку (`incy://autorouting/onadd/https://...`) и вставьте в адресную строку браузера — клиент свяжет профиль с удаленным источником и будет автоматически проверять обновления каждые 30 минут.
+> 2. **Через разовый диплинк (Happ / INCY):** откройте ссылку на файл `.DEEPLINK`, скопируйте строку схемы (`happ://routing/onadd/...` или `incy://routing/onadd/...`) и откройте её в браузере (импортирует статический снимок правил в клиент).
+> 3. **Через URL профиля в приложении:** укажите прямую ссылку на `.JSON` файл в настройках маршрутизации клиента.
+> 4. **В Shadowrocket:** нажмите «Импорт в Shadowrocket» или скопируйте URL `.CONF` файла, перейдите в **Config** ➔ **«+»**, вставьте ссылку и нажмите **Download**. Включите автообновление: **Settings** ➔ **Update** ➔ **Config** (или через параметр `update-url`).
 
 ---
 
@@ -276,10 +280,10 @@
 │   ├── DEFAULT.JSON / .DEEPLINK
 │   ├── WHITELIST.JSON / .DEEPLINK
 │   └── BASIC.JSON / .DEEPLINK
-├── INCY/                      # Зеркальные конфигурации для клиента INCY
-│   ├── DEFAULT.JSON / .DEEPLINK
-│   ├── WHITELIST.JSON / .DEEPLINK
-│   └── BASIC.JSON / .DEEPLINK
+├── INCY/                      # Конфигурации для клиента INCY (автообновление и разовый импорт)
+│   ├── DEFAULT.JSON / .AUTOLINK / .DEEPLINK
+│   ├── WHITELIST.JSON / .AUTOLINK / .DEEPLINK
+│   └── BASIC.JSON / .AUTOLINK / .DEEPLINK
 ├── SHADOWROCKET/              # Конфигурации и списки правил для Shadowrocket
 │   ├── DEFAULT.CONF           # Основной профиль маршрутизации
 │   ├── WHITELIST.CONF         # Профиль белого списка РФ
