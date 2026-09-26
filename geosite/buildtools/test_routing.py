@@ -180,6 +180,11 @@ class RoutingTestSuite:
             ("3gppnetwork.org", "DIRECT", "VoWiFi root"),
             ("epdg.epc.mnc002.mcc250.pub.3gppnetwork.org", "DIRECT", "Megafon VoWiFi ePDG"),
             ("gateway.icloud.com", "DIRECT", "Apple push/iCloud"),
+            # Mobile App Store & Google Play direct updates -> DIRECT
+            ("updates.cdn-apple.com", "DIRECT", "Apple App Store / iOS updates CDN"),
+            ("appldnld.apple.com", "DIRECT", "Apple software download CDN"),
+            ("play.google.com", "DIRECT", "Google Play Store"),
+            ("play.googleapis.com", "DIRECT", "Google Play API & APKs"),
             # Direct media and gaming -> DIRECT
             ("steamcommunity.com", "DIRECT", "Steam"),
             ("steampowered.com", "DIRECT", "Steam Store"),

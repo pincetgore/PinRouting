@@ -2,7 +2,7 @@
   "Name": "PinRouting Whitelist",
   "GlobalProxy": "true",
   "UseChunkFiles": "true",
-  "RemoteDNSType": "DoH",
+  "RemoteDNSType": "DoH3",
   "RemoteDNSDomain": "https://dns.quad9.net/dns-query",
   "RemoteDNSIP": "9.9.9.9",
   "DomesticDNSType": "DoH",
@@ -10,7 +10,7 @@
   "DomesticDNSIP": "77.88.8.8",
   "Geoipurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat",
   "Geositeurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat",
-  "LastUpdated": "1790413053",
+  "LastUpdated": "1790356204",
   "DnsHosts": {
     "lkfl2.nalog.ru": "213.24.64.175",
     "lknpd.nalog.ru": "213.24.64.181"
@@ -20,6 +20,8 @@
     "geosite:private",
     "geosite:apple-push",
     "geosite:android-push",
+    "geosite:apple-update",
+    "geosite:google-play",
     "geosite:whitelist"
   ],
   "DirectIp": [

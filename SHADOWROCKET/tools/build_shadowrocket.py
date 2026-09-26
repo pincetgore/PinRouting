@@ -178,7 +178,7 @@ dns-fallback-system = false
 dns-direct-fallback-proxy = true
 
 # DNS серверы (100% аналог RemoteDns и DomesticDns из Happ и INCY):
-# Основной удаленный DoH: Quad9 (https://dns.quad9.net/dns-query, 9.9.9.9)
+# Основной удаленный DoH3/DoH: Quad9 (https://dns.quad9.net/dns-query, 9.9.9.9)
 dns-server = https://dns.quad9.net/dns-query, 9.9.9.9
 
 # Резервный отечественный DoH: Yandex (https://common.dot.dns.yandex.net/dns-query, 77.88.8.8)
@@ -231,6 +231,8 @@ RULE-SET,{rules_base}/twitter.list,PROXY
 # --- Прямое подключение (DirectSites) ---
 RULE-SET,{rules_base}/private.list,DIRECT
 RULE-SET,{rules_base}/apple-push.list,DIRECT
+RULE-SET,{rules_base}/apple-update.list,DIRECT
+RULE-SET,{rules_base}/google-play.list,DIRECT
 RULE-SET,{rules_base}/category-ru.list,DIRECT
 RULE-SET,{rules_base}/whitelist.list,DIRECT
 RULE-SET,{rules_base}/domains-geo-detect.list,DIRECT
@@ -263,6 +265,8 @@ RULE-SET,{rules_base}/category-ads.list,REJECT
 # --- Прямое подключение: только белые списки (DirectSites) ---
 RULE-SET,{rules_base}/private.list,DIRECT
 RULE-SET,{rules_base}/apple-push.list,DIRECT
+RULE-SET,{rules_base}/apple-update.list,DIRECT
+RULE-SET,{rules_base}/google-play.list,DIRECT
 RULE-SET,{rules_base}/whitelist.list,DIRECT
 
 # --- Прямое подключение: IP белого списка РФ (DirectIp) ---

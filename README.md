@@ -147,6 +147,7 @@
 <tbody>
 <tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
 <tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Доставка push-уведомлений Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei HMS <code>hicloud</code>/<code>dbankcloud</code>, Samsung), звонки Wi-Fi Calling (VoWiFi <code>3gppnetwork.org</code>) и проверка сетевого подключения (captive portal)</td></tr>
+<tr><td>✅ <code>geosite:apple-update</code> + <code>geosite:google-play</code></td><td>Фоновое обновление приложений и системы (App Store, iOS Updates, Google Play, Play Services) напрямую без расхода трафика VPN-сервера</td></tr>
 <tr><td>✅ <code>geosite:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
 <tr><td>✅ <code>geosite:domains-geo-detect</code></td><td>225 сервисов проверки IP и сетевой геолокации (2ip, whoer, browserleaks, bgp.tools и др.) напрямую в обход VPN</td></tr>
 <tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
@@ -179,6 +180,7 @@
 <tr><td>✅ <code>geosite:whitelist</code></td><td><b>860+ проверенных корневых доменов</b> ключевых российских сервисов (банки, Госуслуги, суды, ФНС, ЕМИАС, аптеки, маркетплейсы, доставка, транспорт, авиация, телеком, облака)</td></tr>
 <tr><td>✅ <code>geoip:whitelist</code></td><td><b>17 900+ доверенных IP-диапазонов РФ</b> для гарантированной работы банковских приложений и государственных порталов</td></tr>
 <tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Push-уведомления Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei HMS <code>hicloud</code>/<code>dbankcloud</code>, Samsung), звонки Wi-Fi Calling (VoWiFi <code>3gppnetwork.org</code>) и проверка сетевого подключения (captive portal)</td></tr>
+<tr><td>✅ <code>geosite:apple-update</code> + <code>geosite:google-play</code></td><td>Обновление приложений App Store и Google Play напрямую без троттлинга скорости</td></tr>
 <tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, роутер, домашние устройства)</td></tr>
 </tbody>
 </table>
@@ -205,7 +207,7 @@
 </tr>
 <tr>
   <td align="center">🌍 <b>Remote (Proxy)</b></td>
-  <td><b>Quad9 DNS (DoH)</b><br><code>https://dns.quad9.net/dns-query</code></td>
+  <td><b>Quad9 DNS (DoH3 / HTTP/3)</b><br><code>https://dns.quad9.net/dns-query</code></td>
   <td>Резолвинг зарубежных и заблокированных сайтов. Запросы шифруются и идут <b>через зашифрованный VPN-туннель</b> (не перехватываются ТСПУ). Не ведет логов, юрисдикция Швейцарии, фильтрация фишинга.</td>
 </tr>
 </tbody>
