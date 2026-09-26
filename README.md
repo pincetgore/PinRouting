@@ -27,7 +27,7 @@
   <td><b>DEFAULT</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.DEEPLINK">DEFAULT.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.JSON">DEFAULT.JSON</a></td>
-  <td><b>Основной профиль:</b> RU/BY, банки, гос. сервисы, Steam, Twitch напрямую. YouTube, Telegram, GitHub и зарубежный интернет — через прокси. Реклама и телеметрия заблокированы.</td>
+  <td><b>Основной профиль:</b> RU/BY, банки, гос. сервисы, Steam напрямую. YouTube, Telegram, GitHub и зарубежный интернет — через прокси. Реклама и телеметрия заблокированы.</td>
 </tr>
 <tr>
   <td><b>WHITELIST</b></td>
@@ -82,7 +82,7 @@
   <td><b>DEFAULT</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/DEFAULT.CONF">DEFAULT.CONF</a></td>
   <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/DEFAULT.CONF">Импорт в Shadowrocket</a></td>
-  <td><b>Основной профиль:</b> Полный аналог DEFAULT.JSON. Российский трафик (RU/BY, банки, Госуслуги, Steam, Twitch) напрямую. Заблокированные ресурсы и остальной интернет — через прокси. Реклама и телеметрия заблокированы.</td>
+  <td><b>Основной профиль:</b> Полный аналог DEFAULT.JSON. Российский трафик (RU/BY, банки, Госуслуги, Steam) напрямую. Заблокированные ресурсы и остальной интернет — через прокси. Реклама и телеметрия заблокированы.</td>
 </tr>
 <tr>
   <td><b>WHITELIST</b></td>
@@ -150,9 +150,7 @@
 <tr><td>✅ <code>geosite:apple-update</code> + <code>geosite:google-play</code></td><td>Фоновое обновление приложений и системы (App Store, iOS Updates, Google Play, Play Services) напрямую без расхода трафика VPN-сервера</td></tr>
 <tr><td>✅ <code>geosite:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
 <tr><td>✅ <code>geosite:domains-geo-detect</code></td><td>225 сервисов проверки IP и сетевой геолокации (2ip, whoer, browserleaks, bgp.tools и др.) напрямую в обход VPN</td></tr>
-<tr><td>✅ <code>geosite:microsoft</code></td><td>Windows Update, Xbox и сервисы Microsoft без расхода трафика сервера</td></tr>
 <tr><td>✅ <code>geosite:steam</code></td><td>Игровой трафик Steam напрямую (максимальная скорость загрузки игр)</td></tr>
-<tr><td>✅ <code>geosite:twitch</code></td><td>Видеопотоки Twitch напрямую (экономия трафика сервера)</td></tr>
 <tr><td>✅ <code>geosite:pinterest</code></td><td>Прямой доступ к сервису Pinterest</td></tr>
 <tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, 127.0.0.0/8, 192.168.x.x, роутер, локальные устройства)</td></tr>
 </tbody>

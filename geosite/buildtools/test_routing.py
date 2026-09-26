@@ -188,7 +188,7 @@ class RoutingTestSuite:
             # Direct media and gaming -> DIRECT
             ("steamcommunity.com", "DIRECT", "Steam"),
             ("steampowered.com", "DIRECT", "Steam Store"),
-            ("twitch.tv", "DIRECT", "Twitch"),
+            ("twitch.tv", "PROXY", "Twitch (unlisted foreign media -> PROXY)"),
             ("pinterest.com", "DIRECT", "Pinterest"),
             # Social networks and foreign services -> PROXY
             ("instagram.com", "PROXY", "Instagram web"),
