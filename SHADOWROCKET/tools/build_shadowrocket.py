@@ -237,6 +237,7 @@ RULE-SET,{rules_base}/category-ru.list,DIRECT
 RULE-SET,{rules_base}/whitelist.list,DIRECT
 RULE-SET,{rules_base}/domains-geo-detect.list,DIRECT
 RULE-SET,{rules_base}/steam.list,DIRECT
+RULE-SET,{rules_base}/twitch.list,DIRECT
 RULE-SET,{rules_base}/pinterest.list,DIRECT
 
 # --- Прямое подключение по IP (DirectIp) ---
