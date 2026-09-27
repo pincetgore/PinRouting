@@ -6,8 +6,8 @@ name: Build and Update Routing
 
 on:
   schedule:
-    # Run every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
-    - cron: '0 0,6,12,18 * * *'
+    # Run every 24 hours: 01:00 UTC (04:00 MSK / UTC+3)
+    - cron: '0 1 * * *'
   workflow_dispatch:
   push:
     branches:
