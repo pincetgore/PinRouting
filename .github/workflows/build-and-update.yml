@@ -1,20 +1,23 @@
+# .github/workflows/build-and-update.yml
+# Builds custom geoip.dat and geosite.dat, updates Happ, Incy, and Shadowrocket routing configs,
+# publishes release assets with SHA256 checksums, and updates the release branch.
+
 name: Build and Update Routing
 
 on:
   schedule:
-    - cron: '0 4 * * *'
+    # Run every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - "geoip/**"
-      - "geosite/**"
-      - "HAPP/**"
-      - "INCY/**"
-      - "SHADOWROCKET/tools/**"
-      - "pyproject.toml"
-      - ".github/workflows/build-and-update.yml"
-  workflow_dispatch:
+      - 'geoip/**'
+      - 'geosite/**'
+      - 'profiles/**'
+      - 'tools/**'
+      - '.github/workflows/build-and-update.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,29 +26,25 @@ concurrency:
 permissions:
   contents: write
 
+env:
+  CURL: curl -sSL --retry 5 --retry-delay 3 --connect-timeout 10
+
 jobs:
-  build-and-update:
+  build:
+    name: Build & Update Geodata and Routing
     runs-on: ubuntu-latest
-    env:
-      CURL: "curl -fsSL --retry 3 --retry-delay 2 --retry-connrefused"
 
     steps:
-      - name: Checkout PinRouting
+      - name: Checkout Repository
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Validate configs
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Validating JSON files..."
-          jq empty HAPP/*.JSON INCY/*.JSON
-          echo "All configs valid!"
-
-      - name: Set Tag & Timestamps
+      # -----------------------------------------------------------------------
+      # Dynamic Build Metadata
+      # -----------------------------------------------------------------------
+      - name: Generate Build Metadata
         id: meta
-        shell: bash
         run: |
           set -euo pipefail
           export TZ=UTC
@@ -77,13 +76,14 @@ jobs:
       # -----------------------------------------------------------------------
       # Lint Geosite & GeoIP Rules
       # -----------------------------------------------------------------------
-      - name: Lint Rulesets
+      - name: Lint Rulesets and Profiles
         run: |
           python3 geosite/buildtools/lint_rules.py --fail-on-error
+          PYTHONPATH=tools python3 -m pinrouting lint
 
       - name: Run Routing Simulation Tests
         run: |
-          python3 geosite/buildtools/test_routing.py
+          PYTHONPATH=tools python3 -m pinrouting test
 
       # -----------------------------------------------------------------------
       # Build GeoIP
@@ -130,14 +130,14 @@ jobs:
           ls -l ./geolite2/
 
       - name: Overlay Custom GeoIP Config & Lists
-        run: |
+        run: |\
           set -euo pipefail
           cp -f geoip/*.json geoip-builder/
           cp -f geoip/*.txt  geoip-builder/
 
       - name: Compile & Run GeoIP Builder
         working-directory: geoip-builder
-        run: |
+        run: |\
           set -euo pipefail
           go mod download
           go build -o geoip-tool
@@ -157,7 +157,7 @@ jobs:
           fetch-depth: 1
 
       - name: Compile & Run Geosite Builder
-        run: |
+        run: |\
           set -euo pipefail
           rm -rf geosite-builder/data /tmp/geosite-out
           mkdir -p geosite-builder/data /tmp/geosite-out
@@ -176,7 +176,7 @@ jobs:
       # Package Release Assets
       # -----------------------------------------------------------------------
       - name: Prepare Release Directory
-        run: |
+        run: |\
           set -euo pipefail
           rm -rf release /tmp/dist
           mkdir -p release/text /tmp/dist
@@ -197,63 +197,22 @@ jobs:
           cp -f release/*.dat release/*.dat.sha256 /tmp/dist/
 
       # -----------------------------------------------------------------------
-      # Update HAPP & INCY Configs
+      # Build All Client Routing Configs (HAPP, INCY, Shadowrocket) via PinRouting
       # -----------------------------------------------------------------------
-      - name: Update HAPP and INCY Configs
-        run: |
-          set -euo pipefail
-          TAG="${{ steps.meta.outputs.tag }}"
-          EPOCH="${{ steps.meta.outputs.epoch }}"
-          REPO="${{ github.repository }}"
-
-          GEOIP_URL="https://cdn.jsdelivr.net/gh/${REPO}@release/geoip.dat"
-          GEOSITE_URL="https://cdn.jsdelivr.net/gh/${REPO}@release/geosite.dat"
-
-          echo "Updating configs to:"
-          echo "  GeoIP:   $GEOIP_URL"
-          echo "  Geosite: $GEOSITE_URL"
-          echo "  Epoch:   $EPOCH"
-
-          for type in DEFAULT WHITELIST BASIC; do
-            file="HAPP/${type}.JSON"
-            tmp="$(mktemp)"
-            jq \
-              --arg ts "$EPOCH" \
-              --arg geoip "$GEOIP_URL" \
-              --arg geosite "$GEOSITE_URL" \
-              '.LastUpdated = $ts | .Geoipurl = $geoip | .Geositeurl = $geosite' \
-              "$file" > "$tmp"
-            mv "$tmp" "$file"
-          done
-
-          echo "Mirroring HAPP configs to INCY..."
-          cp HAPP/*.JSON INCY/
-
-          echo "Generating Deeplinks and Autorouting Links..."
-          for type in DEFAULT WHITELIST BASIC; do
-            happ_b64="$(jq -c . "HAPP/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
-            printf 'happ://routing/onadd/%s\n' "$happ_b64" > "HAPP/${type}.DEEPLINK"
-
-            incy_b64="$(jq -c . "INCY/${type}.JSON" | tr -d '\r\n' | base64 | tr -d '\r\n')"
-            printf 'incy://routing/onadd/%s\n' "$incy_b64" > "INCY/${type}.DEEPLINK"
-            printf 'incy://autorouting/onadd/https://raw.githubusercontent.com/%s/main/INCY/%s.JSON\n' "$REPO" "$type" > "INCY/${type}.AUTOLINK"
-          done
-
-      # -----------------------------------------------------------------------
-      # Build Shadowrocket Configs & Rules
-      # -----------------------------------------------------------------------
-      - name: Build Shadowrocket Configs and Rules
-        run: |
+      - name: Build PinRouting Client Configurations
+        run: |\
           set -euo pipefail
           EPOCH="${{ steps.meta.outputs.epoch }}"
           REPO="${{ github.repository }}"
-          python3 SHADOWROCKET/tools/build_shadowrocket.py --repo "$REPO" --epoch "$EPOCH"
+
+          echo "Building unified client routing configs for repo $REPO with epoch $EPOCH..."
+          PYTHONPATH=tools python3 -m pinrouting build --repo "$REPO" --epoch "$EPOCH"
 
       # -----------------------------------------------------------------------
       # Commit to main & Push Tag
       # -----------------------------------------------------------------------
       - name: Commit and Push Main Changes
-        run: |
+        run: |\
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
           git config --local user.name "github-actions[bot]"
@@ -273,7 +232,7 @@ jobs:
       # Push to Release Branch & Publish Release
       # -----------------------------------------------------------------------
       - name: Push to Release Branch
-        run: |
+        run: |\
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
           cd release
@@ -283,67 +242,21 @@ jobs:
           git checkout -b release
           git add -A
           git commit -m "Release ${TAG}"
-          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git push -f -u origin release
-          cd ..
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push -f origin release
 
       - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: "PinRouting Geodata & Rules ${{ steps.meta.outputs.tag }}"
+          body: |
+            Automated daily release of compiled geo-databases and routing lists.
+            - `geoip.dat` & `geoip.dat.sha256`
+            - `geosite.dat` & `geosite.dat.sha256`
+            - Text CIDR dumps (`text.tar.gz`)
+          files: /tmp/dist/*
+          draft: false
+          prerelease: false
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          TAG="${{ steps.meta.outputs.tag }}"
-
-          echo "Publishing release for tag ${TAG}..."
-          for i in 1 2 3; do
-            if gh release create "${TAG}" /tmp/dist/* --title "${TAG}" --notes "Automated release ${TAG}"; then
-              echo "Release published successfully!"
-              exit 0
-            elif gh release upload "${TAG}" /tmp/dist/* --clobber; then
-              echo "Release already existed; assets uploaded successfully!"
-              exit 0
-            fi
-            echo "Failed to publish release (attempt $i/3). Retrying in 10s..."
-            sleep 10
-          done
-          exit 1
-
-      # -----------------------------------------------------------------------
-      # Keep Only Latest Release & Tag
-      # -----------------------------------------------------------------------
-      - name: Delete Older Releases and Tags
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          CURRENT_TAG="${{ steps.meta.outputs.tag }}"
-          echo "Keeping current release and tag: ${CURRENT_TAG}"
-
-          # Delete all older releases and their associated tags
-          gh release list --limit 100 --json tagName --jq '.[].tagName' | while read -r tag; do
-            if [ -n "$tag" ] && [ "$tag" != "$CURRENT_TAG" ]; then
-              echo "Deleting old release: $tag"
-              gh release delete "$tag" --cleanup-tag -y || true
-            fi
-          done
-
-          # Clean up any remaining dangling remote tags
-          git ls-remote --tags origin | awk '{print $2}' | sed 's#refs/tags/##' | grep -v '\^{}' | while read -r rtag; do
-            if [ -n "$rtag" ] && [ "$rtag" != "$CURRENT_TAG" ]; then
-              echo "Deleting dangling remote tag: $rtag"
-              git push origin --delete "$rtag" || true
-            fi
-          done
-
-      # -----------------------------------------------------------------------
-      # Purge jsDelivr Cache
-      # -----------------------------------------------------------------------
-      - name: Purge jsDelivr CDN Cache
-        run: |
-          set -euo pipefail
-          REPO="${{ github.repository }}"
-          for f in geoip.dat geoip.dat.sha256 geosite.dat geosite.dat.sha256; do
-            if ! curl -fsSL -i "https://purge.jsdelivr.net/gh/${REPO}@release/${f}" > /dev/null; then
-              echo "::warning ::Failed to purge ${f} from jsDelivr cache"
-            fi
-          done
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
