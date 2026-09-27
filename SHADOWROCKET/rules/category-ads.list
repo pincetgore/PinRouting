@@ -1,7 +1,7 @@
 # NAME: category-ads.list
 # TOTAL: 42
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-27 20:00:46 UTC
+# UPDATED: 2026-09-27 20:04:56 UTC
 # Google Ads
 DOMAIN-SUFFIX,doubleclick.net
 DOMAIN-SUFFIX,googleadservices.com
