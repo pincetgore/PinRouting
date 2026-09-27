@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional
 
 from pinrouting.models import ProfileConfig
 
@@ -19,7 +18,6 @@ class BaseEmitter(ABC):
         profile: ProfileConfig,
         output_dir: Path,
         repo: str,
-        epoch: Optional[str] = None,
+        epoch: str | None = None,
     ) -> None:
         """Emit profile configuration files and links."""
-        pass

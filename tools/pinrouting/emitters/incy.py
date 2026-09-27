@@ -10,7 +10,6 @@ from __future__ import annotations
 import base64
 import json
 from pathlib import Path
-from typing import Optional
 
 from pinrouting.emitters.base import BaseEmitter
 from pinrouting.models import ProfileConfig
@@ -23,7 +22,7 @@ class IncyEmitter(BaseEmitter):
         profile: ProfileConfig,
         output_dir: Path,
         repo: str,
-        epoch: Optional[str] = None,
+        epoch: str | None = None,
     ) -> None:
         output_dir.mkdir(parents=True, exist_ok=True)
         key = profile_id.upper()

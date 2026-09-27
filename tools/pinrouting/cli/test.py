@@ -15,13 +15,17 @@ def run_tests(root_dir: Path) -> int:
         return 1
 
     print(f"Running regression test suite: {test_script.name}...")
-    res = subprocess.run([sys.executable, str(test_script)], cwd=str(root_dir))
+    res = subprocess.run(
+        [sys.executable, str(test_script)], cwd=str(root_dir), check=False
+    )
     return res.returncode
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run PinRouting test suite")
-    parser.add_argument("--root-dir", default=str(Path.cwd()), help="PinRouting repo root")
+    parser.add_argument(
+        "--root-dir", default=str(Path.cwd()), help="PinRouting repo root"
+    )
     args = parser.parse_args(argv)
 
     root = Path(args.root_dir).resolve()

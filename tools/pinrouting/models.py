@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -31,21 +31,21 @@ class ProfileConfig:
     geosite_url: str = (
         "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat"
     )
-    dns_hosts: Dict[str, str] = field(default_factory=dict)
-    direct_sites: List[str] = field(default_factory=list)
-    direct_ip: List[str] = field(default_factory=list)
-    proxy_sites: List[str] = field(default_factory=list)
-    proxy_ip: List[str] = field(default_factory=list)
-    block_sites: List[str] = field(default_factory=list)
-    block_ip: List[str] = field(default_factory=list)
+    dns_hosts: dict[str, str] = field(default_factory=dict)
+    direct_sites: list[str] = field(default_factory=list)
+    direct_ip: list[str] = field(default_factory=list)
+    proxy_sites: list[str] = field(default_factory=list)
+    proxy_ip: list[str] = field(default_factory=list)
+    block_sites: list[str] = field(default_factory=list)
+    block_ip: list[str] = field(default_factory=list)
     domain_strategy: str = "IPIfNonMatch"
     fake_dns: str = "false"
     use_chunk_files: str = "true"
     route_order: str = "block-proxy-direct"
-    last_updated: Optional[str] = None
+    last_updated: str | None = None
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> ProfileConfig:
+    def from_dict(cls, data: dict[str, Any]) -> ProfileConfig:
         return cls(
             name=data.get("Name", "Default"),
             global_proxy=str(data.get("GlobalProxy", "true")),
@@ -90,9 +90,9 @@ class ProfileConfig:
             data = json.load(f)
         return cls.from_dict(data)
 
-    def to_client_dict(self, epoch: Optional[str] = None) -> Dict[str, Any]:
+    def to_client_dict(self, epoch: str | None = None) -> dict[str, Any]:
         """Convert to the standard Happ/INCY JSON dictionary structure preserving exact key order."""
-        out: Dict[str, Any] = {
+        out: dict[str, Any] = {
             "Name": self.name,
             "GlobalProxy": self.global_proxy,
             "UseChunkFiles": self.use_chunk_files,

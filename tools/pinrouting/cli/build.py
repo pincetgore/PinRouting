@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Optional
 
 from pinrouting.emitters.happ import HappEmitter
 from pinrouting.emitters.incy import IncyEmitter
@@ -12,7 +11,7 @@ from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.models import ProfileConfig
 
 
-def build_all(root_dir: Path, repo: str, epoch: Optional[str] = None) -> None:
+def build_all(root_dir: Path, repo: str, epoch: str | None = None) -> None:
     profiles_dir = root_dir / "profiles"
     happ_dir = root_dir / "HAPP"
     incy_dir = root_dir / "INCY"
@@ -56,7 +55,7 @@ def build_all(root_dir: Path, repo: str, epoch: Optional[str] = None) -> None:
     print("\n✓ All client configurations generated successfully!")
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Build PinRouting configurations for HAPP, INCY, and Shadowrocket"
     )

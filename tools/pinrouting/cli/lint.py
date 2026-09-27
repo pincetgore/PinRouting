@@ -14,10 +14,7 @@ from __future__ import annotations
 import argparse
 import ipaddress
 import json
-import re
-import sys
 from pathlib import Path
-from typing import List, Set
 
 from pinrouting.models import ProfileConfig
 
@@ -26,13 +23,27 @@ class ValidationError(Exception):
     pass
 
 
-def lint_profiles(root_dir: Path) -> List[str]:
-    errors: List[str] = []
+def lint_profiles(root_dir: Path) -> list[str]:
+    errors: list[str] = []
     profiles_dir = root_dir / "profiles"
     geosite_data_dir = root_dir / "geosite" / "data"
 
-    available_geosites = {p.name for p in geosite_data_dir.iterdir() if p.is_file() and not p.name.startswith(".")}
-    standard_geoips = {"private", "ru", "by", "cn", "direct", "whitelist", "custom-list-add", "custom-whitelist", "ads"}
+    available_geosites = {
+        p.name
+        for p in geosite_data_dir.iterdir()
+        if p.is_file() and not p.name.startswith(".")
+    }
+    standard_geoips = {
+        "private",
+        "ru",
+        "by",
+        "cn",
+        "direct",
+        "whitelist",
+        "custom-list-add",
+        "custom-whitelist",
+        "ads",
+    }
 
     profile_files = sorted(profiles_dir.glob("*.json"))
     if not profile_files:
@@ -44,7 +55,7 @@ def lint_profiles(root_dir: Path) -> List[str]:
             with open(pf, "r", encoding="utf-8") as f:
                 raw = json.load(f)
             cfg = ProfileConfig.from_dict(raw)
-        except Exception as e:
+        except (json.JSONDecodeError, OSError, ValueError, KeyError) as e:
             errors.append(f"[{pf.name}] Failed to parse profile: {e}")
             continue
 
@@ -52,18 +63,26 @@ def lint_profiles(root_dir: Path) -> List[str]:
         if not cfg.name:
             errors.append(f"[{pf.name}] Profile Name cannot be empty")
         if cfg.global_proxy not in ("true", "false"):
-            errors.append(f"[{pf.name}] GlobalProxy must be 'true' or 'false', got '{cfg.global_proxy}'")
+            errors.append(
+                f"[{pf.name}] GlobalProxy must be 'true' or 'false', got '{cfg.global_proxy}'"
+            )
         if cfg.remote_dns_type not in ("DoH", "DoH3", "DoU", "DoT"):
-            errors.append(f"[{pf.name}] RemoteDNSType '{cfg.remote_dns_type}' is not supported")
+            errors.append(
+                f"[{pf.name}] RemoteDNSType '{cfg.remote_dns_type}' is not supported"
+            )
         if cfg.domestic_dns_type not in ("DoH", "DoH3", "DoU", "DoT"):
-            errors.append(f"[{pf.name}] DomesticDNSType '{cfg.domestic_dns_type}' is not supported")
+            errors.append(
+                f"[{pf.name}] DomesticDNSType '{cfg.domestic_dns_type}' is not supported"
+            )
 
         # Validate DnsHosts
         for domain, ip in cfg.dns_hosts.items():
             try:
                 ipaddress.ip_address(ip)
             except ValueError:
-                errors.append(f"[{pf.name}] Invalid IP '{ip}' for host '{domain}' in DnsHosts")
+                errors.append(
+                    f"[{pf.name}] Invalid IP '{ip}' for host '{domain}' in DnsHosts"
+                )
 
         # Check geosite references
         all_sites = cfg.direct_sites + cfg.proxy_sites + cfg.block_sites
@@ -71,7 +90,9 @@ def lint_profiles(root_dir: Path) -> List[str]:
             if site.startswith("geosite:"):
                 cat = site.split(":", 1)[1]
                 if cat not in available_geosites:
-                    errors.append(f"[{pf.name}] Unknown geosite category '{cat}' (referenced as '{site}')")
+                    errors.append(
+                        f"[{pf.name}] Unknown geosite category '{cat}' (referenced as '{site}')"
+                    )
 
         # Check geoip references
         all_ips = cfg.direct_ip + cfg.proxy_ip + cfg.block_ip
@@ -90,14 +111,14 @@ def lint_profiles(root_dir: Path) -> List[str]:
     return errors
 
 
-def lint_geosites(root_dir: Path) -> List[str]:
-    errors: List[str] = []
+def lint_geosites(root_dir: Path) -> list[str]:
+    errors: list[str] = []
     geosite_data_dir = root_dir / "geosite" / "data"
 
     for p in sorted(geosite_data_dir.glob("*")):
         if not p.is_file() or p.name.startswith("."):
             continue
-        seen_domains: Set[str] = set()
+        seen_domains: set[str] = set()
         with open(p, "r", encoding="utf-8") as f:
             for idx, line in enumerate(f, 1):
                 line = line.strip()
@@ -105,19 +126,24 @@ def lint_geosites(root_dir: Path) -> List[str]:
                     continue
                 # check for simple formatting issues
                 if " " in line:
-                    errors.append(f"[{p.name}:{idx}] Line contains unescaped space: '{line}'")
+                    errors.append(
+                        f"[{p.name}:{idx}] Line contains unescaped space: '{line}'"
+                    )
                 domain = line.split(":", 1)[1] if ":" in line else line
                 if domain in seen_domains:
-                    # duplicate in same file
-                    pass  # duplicates can happen across attributes, but warn if exact
+                    pass
                 seen_domains.add(line)
 
     return errors
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Lint PinRouting declarative profiles and data files")
-    parser.add_argument("--root-dir", default=str(Path.cwd()), help="PinRouting repo root")
+    parser = argparse.ArgumentParser(
+        description="Lint PinRouting declarative profiles and data files"
+    )
+    parser.add_argument(
+        "--root-dir", default=str(Path.cwd()), help="PinRouting repo root"
+    )
     args = parser.parse_args(argv)
 
     root = Path(args.root_dir).resolve()

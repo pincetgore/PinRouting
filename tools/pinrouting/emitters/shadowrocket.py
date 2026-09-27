@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Set
 
 from pinrouting.emitters.base import BaseEmitter
 from pinrouting.models import ProfileConfig
@@ -17,7 +16,7 @@ class ShadowrocketEmitter(BaseEmitter):
         self.geoip_dir = root_dir / "geoip"
         self.rules_dir = root_dir / "SHADOWROCKET" / "rules"
 
-    def convert_domain_rule(self, line: str) -> Optional[str]:
+    def convert_domain_rule(self, line: str) -> str | None:
         line = line.strip()
         if not line:
             return None
@@ -51,7 +50,7 @@ class ShadowrocketEmitter(BaseEmitter):
     def build_ruleset_file(
         self, src_path: Path, dst_path: Path, repo: str, updated_str: str
     ) -> int:
-        out_lines: List[str] = []
+        out_lines: list[str] = []
         rule_count = 0
 
         with open(src_path, "r", encoding="utf-8") as f:
@@ -74,7 +73,7 @@ class ShadowrocketEmitter(BaseEmitter):
     def build_whitelist_ips(
         self, src_path: Path, dst_path: Path, repo: str, updated_str: str
     ) -> int:
-        ip_lines: List[str] = []
+        ip_lines: list[str] = []
         ip_count = 0
         with open(src_path, "r", encoding="utf-8") as f:
             for line in f:
@@ -95,10 +94,10 @@ class ShadowrocketEmitter(BaseEmitter):
         return ip_count
 
     def build_direct_ips(
-        self, sources: List[Path], dst_path: Path, repo: str, updated_str: str
+        self, sources: list[Path], dst_path: Path, repo: str, updated_str: str
     ) -> int:
-        direct_ip_lines: List[str] = []
-        seen_cidrs: Set[str] = set()
+        direct_ip_lines: list[str] = []
+        seen_cidrs: set[str] = set()
 
         for src in sources:
             if src.is_file():
@@ -122,16 +121,16 @@ class ShadowrocketEmitter(BaseEmitter):
         return len(direct_ip_lines)
 
     def build_all_rulesets(
-        self, repo: str, updated_str: Optional[str] = None
-    ) -> Dict[str, int]:
+        self, repo: str, updated_str: str | None = None
+    ) -> dict[str, int]:
         """Generate all .list files in SHADOWROCKET/rules/."""
         self.rules_dir.mkdir(parents=True, exist_ok=True)
         if not updated_str:
-            updated_str = datetime.datetime.now(datetime.timezone.utc).strftime(
+            updated_str = datetime.datetime.now(datetime.UTC).strftime(
                 "%Y-%m-%d %H:%M:%S UTC"
             )
 
-        counts: Dict[str, int] = {}
+        counts: dict[str, int] = {}
 
         # 1. Geosite domain lists (preserve existing list coverage)
         for p in sorted(self.geosite_data_dir.glob("*")):
@@ -166,8 +165,8 @@ class ShadowrocketEmitter(BaseEmitter):
         profile: ProfileConfig,
         output_dir: Path,
         repo: str,
-        epoch: Optional[str] = None,
-        updated_str: Optional[str] = None,
+        epoch: str | None = None,
+        updated_str: str | None = None,
     ) -> None:
         """Emit Shadowrocket .CONF file matching exact legacy template specifications."""
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -177,7 +176,7 @@ class ShadowrocketEmitter(BaseEmitter):
         rules_base = f"{raw_base}/rules"
 
         if not epoch:
-            now = datetime.datetime.now(datetime.timezone.utc)
+            now = datetime.datetime.now(datetime.UTC)
             epoch_str = str(int(now.timestamp()))
             if not updated_str:
                 updated_str = now.strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -186,7 +185,7 @@ class ShadowrocketEmitter(BaseEmitter):
             if not updated_str:
                 # convert epoch to UTC format
                 dt = datetime.datetime.fromtimestamp(
-                    int(epoch), tz=datetime.timezone.utc
+                    int(epoch), tz=datetime.UTC
                 )
                 updated_str = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
 
@@ -259,7 +258,7 @@ update-url = {raw_base}/{key}.CONF
 """
 
         # Build [Rule] section dynamically from ProfileConfig
-        rule_parts: List[str] = ["[Rule]"]
+        rule_parts: list[str] = ["[Rule]"]
 
         # 1. Block rules
         if profile.block_sites:
