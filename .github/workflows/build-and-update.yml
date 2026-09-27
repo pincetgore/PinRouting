@@ -130,14 +130,14 @@ jobs:
           ls -l ./geolite2/
 
       - name: Overlay Custom GeoIP Config & Lists
-        run: |\
+        run: |
           set -euo pipefail
           cp -f geoip/*.json geoip-builder/
           cp -f geoip/*.txt  geoip-builder/
 
       - name: Compile & Run GeoIP Builder
         working-directory: geoip-builder
-        run: |\
+        run: |
           set -euo pipefail
           go mod download
           go build -o geoip-tool
@@ -157,7 +157,7 @@ jobs:
           fetch-depth: 1
 
       - name: Compile & Run Geosite Builder
-        run: |\
+        run: |
           set -euo pipefail
           rm -rf geosite-builder/data /tmp/geosite-out
           mkdir -p geosite-builder/data /tmp/geosite-out
@@ -176,7 +176,7 @@ jobs:
       # Package Release Assets
       # -----------------------------------------------------------------------
       - name: Prepare Release Directory
-        run: |\
+        run: |
           set -euo pipefail
           rm -rf release /tmp/dist
           mkdir -p release/text /tmp/dist
@@ -200,7 +200,7 @@ jobs:
       # Build All Client Routing Configs (HAPP, INCY, Shadowrocket) via PinRouting
       # -----------------------------------------------------------------------
       - name: Build PinRouting Client Configurations
-        run: |\
+        run: |
           set -euo pipefail
           EPOCH="${{ steps.meta.outputs.epoch }}"
           REPO="${{ github.repository }}"
@@ -212,7 +212,7 @@ jobs:
       # Commit to main & Push Tag
       # -----------------------------------------------------------------------
       - name: Commit and Push Main Changes
-        run: |\
+        run: |
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
           git config --local user.name "github-actions[bot]"
@@ -232,7 +232,7 @@ jobs:
       # Push to Release Branch & Publish Release
       # -----------------------------------------------------------------------
       - name: Push to Release Branch
-        run: |\
+        run: |
           set -euo pipefail
           TAG="${{ steps.meta.outputs.tag }}"
           cd release
