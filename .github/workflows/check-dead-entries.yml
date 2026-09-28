@@ -59,12 +59,12 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.14"
 
@@ -103,7 +103,7 @@ jobs:
           fi
 
       - name: Upload Report Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: dead-entries-report
@@ -127,7 +127,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ (inputs.action || 'pr') == 'pr' }}
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore(cleanup): remove dead domains and unrouted IPs"
