@@ -1,6 +1,7 @@
 # 🛡️ PinRouting
 
 [![Build and Update Routing](https://github.com/pincetgore/PinRouting/actions/workflows/build-and-update.yml/badge.svg)](https://github.com/pincetgore/PinRouting/actions/workflows/build-and-update.yml)
+[![Check and Cleanup Dead Entries](https://github.com/pincetgore/PinRouting/actions/workflows/check-dead-entries.yml/badge.svg)](https://github.com/pincetgore/PinRouting/actions/workflows/check-dead-entries.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/pincetgore/PinRouting?style=flat-square&color=blue)](https://github.com/pincetgore/PinRouting/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 [![Clients](https://img.shields.io/badge/Clients-Happ%20%7C%20INCY%20%7C%20Shadowrocket-blueviolet?style=flat-square)](#-быстрая-установка)
@@ -61,222 +62,111 @@
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.AUTOLINK">WHITELIST.AUTOLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.DEEPLINK">WHITELIST.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/WHITELIST.JSON">WHITELIST.JSON</a></td>
-  <td><b>Белый список:</b> Прямой доступ только к доверенным белым спискам РФ, остальное через прокси.</td>
+  <td><b>Белый список:</b> Прямой доступ только к доверенным государственным и банковским сервисам.</td>
 </tr>
 <tr>
   <td><b>BASIC</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.AUTOLINK">BASIC.AUTOLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.DEEPLINK">BASIC.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/INCY/BASIC.JSON">BASIC.JSON</a></td>
-  <td><b>Базовый профиль:</b> DNS + базы геоданных + прямой доступ для системных пуш-уведомлений (<code>geosite:apple-push</code>, <code>geosite:android-push</code>).</td>
+  <td><b>Базовый профиль:</b> Системные пуши напрямую, DNS и базы geodata для тонкой ручной кастомизации.</td>
 </tr>
 </tbody>
 </table>
 
 ### Для Shadowrocket
 
-<table width="100%">
-<thead><tr><th align="left">Профиль</th><th align="left">Конфигурационный файл (.CONF)</th><th align="left">Ссылка для импорта в один клик</th><th align="left">Описание</th></tr></thead>
-<tbody>
-<tr>
-  <td><b>DEFAULT</b></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/DEFAULT.CONF">DEFAULT.CONF</a></td>
-  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/DEFAULT.CONF">Импорт в Shadowrocket</a></td>
-  <td><b>Основной профиль:</b> Полный аналог DEFAULT.JSON. Российский трафик (RU/BY, банки, Госуслуги, Steam, Twitch) напрямую. Заблокированные ресурсы и остальной интернет — через прокси. Реклама и телеметрия заблокированы.</td>
-</tr>
-<tr>
-  <td><b>WHITELIST</b></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/WHITELIST.CONF">WHITELIST.CONF</a></td>
-  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/WHITELIST.CONF">Импорт в Shadowrocket</a></td>
-  <td><b>Белый список:</b> Полный аналог WHITELIST.JSON. Напрямую идут <i>только</i> проверенные ресурсы РФ и 17 900+ банковских IP. Весь остальной трафик — через прокси.</td>
-</tr>
-<tr>
-  <td><b>BASIC</b></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/BASIC.CONF">BASIC.CONF</a></td>
-  <td><a href="shadowrocket://config/add/https://raw.githubusercontent.com/pincetgore/PinRouting/main/SHADOWROCKET/BASIC.CONF">Импорт в Shadowrocket</a></td>
-  <td><b>Базовый профиль:</b> DoH DNS + прямой доступ для системных пуш-уведомлений (Apple APNs/iCloud). Остальной трафик через прокси.</td>
-</tr>
-<tr>
-  <td><b>EXTENDED</b></td>
-  <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/EXTENDED.CONF">EXTENDED.CONF</a></td>
-  <td>—</td>
-  <td><b>Пользовательский файл:</b> Подключается через <code>include = EXTENDED.CONF</code>. Добавленные в него личные правила имеют наивысший приоритет и не затираются при автообновлении.</td>
-</tr>
-</tbody>
-</table>
+Импортируйте нужный `.CONF` файл по ссылке в Shadowrocket (**Config** ➔ **+** ➔ вставить URL):
 
-> [!TIP]
-> **Как подключить в приложении:**
-> 1. **Через автообновляемый диплинк (INCY Autorouting):** откройте ссылку на `.AUTOLINK`, скопируйте строку (`incy://autorouting/onadd/https://...`) и вставьте в адресную строку браузера — клиент свяжет профиль с удаленным источником и будет автоматически проверять обновления каждые 30 минут.
-> 2. **Через разовый диплинк (Happ / INCY):** откройте ссылку на файл `.DEEPLINK`, скопируйте строку схемы (`happ://routing/onadd/...` или `incy://routing/onadd/...`) и откройте её в браузере (импортирует статический снимок правил в клиент).
-> 3. **Через URL профиля в приложении:** укажите прямую ссылку на `.JSON` файл в настройках маршрутизации клиента.
-> 4. **В Shadowrocket:** нажмите «Импорт в Shadowrocket» или скопируйте URL `.CONF` файла, перейдите в **Config** ➔ **«+»**, вставьте ссылку и нажмите **Download**. Включите автообновление: **Settings** ➔ **Update** ➔ **Config** (или через параметр `update-url`).
+* 🛡️ **[DEFAULT.CONF](https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/DEFAULT.CONF)** — основной профиль со всеми оптимизациями.
+* 📋 **[WHITELIST.CONF](https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/WHITELIST.CONF)** — режим строгого белого списка.
+* ⚙️ **[BASIC.CONF](https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/SHADOWROCKET/BASIC.CONF)** — базовый профиль без предустановленных правил маршрутизации сайтов.
 
 ---
 
-## 🗺️ Маршрутизация в профиле DEFAULT
+## 🧭 Логика маршрутизации
 
-Порядок применения правил (`RouteOrder`): **`block-proxy-direct`**.
+Порядок обработки правил во всех профилях строго упорядочен:
 
-### 🔴 BLOCK (блокировка)
-<table width="100%">
-<thead><tr><th align="left">Категория</th><th align="left">Зачем</th></tr></thead>
-<tbody>
-<tr><td>🚫 <code>geosite:torrent</code></td><td>Блокировка публичных BitTorrent DHT-серверов и трекеров (защита VPS от абуз хостера)</td></tr>
-<tr><td>🚫 <code>geosite:category-ads</code></td><td>Блокировка рекламы (Google Ads, РСЯ, AdFox, MyTarget, VK, Sber Ads, агрессивные баннерные сети и попандеры)</td></tr>
-</tbody>
-</table>
-
-### 🔵 PROXY (через VPN)
-<table width="100%">
-<thead><tr><th align="left">Сервис / Направление</th><th align="left">Зачем</th></tr></thead>
-<tbody>
-<tr><td>🌐 <code>geosite:category-geoblock-ru</code></td><td>Зарубежные сервисы с геоблокировкой пользователей из РФ (Gemini, AI Studio, ChatGPT, Claude, Microsoft Copilot, Notion, Canva и др.)</td></tr>
-<tr><td>🌐 <code>geosite:youtube</code></td><td>Обход замедлений ТСПУ и стабильное воспроизведение YouTube</td></tr>
-<tr><td>🌐 <code>geosite:telegram</code></td><td>Стабильное подключение к дата-центрам Telegram в обход блокировок</td></tr>
-<tr><td>🌐 <code>geosite:github</code></td><td>Обход фильтрации ресурсов и ассетов GitHub</td></tr>
-<tr><td>🌐 <code>geosite:instagram</code></td><td>Официальные домены и медиа-CDN Instagram и Threads (мгновенная загрузка без DNS-задержек)</td></tr>
-<tr><td>🌐 <code>geosite:twitter</code></td><td>Социальная сеть X (Twitter), t.co и twimg.com (прямой резолв без блокировок)</td></tr>
-<tr><td>🌐 <b>Весь остальной зарубежный трафик</b></td><td>Все сайты и сервисы, не вошедшие в Direct-списки, направляются через прокси</td></tr>
-</tbody>
-</table>
-
-### 🟢 DIRECT (напрямую без VPN)
-<table width="100%">
-<thead><tr><th align="left">Сервис / Домены</th><th align="left">Зачем</th></tr></thead>
-<tbody>
-<tr><td>✅ <code>geosite:category-ru</code> + <code>geoip:direct</code></td><td>Все российские и белорусские сайты, порталы и сервисы</td></tr>
-<tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Доставка push-уведомлений Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei HMS <code>hicloud</code>/<code>dbankcloud</code>, Samsung), звонки Wi-Fi Calling (VoWiFi <code>3gppnetwork.org</code>) и проверка сетевого подключения (captive portal)</td></tr>
-<tr><td>✅ <code>geosite:apple-update</code> + <code>geosite:google-play</code></td><td>Фоновое обновление приложений и системы (App Store, iOS Updates, Google Play, Play Services) напрямую без расхода трафика VPN-сервера</td></tr>
-<tr><td>✅ <code>geosite:whitelist</code></td><td>Госуслуги, все банки РФ (реестр ЦБ РФ), критически важные ресурсы и сервисы Google</td></tr>
-<tr><td>✅ <code>geosite:domains-geo-detect</code></td><td>225 сервисов проверки IP и сетевой геолокации (2ip, whoer, browserleaks, bgp.tools и др.) напрямую в обход VPN</td></tr>
-<tr><td>✅ <code>geosite:steam</code></td><td>Игровой трафик Steam напрямую (максимальная скорость загрузки игр)</td></tr>
-<tr><td>✅ <code>geosite:twitch</code></td><td>Видеопотоки Twitch напрямую (экономия трафика сервера)</td></tr>
-<tr><td>✅ <code>geosite:pinterest</code></td><td>Прямой доступ к сервису Pinterest</td></tr>
-<tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, 127.0.0.0/8, 192.168.x.x, роутер, локальные устройства)</td></tr>
-</tbody>
-</table>
-
-> [!NOTE]
-> **Приоритет Google vs Gemini:** Домен `google.com` включён в `whitelist` для быстрого прямого поиска без задержек VPN. При этом сервисы Gemini и AI Studio (`gemini.google.com`, `gemini.gstatic.com`, `generativelanguage.googleapis.com`) гарантированно направляются в прокси, так как правило `geosite:category-geoblock-ru` имеет более высокий приоритет исполнения (`RouteOrder: block-proxy-direct`).
+1. **Блокировка (Block / Reject):**
+   * Рекламные сети, трекеры и баннеры (`geosite:category-ads`).
+   * Телеметрия и сбор данных Windows / Office (`geosite:win-spy`).
+   * Торрент-трекеры (`geosite:torrent`), предотвращающие утечки в туннель и нагрузку на сервер.
+2. **Системные исключения (Direct):**
+   * Push-уведомления Apple (`geosite:apple-push`) и Google FCM / Huawei HMS / Xiaomi (`geosite:android-push`).
+   * Загрузка системных обновлений iOS/macOS (`geosite:apple-update`).
+   * Скачивание APK и приложений из Google Play (`geosite:google-play`).
+   * Сетевые протоколы операторов связи (VoWiFi / IMS) и домены локального определения IP (`geosite:domains-geo-detect`).
+3. **Прямое соединение (Direct):**
+   * Локальные и приватные адреса (`geosite:private`, `geoip:private`).
+   * Российские ресурсы, порталы и банки (`geosite:category-ru`, `geoip:ru`, `geoip:by`, `geoip:direct`, `geoip:custom-list-add`).
+   * Ресурсы белого списка (`geosite:whitelist`, `geoip:whitelist`).
+   * Гейминг и стриминг: Steam (`geosite:steam`), Twitch (`geosite:twitch`), Pinterest (`geosite:pinterest`).
+4. **Проксирование (Proxy):**
+   * Заблокированные и международные социальные сети: YouTube (`geosite:youtube`), Telegram (`geosite:telegram`), Instagram / Threads (`geosite:instagram`), X / Twitter (`geosite:twitter`).
+   * Инструменты разработки: GitHub (`geosite:github`).
+   * Ресурсы, блокирующие пользователей из РФ (GeoBlock): AI-сервисы (ChatGPT, Claude, Gemini, Copilot), Canva, Spotify, Notion и др. (`geosite:category-geoblock-ru`).
+   * **Финальное правило (Catch-all):** весь остальной зарубежный трафик направляется через Proxy.
 
 ---
 
-## 🛡️ Маршрутизация в профиле WHITELIST (Белый список)
+## ⚙️ Настройки DNS
 
-Профиль предназначен для режима максимальной приватности или работы в небезопасных сетях: **весь интернет-трафик по умолчанию направляется в зашифрованный VPN-туннель**, за исключением критически важных российских сервисов, блокирующих зарубежные IP.
+Все сгенерированные конфигурации по умолчанию используют защищённые и оптимизированные резолверы:
 
-Порядок применения правил (`RouteOrder`): **`block-proxy-direct`**.
-
-### 🔴 BLOCK (блокировка)
-* 🚫 `geosite:torrent` — публичные BitTorrent трекеры и DHT (защита VPS)
-* 🚫 `geosite:category-ads` — реклама и трекеры
-
-### 🟢 DIRECT (напрямую без VPN — только доверенные ресурсы)
-<table width="100%">
-<thead><tr><th align="left">Категория / Список</th><th align="left">Что входит</th></tr></thead>
-<tbody>
-<tr><td>✅ <code>geosite:whitelist</code></td><td><b>860+ проверенных корневых доменов</b> ключевых российских сервисов (банки, Госуслуги, суды, ФНС, ЕМИАС, аптеки, маркетплейсы, доставка, транспорт, авиация, телеком, облака)</td></tr>
-<tr><td>✅ <code>geoip:whitelist</code></td><td><b>17 900+ доверенных IP-диапазонов РФ</b> для гарантированной работы банковских приложений и государственных порталов</td></tr>
-<tr><td>✅ <code>geosite:apple-push</code> + <code>geosite:android-push</code></td><td>Push-уведомления Apple (APNs/iCloud), Android (Google FCM, Xiaomi, Huawei HMS <code>hicloud</code>/<code>dbankcloud</code>, Samsung), звонки Wi-Fi Calling (VoWiFi <code>3gppnetwork.org</code>) и проверка сетевого подключения (captive portal)</td></tr>
-<tr><td>✅ <code>geosite:apple-update</code> + <code>geosite:google-play</code></td><td>Обновление приложений App Store и Google Play напрямую без троттлинга скорости</td></tr>
-<tr><td>✅ <code>geosite:private</code> + <code>geoip:private</code></td><td>Локальные сети (RFC 1918, роутер, домашние устройства)</td></tr>
-</tbody>
-</table>
-
-### 🔵 PROXY (через VPN)
-* 🌐 `geosite:category-geoblock-ru` — зарубежные сервисы с геоблокировкой пользователей из РФ (OpenAI ChatGPT, Anthropic Claude, Google Gemini, Microsoft Copilot, Notion и др.)
-* 🌐 `geosite:instagram` — официальные домены и медиа-CDN Instagram и Threads
-* 🌐 `geosite:twitter` — социальная сеть X (Twitter), t.co и twimg.com
-* 🌐 **Весь остальной трафик** — все поисковики, зарубежные сайты, социальные сети, медиа и сервисы, не входящие в белый список, идут через защищённый туннель.
+* **Remote DNS (для зарубежных и заблокированных доменов):**
+  * `Cloudflare DoH` — `https://1.1.1.1/dns-query`
+  * `Google DoH` — `https://dns.google/dns-query`
+* **Direct DNS (для российских ресурсов):**
+  * `Yandex DNS` — `77.88.8.8`, `77.88.8.1`
+  * `Cloudflare DNS` — `1.1.1.1`, `1.0.0.1`
 
 ---
 
-## 🔒 DNS и защита от утечек
+## 📦 Релизы и ссылки на базы
 
-В конфигурациях используется защищённый протокол **DNS-over-HTTPS (DoH)**:
+Скомпилированные файлы всегда доступны в ветке [`release`](https://github.com/pincetgore/PinRouting/tree/release) и через глобальный CDN:
 
-<table width="100%">
-<thead><tr><th align="center">Направление</th><th align="left">Протокол и сервер</th><th align="left">Как работает</th></tr></thead>
-<tbody>
-<tr>
-  <td align="center">🏠 <b>Domestic (Direct)</b></td>
-  <td><b>Яндекс DNS (DoH)</b><br><code>https://common.dot.dns.yandex.net/dns-query</code></td>
-  <td>Используется для прямого мгновенного резолвинга российских сайтов через локального провайдера. Минимальный пинг в РФ.</td>
-</tr>
-<tr>
-  <td align="center">🌍 <b>Remote (Proxy)</b></td>
-  <td><b>Quad9 DNS (DoH3 / HTTP/3)</b><br><code>https://dns.quad9.net/dns-query</code></td>
-  <td>Резолвинг зарубежных и заблокированных сайтов. Запросы шифруются и идут <b>через зашифрованный VPN-туннель</b> (не перехватываются ТСПУ). Не ведет логов, юрисдикция Швейцарии, фильтрация фишинга.</td>
-</tr>
-</tbody>
-</table>
-
-### Статические записи (`DnsHosts` / `[Host]`)
-Для гарантированного доступа к Личному кабинету налогоплательщика ФНС РФ в конфигах заданы статические сопоставления:
-* `lkfl2.nalog.ru` ➔ `213.24.64.175`
-* `lknpd.nalog.ru` ➔ `213.24.64.181`
+| Файл | Описание | Прямая ссылка через jsDelivr CDN |
+| :--- | :--- | :--- |
+| `geoip.dat` | Бинарная база диапазонов IP | `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat` |
+| `geosite.dat` | Бинарная база доменных правил | `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat` |
+| `geoip.dat.sha256` | Контрольная сумма SHA-256 | `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat.sha256` |
+| `geosite.dat.sha256` | Контрольная сумма SHA-256 | `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat.sha256` |
+| `text.tar.gz` | Текстовые дампы CIDR списков | В релизах [GitHub Releases](https://github.com/pincetgore/PinRouting/releases) |
 
 ---
 
-## ⚙️ Особенности кастомных баз данных
+## 🔄 Автоматизация (CI/CD)
 
-### 🌎 GeoIP (`geoip.dat`)
-Сборка базы выполняется с помощью утилиты Loyalsoldier на основе конфигурации [`geoip/config.json`](geoip/config.json):
-* **Включает подсети РФ и РБ** из трёх авторитетных источников: MaxMind GeoLite2 ASN, IPinfo и DB-IP. Базы GeoLite2 и DB-IP конвертируются автономным скриптом [`geoip/buildtools/parse_country_db.py`](geoip/buildtools/parse_country_db.py) напрямую из выгрузок `@ip-location-db` без сторонних промежуточных сервисов.
-* **Кастомные списки ([`geoip/CUSTOM-LIST-ADD.txt`](geoip/CUSTOM-LIST-ADD.txt))**:
-  * Инфраструктура Yandex Cloud / HLL LLC (AS51115);
-  * Зарубежные точки присутствия Яндекса (Yandex Oy Финляндия, Yandex Europe B.V., серверы в США, Казахстане, Беларуси);
-  * Зарубежные серверы ВКонтакте и Mail.ru Games;
-  * Официальные диапазоны шлюзов Apple Push Notification Service (APNs) для решения проблем с доставкой уведомлений на iPhone и Mac.
-* **Кастомный белый список ([`geoip/CUSTOM-WHITELIST.txt`](geoip/CUSTOM-WHITELIST.txt))**: 17 900+ доверенных диапазонов для профиля WHITELIST.
-* **Точечные исправления ([`geoip/CUSTOM-FIX-ADD.txt`](geoip/CUSTOM-FIX-ADD.txt))**: принудительное возвращение в `direct` адресов, ошибочно заблокированных РКН (например, `images.biggeek.ru`).
-* **Исключение блокировок и CDN**:
-  * Вычитание списков блокировок РКН: [Re:filter](https://github.com/1andrevich/Re-filter-lists) + [Antifilter.Network](https://antifilter.network);
-  * Вычитание [зарубежных CDN](https://github.com/PentiumB/CDN-RuleSet), а также европейских хостингов (Hetzner, ZeroCDN) для исключения утечек прокси-трафика в прямой канал.
+В репозитории настроен автоматический пайплайн GitHub Actions:
 
-### 🌐 Geosite (`geosite.dat`)
-Сборка базы выполняется компилятором `domain-list-community` из файлов правил [`geosite/data/`](geosite/data/):
-* **Очистка от мусора**: включены только категории, реально используемые в роутинге (`category-ru`, `category-geoblock-ru`, `whitelist`, `apple-push`, `android-push`, `youtube`, `telegram`, `github`, `instagram`, `twitter`, `microsoft`, `steam`, `twitch`, `pinterest`, `domains-geo-detect`, `category-ads`, `torrent`, `private`).
-* **База `whitelist`**: более **860 проверенных корневых доменов** по 13 жизненно важным отраслям РФ (госуслуги, суды, банки, медицина, ритейл, доставка, транспорт, образование, страхование, телеком, облака, медиа), агрегированных из открытых белых списков, [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) и официального реестра ЦБ РФ.
-* **Утилиты валидации, тестирования и дедупликации ([`geosite/buildtools/`](geosite/buildtools/))**:
-  * `test_routing.py`: сквозное симуляционное тестирование маршрутизации (Happ, INCY, Shadowrocket) на ключевом наборе доменов (банки, Госуслуги, VoWiFi, push-шлюзы, соцсети, AI-сервисы, трекеры) для защиты от регрессий в CI/CD:
-    ```bash
-    python3 geosite/buildtools/test_routing.py
-    ```
-  * `lint_rules.py`: статический анализатор синтаксиса, дубликатов, избыточных поддоменов и валидации CIDR в CI/CD:
-    ```bash
-    python3 geosite/buildtools/lint_rules.py --fail-on-error
-    ```
-  * `deduplicate.py`: автоматическая проверка доступности доменов через российские и зарубежные DNS-ноды для исключения доменов, чьи IP уже полностью входят в Direct-диапазоны. Поддерживает запуск как с удаленной загрузкой, так и с локальным файлом:
-    ```bash
-    python3 geosite/buildtools/deduplicate.py -f release/text/direct.txt geosite/data/category-ru
-    ```
+### 1. `build-and-update.yml` (Сборка баз и конфигов)
+1. **Проверяет синтаксис** и валидность всех профилей и правил (`ruff`, `lint_rules.py`, `pinrouting lint`).
+2. **Запускает симуляцию роутинга** (`pinrouting test`), гарантируя отсутствие регрессий.
+3. **Загружает свежие списки** GeoLite2, DB-IP, IPinfo, Re:filter, Antifilter и CDN.
+4. **Компилирует бинарные файлы** `geoip.dat` и `geosite.dat` через `geoip-tool` и `domain-list-community`.
+5. **Публикует релизы** с бинарниками, контрольными суммами и архивом `text.tar.gz`.
+6. **Генерирует клиентские конфигурации** Happ, INCY и Shadowrocket.
+
+Расписание запуска: **ежедневно в 01:00 UTC**, при каждом коммите в репозиторий или вручную через **Actions**.
+
+### 2. `check-dead-entries.yml` (Проверка и очистка неживых записей)
+1. **Проверяет домены** на liveness через 3 независимых DNS-резолвера (`1.1.1.1`, `8.8.8.8`, `77.88.8.8`) с подтверждением `NXDOMAIN`.
+2. **Проверяет IP и подсети** через TCP-пробы (443 TLS, 80 HTTP) и ICMP ping со сэмплированием хостов для сетей `/24` и шире.
+3. **Формирует детальный отчет** в Markdown и JSON (прикрепляется к GitHub Step Summary и артефактам).
+4. **Удаляет неживые записи** и автоматически создает Pull Request (`action: pr`) либо коммитит в ветку.
+
+Расписание запуска: **ежемесячно 1-го числа в 03:00 UTC** или вручную через **Actions** (`workflow_dispatch`).
 
 ---
 
-## 🔄 Автоматическая сборка и раздача геоданных
-
-Пайплайн GitHub Actions ([`.github/workflows/build-and-update.yml`](.github/workflows/build-and-update.yml)):
-1. **Параллельно загружает** актуальные выгрузки блокировок и геобаз (Re:filter, Antifilter, IPinfo, DB-IP, MaxMind GeoLite2).
-2. **Компилирует бинарные файлы** `geoip.dat` и `geosite.dat`.
-3. **Пушит результаты в изолированную ветку `release`** (без засорения ветки `main` тяжелыми бинарными diff'ами).
-4. **Раздаёт файлы через Anycast CDN jsDelivr**:
-   * `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat`
-   * `https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat`
-5. **Публикует GitHub Releases** с бинарниками, контрольными суммами (`.sha256`) и архивом текстовых списков (`text.tar.gz`).
-6. **Обновляет таймстемп `LastUpdated`** в JSON-конфигах, перегенерирует диплинки и собирает конфигурации Shadowrocket.
-7. **Очищает кэш CDN jsDelivr** через Purge API.
-
-Расписание запуска: **ежедневно в 04:00 UTC**, при каждом коммите в репозиторий или вручную через вкладку **Actions**.
-
----
-
-## 📂 Структура репозитория
+## 📁 Структура репозитория
 
 ```text
 ├── .github/workflows/
-│   └── build-and-update.yml   # Автоматизированный CI/CD пайплайн сборки
+│   ├── build-and-update.yml   # Автоматизированный CI/CD пайплайн сборки
+│   └── check-dead-entries.yml # Проверка и очистка неживых доменов и IP (PR / Commit)
 ├── HAPP/                      # Конфигурации и диплинки для клиента Happ
 │   ├── DEFAULT.JSON / .DEEPLINK
 │   ├── WHITELIST.JSON / .DEEPLINK
@@ -305,7 +195,18 @@
 │   │   ├── test_routing.py    # Симуляция и регрессионное тестирование роутинга
 │   │   └── deduplicate.py     # Анализатор пересечений IP и доменов
 │   └── data/                  # Текстовые списки доменов по категориям
-├── .gitignore                 # Исключение временных файлов и build artifacts (release/)
+├── profiles/                  # SSOT JSON-манифесты профилей (DEFAULT, WHITELIST, BASIC)
+├── tools/                     # Пакет PinRouting CLI и инструментов автоматизации
+│   └── pinrouting/
+│       ├── cli/
+│       │   ├── build.py       # Сборка конфигураций всех клиентов
+│       │   ├── check_dead.py  # Проверка и очистка неживых доменов и IP
+│       │   ├── lint.py        # Линтинг профилей и правил
+│       │   └── test.py        # Регрессионные тесты роутинга
+│       ├── emitters/          # Генераторы форматов HAPP, INCY, Shadowrocket
+│       └── models.py          # Модели конфигураций и профилей
+├── Makefile                   # make lint, make test, make build, make check-dead
+├── pyproject.toml             # Конфигурация Python проекта и линтера Ruff
 ├── LICENSE                    # Лицензия MIT
 └── README.md                  # Документация проекта
 ```
