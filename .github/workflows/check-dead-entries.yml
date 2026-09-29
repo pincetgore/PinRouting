@@ -43,6 +43,11 @@ on:
         required: false
         type: number
         default: 1.5
+      exclude_files:
+        description: 'Comma-separated filenames to exclude from checking'
+        required: false
+        type: string
+        default: 'private'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -86,8 +91,9 @@ jobs:
           CONCURRENCY="${{ inputs.concurrency || 150 }}"
           DNS_TIMEOUT="${{ inputs.dns_timeout || 2.0 }}"
           IP_TIMEOUT="${{ inputs.ip_timeout || 1.5 }}"
+          EXCLUDE_FILES="${{ inputs.exclude_files || 'private' }}"
 
-          CMD="python3 -m pinrouting check-dead --target $TARGET --concurrency $CONCURRENCY --dns-timeout $DNS_TIMEOUT --ip-timeout $IP_TIMEOUT --output-markdown dead-report.md --output-json dead-report.json"
+          CMD="python3 -m pinrouting check-dead --target $TARGET --exclude-files $EXCLUDE_FILES --concurrency $CONCURRENCY --dns-timeout $DNS_TIMEOUT --ip-timeout $IP_TIMEOUT --output-markdown dead-report.md --output-json dead-report.json"
           if [ "$ACTION" != "dry-run" ]; then
             CMD="$CMD --remove"
           fi

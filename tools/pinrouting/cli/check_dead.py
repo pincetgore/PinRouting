@@ -42,6 +42,7 @@ DEFAULT_CONCURRENCY = 150
 DEFAULT_DNS_TIMEOUT = 2.0
 DEFAULT_IP_TIMEOUT = 1.5
 DEFAULT_RETRIES = 2
+DEFAULT_EXCLUDED_FILES = ["private"]
 
 
 @dataclass
@@ -406,7 +407,7 @@ class DeadEntriesChecker:
         self.max_samples = max_samples
         self.retries = retries
         self.remove = remove
-        self.excluded_files = excluded_files or set()
+        self.excluded_files = excluded_files if excluded_files is not None else set(DEFAULT_EXCLUDED_FILES)
         self.summary = CheckSummary(dry_run=not remove)
 
     async def check_all_domains(self) -> None:
@@ -690,7 +691,8 @@ class DeadEntriesChecker:
 async def run_checker(args: argparse.Namespace) -> int:
     root_dir = Path(args.root_dir).resolve()
     resolvers = [r.strip() for r in args.resolvers.split(",") if r.strip()]
-    excluded = {x.strip() for x in args.exclude_files.split(",") if x.strip()} if args.exclude_files else set()
+    user_excluded = {x.strip() for x in args.exclude_files.split(",") if x.strip()} if args.exclude_files else set()
+    excluded = set(DEFAULT_EXCLUDED_FILES) | user_excluded
 
     checker = DeadEntriesChecker(
         root_dir=root_dir,
@@ -800,8 +802,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument(
         "--exclude-files",
-        default="",
-        help="Comma-separated list of filenames to exclude from checking",
+        default=",".join(DEFAULT_EXCLUDED_FILES),
+        help=f"Comma-separated list of filenames to exclude from checking (default: {','.join(DEFAULT_EXCLUDED_FILES)})",
     )
     parser.add_argument(
         "--output-markdown",

@@ -65,8 +65,8 @@ def main() -> int:
     )
     check_parser.add_argument(
         "--exclude-files",
-        default="",
-        help="Comma-separated list of filenames to exclude from checking",
+        default="private",
+        help="Comma-separated list of filenames to exclude from checking (default: private)",
     )
     check_parser.add_argument(
         "--output-markdown",
