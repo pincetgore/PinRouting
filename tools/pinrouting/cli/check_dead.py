@@ -247,10 +247,15 @@ async def ping_host(ip: str, timeout: float = 1.0) -> bool:
         return False
 
 
+_SSL_PROBE_CONTEXT = ssl.create_default_context()
+_SSL_PROBE_CONTEXT.check_hostname = False
+_SSL_PROBE_CONTEXT.verify_mode = ssl.CERT_NONE
+
+
 async def tcp_probe_443(ip: str, timeout: float = 1.0) -> bool:
-    """Probes port 443 with TLS ClientHello or TCP connect."""
+    """Probes port 443 with full TLS handshake to avoid fake-ip proxy interception."""
     try:
-        coro = asyncio.open_connection(ip, 443)
+        coro = asyncio.open_connection(ip, 443, ssl=_SSL_PROBE_CONTEXT)
         _reader, writer = await asyncio.wait_for(coro, timeout=timeout)
         with contextlib.suppress(OSError, TimeoutError):
             writer.close()
@@ -260,27 +265,26 @@ async def tcp_probe_443(ip: str, timeout: float = 1.0) -> bool:
         # TCP RST received: host is online and active!
         return True
     except ssl.SSLError:
-        # TLS alert received: host is active!
+        # TLS alert/error received: host is online and TLS-aware!
         return True
     except (OSError, TimeoutError):
         return False
 
 
 async def tcp_probe_80(ip: str, timeout: float = 1.0) -> bool:
-    """Probes port 80 with HTTP HEAD probe or TCP connect."""
+    """Probes port 80 with HTTP HEAD probe and response validation."""
     try:
         coro = asyncio.open_connection(ip, 80)
         reader, writer = await asyncio.wait_for(coro, timeout=timeout)
         try:
             writer.write(b"HEAD / HTTP/1.0\r\nHost: " + ip.encode("ascii") + b"\r\n\r\n")
             await asyncio.wait_for(writer.drain(), timeout=timeout)
-            with contextlib.suppress(OSError, TimeoutError):
-                await asyncio.wait_for(reader.read(32), timeout=timeout)
+            data = await asyncio.wait_for(reader.read(16), timeout=timeout)
+            return bool(data)
         finally:
             writer.close()
             with contextlib.suppress(OSError, TimeoutError):
                 await writer.wait_closed()
-        return True
     except ConnectionRefusedError:
         # TCP RST received: host is online!
         return True
