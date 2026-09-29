@@ -125,19 +125,54 @@ jobs:
             echo "No changes detected in rulesets."
           fi
 
-      - name: Create Pull Request
+      - name: Publish Cleanup (Pull Request or Branch)
         if: ${{ (inputs.action || 'pr') == 'pr' }}
-        uses: peter-evans/create-pull-request@v8
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore(cleanup): remove dead domains and unrouted IPs"
-          branch: cleanup/dead-entries
-          delete-branch: true
-          title: "🧹 Cleanup dead domains and unresponsive IPs"
-          body-path: dead-report.md
-          labels: |
-            cleanup
-            automated
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain geosite/data/ geoip/)" ]; then
+            echo "No changes detected. Nothing to commit or push."
+            exit 0
+          fi
+
+          BRANCH="cleanup/dead-entries"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "$BRANCH"
+          git add geosite/data/ geoip/
+          git commit -m "chore(cleanup): remove dead domains and unrouted IPs"
+          git push -f origin "$BRANCH"
+          echo "Successfully pushed changes to branch $BRANCH"
+
+          # Attempt creating PR via GitHub CLI
+          PR_URL=$(gh pr list --head "$BRANCH" --base "${{ github.ref_name }}" --json url --jq ".[0].url" 2>/dev/null || true)
+          if [ -n "$PR_URL" ]; then
+            echo "Existing Pull Request found: $PR_URL"
+            gh pr edit "$PR_URL" --title "🧹 Cleanup dead domains and unresponsive IPs" --body-file dead-report.md || true
+          else
+            echo "Attempting to create Pull Request via gh cli..."
+            set +e
+            PR_OUTPUT=$(gh pr create --base "${{ github.ref_name }}" --head "$BRANCH"               --title "🧹 Cleanup dead domains and unresponsive IPs"               --body-file dead-report.md 2>&1)
+            EXIT_CODE=$?
+            set -e
+
+            if [ $EXIT_CODE -eq 0 ]; then
+              echo "Pull Request created successfully: $PR_OUTPUT"
+            else
+              echo "::warning ::GitHub Actions does not have permission to create Pull Requests directly. The branch $BRANCH was pushed."
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "> [!WARNING]" >> $GITHUB_STEP_SUMMARY
+              echo "> ### ⚠️ Pull Request could not be created automatically" >> $GITHUB_STEP_SUMMARY
+              echo "> **GitHub Actions is not permitted to create pull requests in this repository's settings.**" >> $GITHUB_STEP_SUMMARY
+              echo "> The cleanup branch \`$BRANCH\` was pushed to the repository." >> $GITHUB_STEP_SUMMARY
+              echo "> " >> $GITHUB_STEP_SUMMARY
+              echo "> **How to resolve:**" >> $GITHUB_STEP_SUMMARY
+              echo "> 1. **To enable automatic PRs in the future:** Go to **Settings ➔ Actions ➔ General ➔ Workflow permissions** and check **"Allow GitHub Actions to create and approve pull requests"**." >> $GITHUB_STEP_SUMMARY
+              echo "> 2. **To open the PR now:** [Click here to review and create Pull Request](https://github.com/${{ github.repository }}/compare/${{ github.ref_name }}...${BRANCH}?expand=1)" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
 
       - name: Direct Commit to Branch
         if: ${{ (inputs.action || 'pr') == 'commit' }}

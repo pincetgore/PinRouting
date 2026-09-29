@@ -632,18 +632,30 @@ class DeadEntriesChecker:
             lines.append(f"| `{file_key}` | {stats['total']:,} | {stats['alive']:,} | {dead_str} |")
 
         if self.summary.dead_entries:
+            max_display = 100
+            total_dead = len(self.summary.dead_entries)
             lines.extend([
                 "",
                 "## 🔍 Dead Entries Details",
                 "",
+            ])
+            if total_dead > max_display:
+                lines.extend([
+                    "> [!NOTE]",
+                    f"> Showing first **{max_display}** of **{total_dead:,}** detected dead entries to keep summary readable. Full list is available in the attached `dead-report.json` artifact.",
+                    "",
+                ])
+            lines.extend([
                 "<details>",
-                f"<summary><b>Click to view {len(self.summary.dead_entries)} detected dead entries</b></summary>",
+                f"<summary><b>Click to view details ({min(total_dead, max_display)} shown)</b></summary>",
                 "",
                 "| File | Type | Target | Reason |",
                 "| :--- | :---: | :--- | :--- |",
             ])
-            for entry in self.summary.dead_entries:
+            for entry in self.summary.dead_entries[:max_display]:
                 lines.append(f"| `{entry.file_path}` | {entry.entry_type} | `{entry.target}` | {entry.reason} |")
+            if total_dead > max_display:
+                lines.append(f"| ... | ... | *and {total_dead - max_display} more* | *see dead-report.json* |")
             lines.extend([
                 "",
                 "</details>",
