@@ -186,8 +186,6 @@ class RoutingTestSuite:
             ("play.google.com", "DIRECT", "Google Play Store"),
             ("play.googleapis.com", "DIRECT", "Google Play API & APKs"),
             # Direct media and gaming -> DIRECT
-            ("steamcommunity.com", "DIRECT", "Steam"),
-            ("steampowered.com", "DIRECT", "Steam Store"),
             ("twitch.tv", "DIRECT", "Twitch"),
             ("pinterest.com", "DIRECT", "Pinterest"),
             # Social networks and foreign services -> PROXY

@@ -24,7 +24,6 @@
     "geosite:category-ru",
     "geosite:whitelist",
     "geosite:domains-geo-detect",
-    "geosite:steam",
     "geosite:twitch",
     "geosite:pinterest"
   ],

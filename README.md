@@ -28,7 +28,7 @@
   <td><b>DEFAULT</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.DEEPLINK">DEFAULT.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.JSON">DEFAULT.JSON</a></td>
-  <td><b>Основной профиль:</b> RU/BY, банки, гос. сервисы, Steam, Twitch напрямую. YouTube, Telegram, GitHub и зарубежный интернет — через прокси. Реклама и телеметрия заблокированы.</td>
+  <td><b>Основной профиль:</b> RU/BY, банки, гос. сервисы, Twitch напрямую. YouTube, Telegram, GitHub и зарубежный интернет — через прокси. Реклама и телеметрия заблокированы.</td>
 </tr>
 <tr>
   <td><b>WHITELIST</b></td>
@@ -90,7 +90,6 @@
 
 1. **Блокировка (Block / Reject):**
    * Рекламные сети, трекеры и баннеры (`geosite:category-ads`).
-   * Телеметрия и сбор данных Windows / Office (`geosite:win-spy`).
    * Торрент-трекеры (`geosite:torrent`), предотвращающие утечки в туннель и нагрузку на сервер.
 2. **Системные исключения (Direct):**
    * Push-уведомления Apple (`geosite:apple-push`) и Google FCM / Huawei HMS / Xiaomi (`geosite:android-push`).
@@ -101,7 +100,7 @@
    * Локальные и приватные адреса (`geosite:private`, `geoip:private`).
    * Российские ресурсы, порталы и банки (`geosite:category-ru`, `geoip:ru`, `geoip:by`, `geoip:direct`, `geoip:custom-list-add`).
    * Ресурсы белого списка (`geosite:whitelist`, `geoip:whitelist`).
-   * Гейминг и стриминг: Steam (`geosite:steam`), Twitch (`geosite:twitch`), Pinterest (`geosite:pinterest`).
+   * Стриминг и медиа: Twitch (`geosite:twitch`), Pinterest (`geosite:pinterest`).
 4. **Проксирование (Proxy):**
    * Заблокированные и международные социальные сети: YouTube (`geosite:youtube`), Telegram (`geosite:telegram`), Instagram / Threads (`geosite:instagram`), X / Twitter (`geosite:twitter`).
    * Инструменты разработки: GitHub (`geosite:github`).
