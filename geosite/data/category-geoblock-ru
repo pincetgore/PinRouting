@@ -482,8 +482,6 @@ domain:audio4-ak-spotify-com.akamaized.net
 domain:cdn-spotify-experiments.conductrics.com
 domain:heads-ak-spotify-com.akamaized.net
 domain:heads4-ak-spotify-com.akamaized.net
-domain:spotify.map.fastly.net
-domain:spotify.map.fastlylb.net
 
 # Strava
 domain:strava.com
@@ -1234,5 +1232,3 @@ domain:seasonvar.ru
 domain:hdrezka.ag
 domain:hdrezka.me
 domain:rezka.ag
-
-

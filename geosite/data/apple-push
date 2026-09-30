@@ -36,13 +36,9 @@ domain:iad.apple.com
 domain:qwapi.com
 
 # Apple PKI & Certificates
-domain:certs-lb.apple.com.akadns.net
 domain:certs.apple.com
-domain:crl-lb.apple.com.akadns.net
 domain:crl.apple.com
-domain:ocsp-lb.apple.com.akadns.net
 domain:ocsp.apple.com
-domain:ocsp2-lb.apple.com.akadns.net
 domain:ocsp2.apple.com
 domain:valid.apple.com
 
