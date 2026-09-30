@@ -1,7 +1,7 @@
 # NAME: google-play.list
 # TOTAL: 5
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-29 20:18:01 UTC
+# UPDATED: 2026-09-30 05:48:01 UTC
 # Google Play Store APK downloads & Play Services updates
 DOMAIN-SUFFIX,play.google.com
 DOMAIN-SUFFIX,play-fe.googleapis.com

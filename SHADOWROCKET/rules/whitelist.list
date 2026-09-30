@@ -1,7 +1,7 @@
 # NAME: whitelist.list
-# TOTAL: 864
+# TOTAL: 862
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-29 20:18:01 UTC
+# UPDATED: 2026-09-30 05:48:01 UTC
 # Direct for checkers
 DOMAIN-SUFFIX,ipify.org
 DOMAIN-SUFFIX,checkip.amazonaws.com
@@ -336,7 +336,6 @@ DOMAIN-SUFFIX,victoria-group.ru
 DOMAIN-SUFFIX,vk-analytics.ru
 DOMAIN-SUFFIX,vk-apps.com
 DOMAIN-SUFFIX,vk-apps.ru
-DOMAIN-SUFFIX,vk-cdn.me
 DOMAIN-SUFFIX,vk-cdn.net
 DOMAIN-SUFFIX,vk-portal.net
 DOMAIN-SUFFIX,vk.cc
@@ -347,7 +346,6 @@ DOMAIN-SUFFIX,vk.link
 DOMAIN-SUFFIX,vk.me
 DOMAIN-SUFFIX,vk.ru
 DOMAIN-SUFFIX,vk.team
-DOMAIN-SUFFIX,vkcache.com
 DOMAIN-SUFFIX,vkcloud-static.ru
 DOMAIN-SUFFIX,vkgo.app
 DOMAIN-SUFFIX,vklive.app

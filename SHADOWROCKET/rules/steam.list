@@ -1,7 +1,7 @@
 # NAME: steam.list
-# TOTAL: 40
+# TOTAL: 39
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-29 20:18:01 UTC
+# UPDATED: 2026-09-30 05:48:01 UTC
 DOMAIN-SUFFIX,playartifact.com
 DOMAIN-SUFFIX,s.team
 DOMAIN-SUFFIX,steam.tv
@@ -35,7 +35,6 @@ DOMAIN-SUFFIX,client-update.queniuqe.com
 DOMAIN-SUFFIX,dl.steam.clngaa.com
 DOMAIN-SUFFIX,st.dl.bscstorage.net
 DOMAIN-SUFFIX,st.dl.eccdnx.com
-DOMAIN-SUFFIX,st.dl.pinyuncloud.com
 DOMAIN-SUFFIX,steampowered.com.8686c.com
 DOMAIN-SUFFIX,steamstatic.com.8686c.com
 DOMAIN-SUFFIX,lv.queniujq.cn

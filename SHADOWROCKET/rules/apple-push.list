@@ -1,7 +1,7 @@
 # NAME: apple-push.list
-# TOTAL: 92
+# TOTAL: 88
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-09-29 20:18:01 UTC
+# UPDATED: 2026-09-30 05:48:01 UTC
 # Apple push notifications (APNs), iCloud, system updates, and captive portal checks.
 #
 # These must stay DIRECT: routing them through a tunnel adds delivery latency,
@@ -36,13 +36,9 @@ DOMAIN-SUFFIX,iadsdk.apple.com
 DOMAIN-SUFFIX,iad.apple.com
 DOMAIN-SUFFIX,qwapi.com
 # Apple PKI & Certificates
-DOMAIN-SUFFIX,certs-lb.apple.com.akadns.net
 DOMAIN-SUFFIX,certs.apple.com
-DOMAIN-SUFFIX,crl-lb.apple.com.akadns.net
 DOMAIN-SUFFIX,crl.apple.com
-DOMAIN-SUFFIX,ocsp-lb.apple.com.akadns.net
 DOMAIN-SUFFIX,ocsp.apple.com
-DOMAIN-SUFFIX,ocsp2-lb.apple.com.akadns.net
 DOMAIN-SUFFIX,ocsp2.apple.com
 DOMAIN-SUFFIX,valid.apple.com
 # Apple iCloud
