@@ -1,7 +1,7 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 1003
+# TOTAL: 1002
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-03 05:57:30 UTC
+# UPDATED: 2026-10-03 13:50:04 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
 DOMAIN-SUFFIX,4pda.ru
 DOMAIN-SUFFIX,4pda.to
@@ -798,7 +798,6 @@ DOMAIN-SUFFIX,joyreactor.cc
 DOMAIN-SUFFIX,jsfiddle.net
 DOMAIN-SUFFIX,keepgrowing.in
 DOMAIN-SUFFIX,keepsolid.com
-DOMAIN-SUFFIX,kemono.su
 DOMAIN-SUFFIX,keysight.com
 DOMAIN-SUFFIX,kinogo.la
 DOMAIN-SUFFIX,klaviyo.com

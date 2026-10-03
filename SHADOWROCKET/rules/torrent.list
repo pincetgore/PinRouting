@@ -1,7 +1,7 @@
 # NAME: torrent.list
-# TOTAL: 432
+# TOTAL: 416
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-03 05:57:30 UTC
+# UPDATED: 2026-10-03 13:50:04 UTC
 DOMAIN-SUFFIX,dht.aelitis.com
 DOMAIN-SUFFIX,dht.transmissionbt.com
 DOMAIN-SUFFIX,dht.vuze.com
@@ -11,12 +11,8 @@ DOMAIN-SUFFIX,tracker.eu.org
 DOMAIN-SUFFIX,1337.abcvg.info
 DOMAIN-SUFFIX,47.ip-51-68-199.eu
 DOMAIN-SUFFIX,9.rarbg.to
-DOMAIN-SUFFIX,a.leopard-raws.org
-DOMAIN-SUFFIX,aaa.army
 DOMAIN-SUFFIX,academic-p2p.appspot.com
 DOMAIN-SUFFIX,acg.rip
-DOMAIN-SUFFIX,admin.videoenpoche.info
-DOMAIN-SUFFIX,adminion.n-blade.ru
 DOMAIN-SUFFIX,all4nothin.net
 DOMAIN-SUFFIX,anidex.moe
 DOMAIN-SUFFIX,api.bitumconference.ru
@@ -31,7 +27,6 @@ DOMAIN-SUFFIX,bitseduce.com
 DOMAIN-SUFFIX,bitsparadise.info
 DOMAIN-SUFFIX,biztorrents.com
 DOMAIN-SUFFIX,blackcats-games.net
-DOMAIN-SUFFIX,blackz.ro
 DOMAIN-SUFFIX,blokas.io
 DOMAIN-SUFFIX,bluebird-hd.org
 DOMAIN-SUFFIX,bms-hosxp.com
@@ -43,18 +38,13 @@ DOMAIN-SUFFIX,bt.3kb.xyz
 DOMAIN-SUFFIX,bt.ali213.net
 DOMAIN-SUFFIX,bt.beatrice-raws.org
 DOMAIN-SUFFIX,bt.edwardk.info
-DOMAIN-SUFFIX,bt.firebit.org
 DOMAIN-SUFFIX,bt.hliang.com
-DOMAIN-SUFFIX,bt.okmp3.ru
-DOMAIN-SUFFIX,bt.pusacg.org
 DOMAIN-SUFFIX,bt.zlofenix.org
 DOMAIN-SUFFIX,bt2.54new.com
 DOMAIN-SUFFIX,bt2.edwardk.info
 DOMAIN-SUFFIX,bubu.mapfactor.com
 DOMAIN-SUFFIX,camera.lei001.com
 DOMAIN-SUFFIX,carbon-bonsai-621.appspot.com
-DOMAIN-SUFFIX,cdn-1.gamecoast.org
-DOMAIN-SUFFIX,cdn-2.gamecoast.org
 DOMAIN-SUFFIX,chanchan.uchuu.co.uk
 DOMAIN-SUFFIX,chihaya.de
 DOMAIN-SUFFIX,chihaya.toss.li
@@ -65,7 +55,6 @@ DOMAIN-SUFFIX,data-bg.net
 DOMAIN-SUFFIX,datascene.net
 DOMAIN-SUFFIX,daveking.com
 DOMAIN-SUFFIX,denis.stalker.upeer.me
-DOMAIN-SUFFIX,derpyradio.net
 DOMAIN-SUFFIX,deviloid.net
 DOMAIN-SUFFIX,discord.heihachi.pw
 DOMAIN-SUFFIX,dpiui.reedlan.com
@@ -76,23 +65,19 @@ DOMAIN-SUFFIX,elitezones.ro
 DOMAIN-SUFFIX,engplus.ru
 DOMAIN-SUFFIX,exodus.desync.com
 DOMAIN-SUFFIX,explodie.org
-DOMAIN-SUFFIX,fe.dealclub.de
 DOMAIN-SUFFIX,finbytes.org
 DOMAIN-SUFFIX,forever-tracker.zooki.xyz
 DOMAIN-SUFFIX,free-tracker.zooki.xyz
 DOMAIN-SUFFIX,funfile.org
 DOMAIN-SUFFIX,git.vulnix.sh
-DOMAIN-SUFFIX,grifon.info
 DOMAIN-SUFFIX,h4.trakx.nibba.trade
 DOMAIN-SUFFIX,hdreactor.org
 DOMAIN-SUFFIX,inferno.demonoid.is
 DOMAIN-SUFFIX,inferno.demonoid.pw
-DOMAIN-SUFFIX,tracker.harry.lu
 DOMAIN-SUFFIX,tracker.zerobytes.xyz
 DOMAIN-SUFFIX,jsb.by
 DOMAIN-SUFFIX,kanal-4.de
 DOMAIN-SUFFIX,kinorun.com
-DOMAIN-SUFFIX,koli.services
 DOMAIN-SUFFIX,learnbits.me
 DOMAIN-SUFFIX,line-net.ru
 DOMAIN-SUFFIX,ln.mtahost.co
@@ -109,7 +94,6 @@ DOMAIN-SUFFIX,mixfiend.com
 DOMAIN-SUFFIX,movies.zsw.ca
 DOMAIN-SUFFIX,mvgroup.org
 DOMAIN-SUFFIX,nagios.tks.sumy.ua
-DOMAIN-SUFFIX,novaopcj.icu
 DOMAIN-SUFFIX,ns-1.x-fins.com
 DOMAIN-SUFFIX,ns349743.ip-91-121-106.eu
 DOMAIN-SUFFIX,ns389251.ovh.net

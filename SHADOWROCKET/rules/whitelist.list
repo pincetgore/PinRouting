@@ -1,7 +1,7 @@
 # NAME: whitelist.list
-# TOTAL: 862
+# TOTAL: 860
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-03 05:57:30 UTC
+# UPDATED: 2026-10-03 13:50:04 UTC
 # Direct for checkers
 DOMAIN-SUFFIX,ipify.org
 DOMAIN-SUFFIX,checkip.amazonaws.com
@@ -380,7 +380,6 @@ DOMAIN-SUFFIX,vtb24.ru
 DOMAIN-SUFFIX,vtbcareer.com
 DOMAIN-SUFFIX,vtbfamily.ru
 DOMAIN-SUFFIX,vtbindia.com
-DOMAIN-SUFFIX,vtbkep.site
 DOMAIN-SUFFIX,vtbpartners.com
 DOMAIN-SUFFIX,vtbrussia.com
 DOMAIN-SUFFIX,vtbrussia.ru
@@ -401,7 +400,6 @@ DOMAIN-SUFFIX,x5q.ru
 DOMAIN-SUFFIX,xn----7sb7akeedqd.xn--p1ai
 DOMAIN-SUFFIX,xn--80aacoonefzg3am8b1fsb.xn--p1ai
 DOMAIN-SUFFIX,xn--90ab2c.xn--p1ai
-DOMAIN-SUFFIX,xn--90aifd0aza.site
 DOMAIN-SUFFIX,xn--b1aew.xn--p1ai
 DOMAIN-SUFFIX,xn--d1acpjx3f.xn--p1ai
 DOMAIN-SUFFIX,ya.ru
