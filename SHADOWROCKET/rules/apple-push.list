@@ -1,7 +1,7 @@
 # NAME: apple-push.list
 # TOTAL: 88
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-05 06:28:23 UTC
+# UPDATED: 2026-10-06 07:04:39 UTC
 # Apple push notifications (APNs), iCloud, system updates, and captive portal checks.
 #
 # These must stay DIRECT: routing them through a tunnel adds delivery latency,

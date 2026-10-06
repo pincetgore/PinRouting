@@ -1,7 +1,7 @@
 # NAME: domains-geo-detect.list
 # TOTAL: 225
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-05 06:28:23 UTC
+# UPDATED: 2026-10-06 07:04:39 UTC
 # Geo and IP detection domains (direct)
 DOMAIN-SUFFIX,2ip.io
 DOMAIN-SUFFIX,2ip.ua
