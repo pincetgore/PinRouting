@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import datetime
+import json
 from pathlib import Path
 
 from pinrouting.emitters.happ import HappEmitter
@@ -17,13 +19,34 @@ def build_all(root_dir: Path, repo: str, epoch: str | None = None) -> None:
     incy_dir = root_dir / "INCY"
     shadowrocket_dir = root_dir / "SHADOWROCKET"
 
+    # If epoch is None, preserve existing LastUpdated from HAPP/DEFAULT.JSON to avoid diff churn
+    if epoch is None:
+        default_happ = happ_dir / "DEFAULT.JSON"
+        if default_happ.is_file():
+            try:
+                with open(default_happ, "r", encoding="utf-8") as f:
+                    epoch = json.load(f).get("LastUpdated")
+            except (json.JSONDecodeError, OSError):
+                pass
+    if epoch is not None:
+        epoch = str(epoch)
+
+    # Format consistent updated_str for ruleset headers
+    updated_str: str | None = None
+    if epoch:
+        try:
+            dt = datetime.datetime.fromtimestamp(int(epoch), tz=datetime.UTC)
+            updated_str = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
+        except (ValueError, TypeError):
+            pass
+
     happ_emitter = HappEmitter()
     incy_emitter = IncyEmitter()
     sr_emitter = ShadowrocketEmitter(root_dir)
 
     # 1. Build Shadowrocket rulesets
     print("Building Shadowrocket rulesets...")
-    counts = sr_emitter.build_all_rulesets(repo=repo)
+    counts = sr_emitter.build_all_rulesets(repo=repo, updated_str=updated_str)
     for name, cnt in sorted(counts.items()):
         print(f"  - {name}: {cnt} rules")
 
@@ -48,7 +71,12 @@ def build_all(root_dir: Path, repo: str, epoch: str | None = None) -> None:
         print(f"  ✓ Emitted INCY: {profile_id}.JSON, .DEEPLINK, .AUTOLINK")
 
         sr_emitter.emit_profile(
-            profile_id, cfg, shadowrocket_dir, repo=repo, epoch=epoch
+            profile_id,
+            cfg,
+            shadowrocket_dir,
+            repo=repo,
+            epoch=epoch,
+            updated_str=updated_str,
         )
         print(f"  ✓ Emitted SHADOWROCKET: {profile_id}.CONF")
 

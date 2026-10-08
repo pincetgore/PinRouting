@@ -229,11 +229,22 @@ def get_sample_hosts(
 
 async def ping_host(ip: str, timeout: float = 1.0) -> bool:
     """Executes a single ICMP ping to the target IP asynchronously."""
+    try:
+        is_ipv6 = ipaddress.ip_address(ip).version == 6
+    except ValueError:
+        return False
+
     is_darwin = sys.platform == "darwin"
-    if is_darwin:
-        cmd = ["ping", "-c", "1", "-W", str(int(timeout * 1000)), ip]
+    if is_ipv6:
+        if is_darwin:
+            cmd = ["ping6", "-c", "1", ip]
+        else:
+            cmd = ["ping", "-6", "-c", "1", "-W", str(max(1, int(timeout))), ip]
     else:
-        cmd = ["ping", "-c", "1", "-W", str(max(1, int(timeout))), ip]
+        if is_darwin:
+            cmd = ["ping", "-c", "1", "-W", str(int(timeout * 1000)), ip]
+        else:
+            cmd = ["ping", "-c", "1", "-W", str(max(1, int(timeout))), ip]
 
     try:
         proc = await asyncio.create_subprocess_exec(

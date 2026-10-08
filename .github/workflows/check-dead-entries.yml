@@ -118,12 +118,14 @@ jobs:
             dead-report.json
           if-no-files-found: ignore
 
-      - name: Validate Modified Rulesets
+      - name: Validate & Rebuild Modified Rulesets
         if: ${{ (inputs.action || 'pr') != 'dry-run' }}
         run: |
           set -euo pipefail
           if [ -n "$(git status --porcelain geosite/data/ geoip/)" ]; then
-            echo "Changes detected in rulesets. Running linters and regression tests..."
+            echo "Changes detected in rulesets. Rebuilding client configurations..."
+            PYTHONPATH=tools python3 -m pinrouting build --repo "${{ github.repository }}"
+            echo "Running linters and regression tests..."
             python3 geosite/buildtools/lint_rules.py --fail-on-error
             PYTHONPATH=tools python3 -m pinrouting lint
             PYTHONPATH=tools python3 -m pinrouting test
@@ -147,7 +149,7 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -B "$BRANCH"
-          git add geosite/data/ geoip/
+          git add geosite/data/ geoip/ HAPP/ INCY/ SHADOWROCKET/
           git commit -m "chore(cleanup): remove dead domains and unrouted IPs"
           git push -f origin "$BRANCH"
           echo "Successfully pushed changes to branch $BRANCH"
@@ -186,7 +188,7 @@ jobs:
           set -euo pipefail
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add geosite/data/ geoip/
+          git add geosite/data/ geoip/ HAPP/ INCY/ SHADOWROCKET/
           if ! git diff --cached --quiet; then
             DATE_TAG=$(date -u +%Y%m%d%H%M)
             git commit -m "chore(cleanup): remove dead domains and unrouted IPs [${DATE_TAG}] [skip ci]"

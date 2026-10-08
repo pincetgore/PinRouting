@@ -14,6 +14,8 @@ from __future__ import annotations
 import argparse
 import ipaddress
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 from pinrouting.models import ProfileConfig
@@ -118,7 +120,7 @@ def lint_geosites(root_dir: Path) -> list[str]:
     for p in sorted(geosite_data_dir.glob("*")):
         if not p.is_file() or p.name.startswith("."):
             continue
-        seen_domains: set[str] = set()
+        seen_domains: dict[str, int] = {}
         with open(p, "r", encoding="utf-8") as f:
             for idx, line in enumerate(f, 1):
                 line = line.strip()
@@ -129,12 +131,26 @@ def lint_geosites(root_dir: Path) -> list[str]:
                     errors.append(
                         f"[{p.name}:{idx}] Line contains unescaped space: '{line}'"
                     )
-                domain = line.split(":", 1)[1] if ":" in line else line
+                domain = line.split(":", 1)[1].strip() if ":" in line else line
                 if domain in seen_domains:
-                    pass
-                seen_domains.add(line)
+                    errors.append(
+                        f"[{p.name}:{idx}] Duplicate domain rule: '{domain}' (first defined at line {seen_domains[domain]})"
+                    )
+                seen_domains[domain] = idx
 
     return errors
+
+
+def run_rules_linter(root_dir: Path) -> int:
+    rules_linter = root_dir / "geosite" / "buildtools" / "lint_rules.py"
+    if not rules_linter.is_file():
+        return 0
+    res = subprocess.run(
+        [sys.executable, str(rules_linter), "--fail-on-error"],
+        cwd=str(root_dir),
+        check=False,
+    )
+    return res.returncode
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -147,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     root = Path(args.root_dir).resolve()
-    print("Linting PinRouting profiles...")
+    print("Linting PinRouting profiles and rulesets...")
     profile_errors = lint_profiles(root)
     geosite_errors = lint_geosites(root)
 
@@ -157,6 +173,11 @@ def main(argv: list[str] | None = None) -> int:
         for err in all_errors:
             print(f"  - {err}")
         return 1
+
+    # Run geosite/geoip syntax & redundancy linter
+    rules_code = run_rules_linter(root)
+    if rules_code != 0:
+        return rules_code
 
     print("✓ All profiles and rule definitions are valid!")
     return 0
