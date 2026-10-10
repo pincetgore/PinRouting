@@ -203,6 +203,7 @@ class RoutingTestSuite:
             ("gu-st.ru", "DIRECT", "State services CDN"),
             ("sberbank.ru", "DIRECT", "Sberbank"),
             ("tbank.ru", "DIRECT", "T-Bank"),
+            ("servicecdn.ru", "DIRECT", "Alfa-Bank CDN"),
             ("nalog.gov.ru", "DIRECT", "Tax service"),
             ("cbr.ru", "DIRECT", "Central Bank of Russia"),
             ("nspk.ru", "DIRECT", "NSPK Mir"),

@@ -1,5 +1,5 @@
 # NAME: whitelist.list
-# TOTAL: 857
+# TOTAL: 858
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-10 14:03:05 UTC
 # Direct for checkers
@@ -305,6 +305,7 @@ DOMAIN-SUFFIX,sbermegamarket.ru
 DOMAIN-SUFFIX,sbpgpb.ru
 DOMAIN-SUFFIX,sistema-capital.com
 DOMAIN-SUFFIX,spvb.ru
+DOMAIN-SUFFIX,servicecdn.ru
 DOMAIN-SUFFIX,static-storage.net
 DOMAIN-SUFFIX,svoy.academy
 DOMAIN-SUFFIX,t2.ru
