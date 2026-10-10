@@ -6,8 +6,14 @@
 Проверка выполняется через DNS-серверы в разных странах (check-host.net).
 Если все серверы подтвердили, что домен ведёт на IP из direct — домен удаляется.
 
+Список IP нужно выбрать явно под профиль, который использует этот geosite-файл:
+  category-ru (профиль DEFAULT, geoip:direct)      → --list direct
+  whitelist   (профиль WHITELIST, geoip:whitelist) → --list whitelist
+
 Использование:
-  python deduplicate.py ../data/category-ru
+  python deduplicate.py ../data/category-ru --list direct
+  python deduplicate.py ../data/whitelist --list whitelist
+  python deduplicate.py ../data/whitelist --direct-file path/to/whitelist.txt
 """
 from __future__ import annotations
 
@@ -24,8 +30,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-# Ссылка на файл со списком IP-диапазонов (direct.txt или whitelist.txt) в GitHub
-DIRECT_TXT_URL = "https://raw.githubusercontent.com/pincetgore/PinRouting/release/text/direct.txt"
+# Ссылка на опубликованные списки IP-диапазонов ({name}.txt) в ветке release
+RELEASE_TEXT_URL = "https://raw.githubusercontent.com/pincetgore/PinRouting/release/text/{name}.txt"
 
 # Адрес API для проверки DNS
 API_BASE = "https://check-host.net"
@@ -75,10 +81,6 @@ def http_get(url: str, timeout: int = 5, headers: dict[str, str] | None = None, 
     raise RuntimeError(f"Failed to fetch {url}")
 
 
-def curl_get(url: str, timeout: int = 5) -> str:
-    """Скачивает содержимое по ссылке и возвращает текст."""
-    return http_get(url, timeout=timeout)
-
 
 def curl_json(url: str) -> dict[str, Any] | None:
     """Скачивает JSON по ссылке. При ошибке возвращает None."""
@@ -124,19 +126,16 @@ def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
     return intervals, starts
 
 
-def load_direct_cidrs(file_path: str | Path | None = None, direct_url: str = DIRECT_TXT_URL) -> tuple[list[tuple[int, int]], list[int]]:
+def load_direct_cidrs(file_path: str | None, direct_url: str | None) -> tuple[list[tuple[int, int]], list[int]]:
     """Загружает direct.txt/whitelist.txt из локального файла или скачивает по ссылке."""
     if file_path:
         path = Path(file_path)
-        if path.is_file():
-            print(f"Loading direct CIDRs from local file: {path} ...")
-            data = path.read_text(encoding="utf-8")
-            return parse_cidrs_from_text(data)
-        else:
-            print(f"Warning: Local file '{file_path}' not found. Falling back to URL.")
+        print(f"Loading direct CIDRs from local file: {path} ...")
+        return parse_cidrs_from_text(path.read_text(encoding="utf-8"))
 
+    assert direct_url
     print(f"Downloading direct CIDRs from {direct_url} ...")
-    data = curl_get(direct_url)
+    data = http_get(direct_url)
     print(f"  Скачано {len(data)} байт")
     return parse_cidrs_from_text(data)
 
@@ -380,22 +379,21 @@ def check_one_domain(
 def main() -> None:
     ap = argparse.ArgumentParser(description="Deduplicate geosite domains covered by geoip:direct/geoip:whitelist")
     ap.add_argument("geosite_file", help="Geosite data file (e.g. data/category-ru, data/whitelist)")
-    ap.add_argument(
-        "-f",
-        "--direct-file",
-        default=None,
-        help="Path to local direct.txt/whitelist.txt file (default: download from release branch)",
+    # Required on purpose: checking data/whitelist against direct.txt removes domains the WHITELIST profile needs
+    source = ap.add_mutually_exclusive_group(required=True)
+    source.add_argument(
+        "--list",
+        choices=["direct", "whitelist"],
+        help="Download geoip:<list> from the release branch (direct for category-ru, whitelist for whitelist)",
     )
-    ap.add_argument(
-        "--direct-url",
-        default=DIRECT_TXT_URL,
-        help=f"URL to download direct.txt/whitelist.txt (default: {DIRECT_TXT_URL})",
-    )
+    source.add_argument("-f", "--direct-file", help="Path to local direct.txt/whitelist.txt file")
+    source.add_argument("--direct-url", help="URL to download direct.txt/whitelist.txt")
     ap.add_argument("--workers", type=int, default=WORKERS, help=f"Parallel workers (default: {WORKERS})")
     args = ap.parse_args()
 
     # Шаг 1. Загружаем и разбираем список IP-диапазонов (direct.txt/whitelist.txt)
-    intervals, starts = load_direct_cidrs(args.direct_file, direct_url=args.direct_url)
+    direct_url = RELEASE_TEXT_URL.format(name=args.list) if args.list else args.direct_url
+    intervals, starts = load_direct_cidrs(args.direct_file, direct_url)
     print(f"  {len(intervals)} IPv4 CIDR ranges loaded")
 
     total_nodes = len(RU_NODES) + len(FOREIGN_NODES)

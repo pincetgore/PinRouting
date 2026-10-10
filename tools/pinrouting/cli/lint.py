@@ -3,10 +3,9 @@
 Verifies:
 - All profiles conform to official Happ / INCY schema requirements
 - All referenced geosite: categories exist in geosite/data/
-- All referenced geoip: categories exist in geoip/ or are standard (cn, ru, by, private, direct, whitelist)
+- All referenced geoip: categories are actually produced by geoip/config.json (+ private)
 - DNS addresses and hosts are valid
-- No duplicate domains in geosite lists
-- No syntax errors in CIDRs
+- Geosite / GeoIP rule syntax via geosite/buildtools/lint_rules.py
 """
 
 from __future__ import annotations
@@ -21,8 +20,22 @@ from pathlib import Path
 from pinrouting.models import ProfileConfig
 
 
-class ValidationError(Exception):
-    pass
+def built_geoip_categories(root_dir: Path) -> set[str]:
+    """Category names the geoip builder will put into geoip.dat."""
+    with open(root_dir / "geoip" / "config.json", "r", encoding="utf-8") as f:
+        config = json.load(f)
+    names: set[str] = set()
+    for entry in config["input"]:
+        if entry.get("action") != "add":
+            continue
+        args = entry.get("args", {})
+        if entry["type"] == "private":
+            names.add("private")
+        elif "name" in args:
+            names.add(args["name"])
+        else:
+            names.update(args.get("wantedList", {}))
+    return {n.lower() for n in names}
 
 
 def lint_profiles(root_dir: Path) -> list[str]:
@@ -35,17 +48,7 @@ def lint_profiles(root_dir: Path) -> list[str]:
         for p in geosite_data_dir.iterdir()
         if p.is_file() and not p.name.startswith(".")
     }
-    standard_geoips = {
-        "private",
-        "ru",
-        "by",
-        "cn",
-        "direct",
-        "whitelist",
-        "custom-list-add",
-        "custom-whitelist",
-        "ads",
-    }
+    available_geoips = built_geoip_categories(root_dir)
 
     profile_files = sorted(profiles_dir.glob("*.json"))
     if not profile_files:
@@ -54,10 +57,8 @@ def lint_profiles(root_dir: Path) -> list[str]:
 
     for pf in profile_files:
         try:
-            with open(pf, "r", encoding="utf-8") as f:
-                raw = json.load(f)
-            cfg = ProfileConfig.from_dict(raw)
-        except (json.JSONDecodeError, OSError, ValueError, KeyError) as e:
+            cfg = ProfileConfig.load_from_file(pf)
+        except (json.JSONDecodeError, OSError, ValueError, TypeError) as e:
             errors.append(f"[{pf.name}] Failed to parse profile: {e}")
             continue
 
@@ -101,8 +102,11 @@ def lint_profiles(root_dir: Path) -> list[str]:
         for ip_rule in all_ips:
             if ip_rule.startswith("geoip:"):
                 cat = ip_rule.split(":", 1)[1]
-                if cat not in standard_geoips:
-                    errors.append(f"[{pf.name}] Unknown geoip category '{cat}'")
+                if cat not in available_geoips:
+                    errors.append(
+                        f"[{pf.name}] geoip category '{cat}' is not built by geoip/config.json "
+                        f"(available: {', '.join(sorted(available_geoips))})"
+                    )
             else:
                 # Must be a valid CIDR
                 try:
@@ -113,38 +117,8 @@ def lint_profiles(root_dir: Path) -> list[str]:
     return errors
 
 
-def lint_geosites(root_dir: Path) -> list[str]:
-    errors: list[str] = []
-    geosite_data_dir = root_dir / "geosite" / "data"
-
-    for p in sorted(geosite_data_dir.glob("*")):
-        if not p.is_file() or p.name.startswith("."):
-            continue
-        seen_domains: dict[str, int] = {}
-        with open(p, "r", encoding="utf-8") as f:
-            for idx, line in enumerate(f, 1):
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                # check for simple formatting issues
-                if " " in line:
-                    errors.append(
-                        f"[{p.name}:{idx}] Line contains unescaped space: '{line}'"
-                    )
-                domain = line.split(":", 1)[1].strip() if ":" in line else line
-                if domain in seen_domains:
-                    errors.append(
-                        f"[{p.name}:{idx}] Duplicate domain rule: '{domain}' (first defined at line {seen_domains[domain]})"
-                    )
-                seen_domains[domain] = idx
-
-    return errors
-
-
 def run_rules_linter(root_dir: Path) -> int:
     rules_linter = root_dir / "geosite" / "buildtools" / "lint_rules.py"
-    if not rules_linter.is_file():
-        return 0
     res = subprocess.run(
         [sys.executable, str(rules_linter), "--fail-on-error"],
         cwd=str(root_dir),
@@ -155,7 +129,8 @@ def run_rules_linter(root_dir: Path) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Lint PinRouting declarative profiles and data files"
+        prog="pinrouting lint",
+        description="Lint PinRouting declarative profiles and data files",
     )
     parser.add_argument(
         "--root-dir", default=str(Path.cwd()), help="PinRouting repo root"
@@ -163,14 +138,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     root = Path(args.root_dir).resolve()
-    print("Linting PinRouting profiles and rulesets...")
+    print("Linting PinRouting profiles...")
     profile_errors = lint_profiles(root)
-    geosite_errors = lint_geosites(root)
-
-    all_errors = profile_errors + geosite_errors
-    if all_errors:
-        print(f"\n❌ Found {len(all_errors)} error(s):")
-        for err in all_errors:
+    if profile_errors:
+        print(f"\n❌ Found {len(profile_errors)} error(s):")
+        for err in profile_errors:
             print(f"  - {err}")
         return 1
 

@@ -27,7 +27,11 @@ permissions:
   contents: write
 
 env:
-  CURL: curl -sSL --retry 5 --retry-delay 3 --connect-timeout 10
+  CURL: curl -fsSL --retry 5 --retry-delay 3 --connect-timeout 10
+  # Upstream builders are pinned: their code runs in a job that can push to this repo.
+  # Bump these SHAs deliberately after reviewing upstream changes.
+  GEOIP_BUILDER_REF: 424733bd132427dbd505ccc3b8e3ebc427494063       # Loyalsoldier/geoip
+  GEOSITE_BUILDER_REF: c6adacf29cc4fb05e04651fcf03e00989ef9f797     # v2fly/domain-list-community
 
 jobs:
   build:
@@ -78,12 +82,7 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Lint Rulesets and Profiles
         run: |
-          python3 geosite/buildtools/lint_rules.py --fail-on-error
           PYTHONPATH=tools python3 -m pinrouting lint
-
-      - name: Run Routing Simulation Tests
-        run: |
-          PYTHONPATH=tools python3 -m pinrouting test
 
       # -----------------------------------------------------------------------
       # Build GeoIP
@@ -92,8 +91,10 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: Loyalsoldier/geoip
+          ref: ${{ env.GEOIP_BUILDER_REF }}
           path: geoip-builder
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Download GeoIP Inputs
         working-directory: geoip-builder
@@ -117,6 +118,18 @@ jobs:
           for pid in "${pids[@]}"; do
             wait "$pid"
           done
+
+          # Every CIDR list must be non-empty and start with a CIDR line: an empty or HTML "remove" list
+          # would silently route blocked IPs DIRECT.
+          for f in whitelist.txt antifilterdownloadcommunity.txt refilter.txt refiltercommunity.txt \
+                   antifilternetwork.txt cdn.lst merged.sum ipinfo_ru.lst ipinfo_by.lst; do
+            first=$(grep -v -m1 -E '^\s*(#|$)' "$f" || true)
+            if ! [[ "$first" =~ ^[0-9a-fA-F:.]+/[0-9]+[[:space:]]*$ ]]; then
+              echo "::error::Download $f is empty or not a CIDR list (first line: '${first:0:80}')"
+              exit 1
+            fi
+          done
+          test -s downloads/geolite2-ipv4.csv && test -s downloads/dbip-ipv4.csv
 
           # Parse GeoLite2 and DB-IP datasets locally for RU & BY
           python3 "${{ github.workspace }}/geoip/buildtools/parse_country_db.py" --input downloads/geolite2-ipv4.csv --prefix geolite_ --countries RU,BY --output-dir .
@@ -144,6 +157,7 @@ jobs:
           rm -rf output
           ./geoip-tool convert -c config.json
           test -s output/dat/geoip.dat
+          test -s output/text/direct.txt && test -s output/text/whitelist.txt
           ls -lh output/dat/*.dat
 
       # -----------------------------------------------------------------------
@@ -153,8 +167,10 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: v2fly/domain-list-community
+          ref: ${{ env.GEOSITE_BUILDER_REF }}
           path: geosite-builder
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Compile & Run Geosite Builder
         run: |
@@ -206,7 +222,13 @@ jobs:
           REPO="${{ github.repository }}"
 
           echo "Building unified client routing configs for repo $REPO with epoch $EPOCH..."
-          PYTHONPATH=tools python3 -m pinrouting build --repo "$REPO" --epoch "$EPOCH"
+          PYTHONPATH=tools python3 -m pinrouting build --repo "$REPO" --epoch "$EPOCH" \
+            --geoip-text-dir geoip-builder/output/text
+
+      # Tests must run on the freshly generated configs, i.e. exactly what is about to be published
+      - name: Run Routing Simulation Tests
+        run: |
+          PYTHONPATH=tools python3 -m pinrouting test
 
       # -----------------------------------------------------------------------
       # Commit to main & Push Tag

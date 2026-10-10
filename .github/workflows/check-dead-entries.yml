@@ -1,6 +1,7 @@
 # .github/workflows/check-dead-entries.yml
 # Separate workflow to inspect all domain names and IP CIDRs for liveness,
-# generate detailed reports, and clean up dead entries via PR or direct commit.
+# generate detailed reports, and clean up dead domains via PR or direct commit.
+# Unresponsive IPs are only reported (CI runners can't reliably probe APNs / RU-only hosts).
 
 name: Check and Cleanup Dead Entries
 
@@ -20,7 +21,7 @@ on:
           - ips
         default: all
       action:
-        description: 'Action to perform on dead entries'
+        description: 'Action to perform on dead domains (IPs are always report-only)'
         required: true
         type: choice
         options:
@@ -126,7 +127,6 @@ jobs:
             echo "Changes detected in rulesets. Rebuilding client configurations..."
             PYTHONPATH=tools python3 -m pinrouting build --repo "${{ github.repository }}"
             echo "Running linters and regression tests..."
-            python3 geosite/buildtools/lint_rules.py --fail-on-error
             PYTHONPATH=tools python3 -m pinrouting lint
             PYTHONPATH=tools python3 -m pinrouting test
           else
@@ -150,7 +150,7 @@ jobs:
 
           git checkout -B "$BRANCH"
           git add geosite/data/ geoip/ HAPP/ INCY/ SHADOWROCKET/
-          git commit -m "chore(cleanup): remove dead domains and unrouted IPs"
+          git commit -m "chore(cleanup): remove dead domains"
           git push -f origin "$BRANCH"
           echo "Successfully pushed changes to branch $BRANCH"
 
@@ -158,11 +158,11 @@ jobs:
           PR_URL=$(gh pr list --head "$BRANCH" --base "${{ github.ref_name }}" --json url --jq ".[0].url" 2>/dev/null || true)
           if [ -n "$PR_URL" ]; then
             echo "Existing Pull Request found: $PR_URL"
-            gh pr edit "$PR_URL" --title "🧹 Cleanup dead domains and unresponsive IPs" --body-file dead-report.md || true
+            gh pr edit "$PR_URL" --title "🧹 Cleanup dead domains" --body-file dead-report.md || true
           else
             echo "Attempting to create Pull Request via gh cli..."
             set +e
-            PR_OUTPUT=$(gh pr create --base "${{ github.ref_name }}" --head "$BRANCH"               --title "🧹 Cleanup dead domains and unresponsive IPs"               --body-file dead-report.md 2>&1)
+            PR_OUTPUT=$(gh pr create --base "${{ github.ref_name }}" --head "$BRANCH"               --title "🧹 Cleanup dead domains"               --body-file dead-report.md 2>&1)
             EXIT_CODE=$?
             set -e
 
@@ -191,7 +191,7 @@ jobs:
           git add geosite/data/ geoip/ HAPP/ INCY/ SHADOWROCKET/
           if ! git diff --cached --quiet; then
             DATE_TAG=$(date -u +%Y%m%d%H%M)
-            git commit -m "chore(cleanup): remove dead domains and unrouted IPs [${DATE_TAG}] [skip ci]"
+            git commit -m "chore(cleanup): remove dead domains [${DATE_TAG}] [skip ci]"
             git pull --rebase origin "${{ github.ref_name }}"
             git push origin "${{ github.ref_name }}"
           fi

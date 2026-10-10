@@ -18,6 +18,7 @@ GEOSITE_DATA_DIR = REPO_ROOT / "geosite" / "data"
 HAPP_DEFAULT_JSON = REPO_ROOT / "HAPP" / "DEFAULT.JSON"
 INCY_DEFAULT_JSON = REPO_ROOT / "INCY" / "DEFAULT.JSON"
 SHADOWROCKET_DEFAULT_CONF = REPO_ROOT / "SHADOWROCKET" / "DEFAULT.CONF"
+SHADOWROCKET_RULES_DIR = REPO_ROOT / "SHADOWROCKET" / "rules"
 
 
 class GeositeMatcher:
@@ -89,6 +90,37 @@ class GeositeMatcher:
         return False
 
 
+def shadowrocket_rule_matches(rtype: str, value: str, domain: str) -> bool:
+    """Matches a single Shadowrocket domain rule (DOMAIN / DOMAIN-SUFFIX / DOMAIN-KEYWORD)."""
+    domain = domain.lower()
+    value = value.lower().strip(".")
+    if rtype == "DOMAIN":
+        return domain == value
+    if rtype == "DOMAIN-SUFFIX":
+        return domain == value or domain.endswith("." + value)
+    if rtype == "DOMAIN-KEYWORD":
+        return value in domain
+    return False
+
+
+class ShadowrocketListMatcher:
+    """Matches domains against a generated SHADOWROCKET/rules/*.list file (what the client really loads)."""
+
+    def __init__(self, list_path: Path):
+        self.rules: list[tuple[str, str]] = []
+        with open(list_path, "r", encoding="utf-8") as f:
+            for raw in f:
+                line = raw.strip()
+                if not line or line.startswith("#"):
+                    continue
+                parts = [p.strip() for p in line.split(",")]
+                if len(parts) >= 2:
+                    self.rules.append((parts[0].upper(), parts[1]))
+
+    def matches(self, domain: str) -> bool:
+        return any(shadowrocket_rule_matches(rtype, value, domain) for rtype, value in self.rules)
+
+
 class RoutingTestSuite:
     """Loads configs and tests domain routing decisions."""
 
@@ -97,6 +129,15 @@ class RoutingTestSuite:
         for item in GEOSITE_DATA_DIR.iterdir():
             if item.is_file() and not item.name.startswith("."):
                 self.matchers[item.name] = GeositeMatcher(item.name, item)
+        self.sr_matchers: dict[str, ShadowrocketListMatcher] = {}
+
+    def _sr_list(self, list_name: str) -> ShadowrocketListMatcher:
+        if list_name not in self.sr_matchers:
+            path = SHADOWROCKET_RULES_DIR / f"{list_name}.list"
+            if not path.is_file():
+                raise FileNotFoundError(f"Shadowrocket RULE-SET references missing list: {path}")
+            self.sr_matchers[list_name] = ShadowrocketListMatcher(path)
+        return self.sr_matchers[list_name]
 
     def _resolve_json(self, config_path: Path, domain: str) -> str:
         with open(config_path, "r", encoding="utf-8") as f:
@@ -144,22 +185,11 @@ class RoutingTestSuite:
             rtype = parts[0].upper()
 
             if rtype == "RULE-SET":
-                url = parts[1]
-                action = parts[2].upper()
-                list_name = Path(url).name.removesuffix(".list")
-                matcher = self.matchers.get(list_name)
-                if matcher and matcher.matches(domain):
-                    return action
-
-            elif rtype == "DOMAIN":
-                if domain.lower() == parts[1].lower():
+                list_name = Path(parts[1]).name.removesuffix(".list")
+                if self._sr_list(list_name).matches(domain):
                     return parts[2].upper()
-            elif rtype == "DOMAIN-SUFFIX":
-                suffix = parts[1].lower().strip(".")
-                if domain.lower() == suffix or domain.lower().endswith("." + suffix):
-                    return parts[2].upper()
-            elif rtype == "DOMAIN-KEYWORD":
-                if parts[1].lower() in domain.lower():
+            elif rtype in ("DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD"):
+                if shadowrocket_rule_matches(rtype, parts[1], domain):
                     return parts[2].upper()
             elif rtype == "FINAL":
                 return parts[1].upper()

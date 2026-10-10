@@ -2,10 +2,12 @@
 
 Verifies:
 - Domains across multiple independent DNS resolvers (Cloudflare 1.1.1.1, Google 8.8.8.8, Yandex 77.88.8.8)
-  with retry logic and confirmation of NXDOMAIN / non-existence.
+  with retry logic. A domain is dead only if every resolver answers NXDOMAIN.
 - IP addresses and CIDR subnets using TCP (port 443 TLS, port 80 HTTP) and ICMP ping.
   Subnets (/24 and wider) are sampled via representative hosts (gateway, early, middle, and late addresses).
-- Supports dry-run inspection or in-place removal of dead entries with Markdown and JSON reporting.
+- Supports dry-run inspection or in-place removal of dead domains with Markdown and JSON reporting.
+  Unresponsive IPs are only reported, never removed: many hosts (APNs, RU-only services) ignore
+  probes from foreign CI runners, and CI runners block ICMP, so "no answer" does not mean "unused".
 """
 
 from __future__ import annotations
@@ -16,7 +18,6 @@ import contextlib
 import ipaddress
 import json
 import logging
-import socket
 import ssl
 import sys
 import time
@@ -25,14 +26,9 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-try:
-    import dns.asyncresolver
-    import dns.exception
-    import dns.resolver
-
-    HAS_DNSPYTHON = True
-except ImportError:
-    HAS_DNSPYTHON = False
+import dns.asyncresolver
+import dns.exception
+import dns.resolver
 
 logger = logging.getLogger("pinrouting.check_dead")
 
@@ -114,22 +110,11 @@ async def check_domain_liveness(
 ) -> tuple[bool, str]:
     """Checks whether a domain is alive across multiple DNS resolvers.
 
-    A domain is alive if AT LEAST ONE resolver successfully returns records (A, AAAA, CNAME, or NS/SOA for zones).
-    A domain is dead ONLY IF all resolvers confirm NXDOMAIN or absence of records.
+    A domain is dead ONLY IF every resolver answers NXDOMAIN. NXDOMAIN also means no subdomain
+    exists (RFC 8020), so this is safe for suffix rules. NoAnswer (name exists, no A record) is
+    alive: `domain:cdn.example.com` may have no A record while `img.cdn.example.com` does.
     """
-    if not HAS_DNSPYTHON:
-        # Fallback to standard library getaddrinfo
-        for _ in range(retries + 1):
-            try:
-                loop = asyncio.get_running_loop()
-                await loop.getaddrinfo(domain, None)
-                return True, "resolved via system resolver"
-            except (socket.gaierror, OSError, TimeoutError):
-                pass
-            await asyncio.sleep(0.2)
-        return False, "failed to resolve via system DNS"
-
-    nx_or_noanswer_count = 0
+    nxdomain_count = 0
     last_error = ""
 
     for ns in resolvers:
@@ -137,60 +122,24 @@ async def check_domain_liveness(
         resolver.nameservers = [ns]
         resolver.lifetime = timeout
 
-        resolved_for_ns = False
-        ns_nxdomain = False
-
         for attempt in range(retries + 1):
             try:
-                # 1. Try A record
-                ans = await resolver.resolve(domain, "A")
-                if ans:
-                    return True, f"resolved A on {ns}"
-            except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):
-                # 2. Try AAAA record
-                try:
-                    ans = await resolver.resolve(domain, "AAAA")
-                    if ans:
-                        return True, f"resolved AAAA on {ns}"
-                except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):
-                    # 3. Try CNAME
-                    try:
-                        ans = await resolver.resolve(domain, "CNAME")
-                        if ans:
-                            return True, f"resolved CNAME on {ns}"
-                    except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):
-                        # 4. Check if apex domain zone exists with NS or SOA
-                        try:
-                            ans = await resolver.resolve(domain, "NS")
-                            if ans:
-                                return True, f"active zone NS on {ns}"
-                        except (dns.exception.DNSException, OSError, TimeoutError):
-                            with contextlib.suppress(dns.exception.DNSException, OSError, TimeoutError):
-                                ans = await resolver.resolve(domain, "SOA")
-                                if ans:
-                                    return True, f"active zone SOA on {ns}"
-                        ns_nxdomain = True
-                        break
-                    except (dns.exception.DNSException, OSError, TimeoutError) as e:
-                        last_error = f"{ns} CNAME: {type(e).__name__}"
-                except (dns.exception.DNSException, OSError, TimeoutError) as e:
-                    last_error = f"{ns} AAAA: {type(e).__name__}"
-            except (dns.exception.DNSException, OSError, TimeoutError) as e:
-                last_error = f"{ns} A: {type(e).__name__}"
+                await resolver.resolve(domain, "A")
+                return True, f"resolved A on {ns}"
+            except dns.resolver.NoAnswer:
+                return True, f"name exists on {ns} (no A record)"
+            except dns.resolver.NXDOMAIN:
+                nxdomain_count += 1
+                break
+            except (dns.exception.DNSException, OSError) as e:
+                last_error = f"{ns}: {type(e).__name__}"
                 if attempt < retries:
                     await asyncio.sleep(0.3)
-                    continue
 
-            if resolved_for_ns:
-                break
-
-        if ns_nxdomain:
-            nx_or_noanswer_count += 1
-
-    if nx_or_noanswer_count == len(resolvers):
+    if nxdomain_count == len(resolvers):
         return False, f"NXDOMAIN on all {len(resolvers)} DNS resolvers"
 
-    # If all resolvers failed with errors/timeouts, play safe: do not mark dead
+    # Some resolvers failed with errors/timeouts: play safe, do not mark dead
     return True, f"unconfirmed DNS status ({last_error})"
 
 
@@ -336,9 +285,9 @@ async def check_network_liveness(
 
 def collect_domain_tasks(
     geosite_dir: Path, excluded_files: set[str], summary: CheckSummary
-) -> list[tuple[str, int, str, Path]]:
+) -> list[tuple[str, int, Path]]:
     """Reads geosite files and collects all domain validation tasks."""
-    domain_tasks: list[tuple[str, int, str, Path]] = []
+    domain_tasks: list[tuple[str, int, Path]] = []
     for file_path in sorted(geosite_dir.iterdir()):
         if not file_path.is_file() or file_path.name.startswith(".") or file_path.name in excluded_files:
             continue
@@ -356,7 +305,7 @@ def collect_domain_tasks(
                 summary.skipped_domains += 1
                 continue
             _rtype, domain = rule
-            domain_tasks.append((domain, line_no, line, file_path))
+            domain_tasks.append((domain, line_no, file_path))
             summary.file_stats[file_key]["total"] += 1
             summary.total_domains += 1
 
@@ -365,9 +314,9 @@ def collect_domain_tasks(
 
 def collect_ip_tasks(
     geoip_dir: Path, excluded_files: set[str], summary: CheckSummary
-) -> list[tuple[str, int, str, Path]]:
+) -> list[tuple[str, int, Path]]:
     """Reads geoip files and collects all IP CIDR validation tasks."""
-    ip_tasks: list[tuple[str, int, str, Path]] = []
+    ip_tasks: list[tuple[str, int, Path]] = []
     for file_path in sorted(geoip_dir.glob("*.txt")):
         if not file_path.is_file() or file_path.name.startswith(".") or file_path.name in excluded_files:
             continue
@@ -389,7 +338,7 @@ def collect_ip_tasks(
                 continue
             try:
                 ipaddress.ip_network(cidr_str, strict=False)
-                ip_tasks.append((cidr_str, line_no, line, file_path))
+                ip_tasks.append((cidr_str, line_no, file_path))
                 summary.file_stats[file_key]["total"] += 1
                 summary.total_ips += 1
             except ValueError:
@@ -437,9 +386,7 @@ class DeadEntriesChecker:
         sem = asyncio.Semaphore(self.concurrency)
         total = len(domain_tasks)
 
-        async def worker(
-            domain: str, line_no: int, raw_line: str, file_path: Path
-        ) -> tuple[bool, str, str, int, Path]:
+        async def worker(domain: str, line_no: int, file_path: Path) -> tuple[bool, str, str, int, Path]:
             async with sem:
                 alive, reason = await check_domain_liveness(
                     domain,
@@ -449,7 +396,7 @@ class DeadEntriesChecker:
                 )
                 return alive, reason, domain, line_no, file_path
 
-        tasks = [worker(d, l_no, rl, fp) for d, l_no, rl, fp in domain_tasks]
+        tasks = [worker(*t) for t in domain_tasks]
         for completed, fut in enumerate(asyncio.as_completed(tasks), 1):
             alive, reason, domain, line_no, file_path = await fut
             file_key = f"geosite/{file_path.name}"
@@ -493,9 +440,7 @@ class DeadEntriesChecker:
         sem = asyncio.Semaphore(self.concurrency)
         total = len(ip_tasks)
 
-        async def worker(
-            cidr: str, line_no: int, raw_line: str, file_path: Path
-        ) -> tuple[bool, str, str, int, Path]:
+        async def worker(cidr: str, line_no: int, file_path: Path) -> tuple[bool, str, str, int, Path]:
             async with sem:
                 alive, reason = await check_network_liveness(
                     cidr,
@@ -504,7 +449,7 @@ class DeadEntriesChecker:
                 )
                 return alive, reason, cidr, line_no, file_path
 
-        tasks = [worker(c, l_no, rl, fp) for c, l_no, rl, fp in ip_tasks]
+        tasks = [worker(*t) for t in ip_tasks]
         for completed, fut in enumerate(asyncio.as_completed(tasks), 1):
             alive, reason, cidr, line_no, file_path = await fut
             file_key = f"geoip/{file_path.name}"
@@ -537,14 +482,11 @@ class DeadEntriesChecker:
         print()
 
     def remove_dead_entries_from_files(self) -> int:
-        """Removes identified dead entries from the source files in-place."""
-        if not self.summary.dead_entries:
-            return 0
-
-        # Group dead entries by file
+        """Removes dead domains from the geosite files in-place. IP entries are report-only."""
         dead_by_file: dict[str, set[str]] = {}
         for entry in self.summary.dead_entries:
-            dead_by_file.setdefault(entry.file_path, set()).add(entry.target)
+            if entry.entry_type == "domain":
+                dead_by_file.setdefault(entry.file_path, set()).add(entry.target)
 
         total_removed = 0
         for rel_path, targets in dead_by_file.items():
@@ -558,25 +500,9 @@ class DeadEntriesChecker:
             new_lines: list[str] = []
             removed_in_file = 0
 
-            is_geosite = "geosite" in rel_path
-            is_geoip = "geoip" in rel_path
-
             for line in lines:
-                should_remove = False
-                stripped = line.strip()
-
-                if is_geosite:
-                    rule = parse_domain_rule(line)
-                    if rule:
-                        _, domain = rule
-                        if domain in targets:
-                            should_remove = True
-                elif is_geoip and stripped and not stripped.startswith("#"):
-                    cidr_part = stripped.split("#")[0].strip()
-                    if cidr_part in targets:
-                        should_remove = True
-
-                if should_remove:
+                rule = parse_domain_rule(line)
+                if rule and rule[1] in targets:
                     removed_in_file += 1
                 else:
                     new_lines.append(line)
@@ -627,7 +553,7 @@ class DeadEntriesChecker:
             )
 
         if self.summary.total_ips > 0:
-            status = "Cleaned" if not self.summary.dry_run else "Found"
+            status = "Reported (never removed)"
             lines.append(
                 f"| **IP CIDRs** | {self.summary.total_ips:,} | "
                 f"{self.summary.alive_ips:,} | "
@@ -706,8 +632,7 @@ class DeadEntriesChecker:
 async def run_checker(args: argparse.Namespace) -> int:
     root_dir = Path(args.root_dir).resolve()
     resolvers = [r.strip() for r in args.resolvers.split(",") if r.strip()]
-    user_excluded = {x.strip() for x in args.exclude_files.split(",") if x.strip()} if args.exclude_files else set()
-    excluded = set(DEFAULT_EXCLUDED_FILES) | user_excluded
+    excluded = {x.strip() for x in args.exclude_files.split(",") if x.strip()}
 
     checker = DeadEntriesChecker(
         root_dir=root_dir,
@@ -735,8 +660,8 @@ async def run_checker(args: argparse.Namespace) -> int:
 
     checker.summary.end_time = time.time()
 
-    if args.remove and checker.summary.dead_entries:
-        print("[*] Removing dead entries from files...")
+    if args.remove and checker.summary.dead_domains:
+        print("[*] Removing dead domains from files (IPs are report-only)...")
         checker.remove_dead_entries_from_files()
 
     md_report = checker.generate_markdown_report()
@@ -778,7 +703,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--remove",
         action="store_true",
-        help="Remove dead entries from files in-place",
+        help="Remove dead domains from files in-place (unresponsive IPs are only reported)",
     )
     parser.add_argument(
         "--resolvers",

@@ -1,19 +1,21 @@
-"""Shadowrocket emitter: generates rules/*.list and *.CONF files with 100% legacy fidelity."""
+"""Shadowrocket emitter: generates rules/*.list and *.CONF files."""
 
 from __future__ import annotations
 
 import datetime
+import ipaddress
 from pathlib import Path
 
-from pinrouting.emitters.base import BaseEmitter
 from pinrouting.models import ProfileConfig
 
+# Shadowrocket IP rule lists built from the compiled geoip text dumps (same data as geoip:<name> in Happ/INCY)
+GEOIP_RULESETS = {"direct": "direct-ips", "whitelist": "whitelist-ips"}
 
-class ShadowrocketEmitter(BaseEmitter):
+
+class ShadowrocketEmitter:
     def __init__(self, root_dir: Path):
         self.root_dir = root_dir
         self.geosite_data_dir = root_dir / "geosite" / "data"
-        self.geoip_dir = root_dir / "geoip"
         self.rules_dir = root_dir / "SHADOWROCKET" / "rules"
 
     def convert_domain_rule(self, line: str) -> str | None:
@@ -36,8 +38,8 @@ class ShadowrocketEmitter(BaseEmitter):
             kw = line.split(":", 1)[1].strip()
             return f"DOMAIN-KEYWORD,{kw}"
         elif line.startswith("regexp:"):
-            pattern = line.split(":", 1)[1].strip()
-            return f"URL-REGEX,{pattern}"
+            # Shadowrocket has no host-regex rule; URL-REGEX matches full URLs and never hits host patterns
+            return None
         elif ":" in line:
             parts = line.split(":", 1)
             prefix, domain = parts[0].strip(), parts[1].strip()
@@ -70,60 +72,33 @@ class ShadowrocketEmitter(BaseEmitter):
 
         return rule_count
 
-    def build_whitelist_ips(
-        self, src_path: Path, dst_path: Path, repo: str, updated_str: str
-    ) -> int:
+    def build_ip_ruleset(self, src_path: Path, dst_path: Path, repo: str, updated_str: str) -> int:
         ip_lines: list[str] = []
-        ip_count = 0
         with open(src_path, "r", encoding="utf-8") as f:
             for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"):
+                cidr = line.split("#", 1)[0].strip()
+                if not cidr:
                     continue
-                cidr = line.split()[0]
-                ip_lines.append(f"IP-CIDR,{cidr},no-resolve")
-                ip_count += 1
+                rtype = "IP-CIDR6" if ipaddress.ip_network(cidr, strict=False).version == 6 else "IP-CIDR"
+                ip_lines.append(f"{rtype},{cidr},no-resolve")
 
         with open(dst_path, "w", encoding="utf-8") as f:
-            f.write("# NAME: whitelist-ips.list\n")
-            f.write(f"# TOTAL: {ip_count}\n")
+            f.write(f"# NAME: {dst_path.name}\n")
+            f.write(f"# TOTAL: {len(ip_lines)}\n")
             f.write(f"# REPO: https://github.com/{repo}\n")
             f.write(f"# UPDATED: {updated_str}\n")
             f.write("\n".join(ip_lines) + "\n")
 
-        return ip_count
-
-    def build_direct_ips(
-        self, sources: list[Path], dst_path: Path, repo: str, updated_str: str
-    ) -> int:
-        direct_ip_lines: list[str] = []
-        seen_cidrs: set[str] = set()
-
-        for src in sources:
-            if src.is_file():
-                with open(src, "r", encoding="utf-8") as f:
-                    for line in f:
-                        line = line.strip()
-                        if not line or line.startswith("#"):
-                            continue
-                        cidr = line.split()[0].split("#")[0].strip()
-                        if cidr and cidr not in seen_cidrs:
-                            seen_cidrs.add(cidr)
-                            direct_ip_lines.append(f"IP-CIDR,{cidr},no-resolve")
-
-        with open(dst_path, "w", encoding="utf-8") as f:
-            f.write("# NAME: direct-ips.list\n")
-            f.write(f"# TOTAL: {len(direct_ip_lines)}\n")
-            f.write(f"# REPO: https://github.com/{repo}\n")
-            f.write(f"# UPDATED: {updated_str}\n")
-            f.write("\n".join(direct_ip_lines) + "\n")
-
-        return len(direct_ip_lines)
+        return len(ip_lines)
 
     def build_all_rulesets(
-        self, repo: str, updated_str: str | None = None
+        self, repo: str, updated_str: str | None = None, geoip_text_dir: Path | None = None
     ) -> dict[str, int]:
-        """Generate all .list files in SHADOWROCKET/rules/."""
+        """Generate all .list files in SHADOWROCKET/rules/.
+
+        IP lists are rebuilt only when `geoip_text_dir` (the geoip builder's output/text) is given,
+        so they always match geoip.dat. Without it the committed IP lists are left untouched.
+        """
         self.rules_dir.mkdir(parents=True, exist_ok=True)
         if not updated_str:
             updated_str = datetime.datetime.now(datetime.UTC).strftime(
@@ -141,36 +116,31 @@ class ShadowrocketEmitter(BaseEmitter):
                 )
 
         # 2. GeoIP CIDR lists
-        whitelist_ips_src = self.geoip_dir / "CUSTOM-WHITELIST.txt"
-        if whitelist_ips_src.is_file():
-            out = self.rules_dir / "whitelist-ips.list"
-            counts["whitelist-ips"] = self.build_whitelist_ips(
-                whitelist_ips_src, out, repo=repo, updated_str=updated_str
-            )
+        if geoip_text_dir is None:
+            print("  (no --geoip-text-dir: keeping existing IP rule lists)")
+            return counts
 
-        direct_sources = [
-            self.geoip_dir / "CUSTOM-LIST-ADD.txt",
-            self.geoip_dir / "CUSTOM-FIX-ADD.txt",
-        ]
-        out_direct = self.rules_dir / "direct-ips.list"
-        counts["direct-ips"] = self.build_direct_ips(
-            direct_sources, out_direct, repo=repo, updated_str=updated_str
-        )
+        for code, list_name in GEOIP_RULESETS.items():
+            src = geoip_text_dir / f"{code}.txt"
+            if not src.is_file():
+                raise FileNotFoundError(f"Compiled geoip list not found: {src}")
+            counts[list_name] = self.build_ip_ruleset(
+                src, self.rules_dir / f"{list_name}.list", repo=repo, updated_str=updated_str
+            )
 
         return counts
 
     def emit_profile(
         self,
-        profile_id: str,
+        key: str,
         profile: ProfileConfig,
         output_dir: Path,
         repo: str,
         epoch: str | None = None,
         updated_str: str | None = None,
     ) -> None:
-        """Emit Shadowrocket .CONF file matching exact legacy template specifications."""
+        """Emit Shadowrocket .CONF file."""
         output_dir.mkdir(parents=True, exist_ok=True)
-        key = profile_id.upper()
         branch = "main"
         raw_base = f"https://raw.githubusercontent.com/{repo}/{branch}/SHADOWROCKET"
         rules_base = f"{raw_base}/rules"
@@ -224,11 +194,11 @@ dns-fallback-system = false
 dns-direct-fallback-proxy = true
 
 # DNS серверы (100% аналог RemoteDns и DomesticDns из Happ и INCY):
-# Основной удаленный DoH3/DoH: Quad9 (https://dns.quad9.net/dns-query, 9.9.9.9)
-dns-server = https://dns.quad9.net/dns-query, 9.9.9.9
+# Основной удаленный {profile.remote_dns_type}: {profile.remote_dns_domain}, {profile.remote_dns_ip}
+dns-server = {profile.remote_dns_domain}, {profile.remote_dns_ip}
 
-# Резервный отечественный DoH: Yandex (https://common.dot.dns.yandex.net/dns-query, 77.88.8.8)
-fallback-dns-server = https://common.dot.dns.yandex.net/dns-query, 77.88.8.8, system
+# Резервный отечественный {profile.domestic_dns_type}: {profile.domestic_dns_domain}, {profile.domestic_dns_ip}
+fallback-dns-server = {profile.domestic_dns_domain}, {profile.domestic_dns_ip}, system
 
 # Перехват стандартных DNS запросов (порт 53)
 hijack-dns = :53
@@ -292,25 +262,14 @@ update-url = {raw_base}/{key}.CONF
                     rule_parts.append(f"RULE-SET,{rules_base}/{cat}.list,DIRECT")
             rule_parts.append("")
 
-        # 4. Direct IP rules
-        has_direct_ip = any(
-            ip in ("geoip:direct", "geoip:ru", "geoip:custom-list-add")
-            for ip in profile.direct_ip
-        )
-        has_whitelist_ip = any(
-            ip in ("geoip:whitelist", "geoip:custom-whitelist")
-            for ip in profile.direct_ip
-        )
-
-        if has_direct_ip:
-            rule_parts.append("# --- Прямое подключение по IP (DirectIp) ---")
+        # 4. Direct IP rules (same CIDRs as geoip:direct / geoip:whitelist in geoip.dat)
+        if "geoip:direct" in profile.direct_ip:
+            rule_parts.append("# --- Прямое подключение по IP (DirectIp: RU/BY без заблокированных и CDN) ---")
             rule_parts.append(
                 f"RULE-SET,{rules_base}/direct-ips.list,DIRECT,no-resolve"
             )
-            rule_parts.append("GEOIP,RU,DIRECT")
-            rule_parts.append("GEOIP,BY,DIRECT")
             rule_parts.append("")
-        elif has_whitelist_ip:
+        if "geoip:whitelist" in profile.direct_ip:
             rule_parts.append(
                 "# --- Прямое подключение: IP белого списка РФ (DirectIp) ---"
             )

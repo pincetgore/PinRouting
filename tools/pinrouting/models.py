@@ -8,119 +8,71 @@ Adheres to official Happ & INCY specifications:
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Any
+
+_CDN = "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release"
+_FLAGS = {"global_proxy", "use_chunk_files", "fake_dns"}  # "true" | "false" strings per Happ/INCY spec
+
+
+def _key(json_key: str) -> dict[str, str]:
+    return {"key": json_key}
 
 
 @dataclass
 class ProfileConfig:
-    """Represents a unified routing profile according to Happ and INCY specs."""
+    """Represents a unified routing profile according to Happ and INCY specs.
 
-    name: str
-    global_proxy: str = "true"  # "true" | "false"
-    remote_dns_type: str = "DoH3"  # "DoH" | "DoH3" | "DoU" | "DoT"
-    remote_dns_domain: str = "https://dns.quad9.net/dns-query"
-    remote_dns_ip: str = "9.9.9.9"
-    domestic_dns_type: str = "DoH"  # "DoH" | "DoH3" | "DoU"
-    domestic_dns_domain: str = "https://common.dot.dns.yandex.net/dns-query"
-    domestic_dns_ip: str = "77.88.8.8"
-    geoip_url: str = (
-        "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat"
+    Field order is the exact key order of the emitted Happ/INCY JSON.
+    """
+
+    name: str = field(metadata=_key("Name"))
+    global_proxy: str = field(default="true", metadata=_key("GlobalProxy"))
+    use_chunk_files: str = field(default="true", metadata=_key("UseChunkFiles"))
+    remote_dns_type: str = field(default="DoH3", metadata=_key("RemoteDNSType"))
+    remote_dns_domain: str = field(default="https://dns.quad9.net/dns-query", metadata=_key("RemoteDNSDomain"))
+    remote_dns_ip: str = field(default="9.9.9.9", metadata=_key("RemoteDNSIP"))
+    domestic_dns_type: str = field(default="DoH", metadata=_key("DomesticDNSType"))
+    domestic_dns_domain: str = field(
+        default="https://common.dot.dns.yandex.net/dns-query", metadata=_key("DomesticDNSDomain")
     )
-    geosite_url: str = (
-        "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat"
-    )
-    dns_hosts: dict[str, str] = field(default_factory=dict)
-    direct_sites: list[str] = field(default_factory=list)
-    direct_ip: list[str] = field(default_factory=list)
-    proxy_sites: list[str] = field(default_factory=list)
-    proxy_ip: list[str] = field(default_factory=list)
-    block_sites: list[str] = field(default_factory=list)
-    block_ip: list[str] = field(default_factory=list)
-    domain_strategy: str = "IPIfNonMatch"
-    fake_dns: str = "false"
-    use_chunk_files: str = "true"
-    route_order: str = "block-proxy-direct"
-    last_updated: str | None = None
+    domestic_dns_ip: str = field(default="77.88.8.8", metadata=_key("DomesticDNSIP"))
+    geoip_url: str = field(default=f"{_CDN}/geoip.dat", metadata=_key("Geoipurl"))
+    geosite_url: str = field(default=f"{_CDN}/geosite.dat", metadata=_key("Geositeurl"))
+    last_updated: str | None = field(default=None, metadata=_key("LastUpdated"))
+    dns_hosts: dict[str, str] = field(default_factory=dict, metadata=_key("DnsHosts"))
+    route_order: str = field(default="block-proxy-direct", metadata=_key("RouteOrder"))
+    direct_sites: list[str] = field(default_factory=list, metadata=_key("DirectSites"))
+    direct_ip: list[str] = field(default_factory=list, metadata=_key("DirectIp"))
+    proxy_sites: list[str] = field(default_factory=list, metadata=_key("ProxySites"))
+    proxy_ip: list[str] = field(default_factory=list, metadata=_key("ProxyIp"))
+    block_sites: list[str] = field(default_factory=list, metadata=_key("BlockSites"))
+    block_ip: list[str] = field(default_factory=list, metadata=_key("BlockIp"))
+    domain_strategy: str = field(default="IPIfNonMatch", metadata=_key("DomainStrategy"))
+    fake_dns: str = field(default="false", metadata=_key("FakeDNS"))
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ProfileConfig:
-        return cls(
-            name=data.get("Name", "Default"),
-            global_proxy=str(data.get("GlobalProxy", "true")),
-            remote_dns_type=data.get("RemoteDNSType", "DoH3"),
-            remote_dns_domain=data.get(
-                "RemoteDNSDomain", "https://dns.quad9.net/dns-query"
-            ),
-            remote_dns_ip=data.get("RemoteDNSIP", "9.9.9.9"),
-            domestic_dns_type=data.get("DomesticDNSType", "DoH"),
-            domestic_dns_domain=data.get(
-                "DomesticDNSDomain",
-                "https://common.dot.dns.yandex.net/dns-query",
-            ),
-            domestic_dns_ip=data.get("DomesticDNSIP", "77.88.8.8"),
-            geoip_url=data.get(
-                "Geoipurl",
-                "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geoip.dat",
-            ),
-            geosite_url=data.get(
-                "Geositeurl",
-                "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release/geosite.dat",
-            ),
-            dns_hosts=dict(data.get("DnsHosts", {})),
-            direct_sites=list(data.get("DirectSites", [])),
-            direct_ip=list(data.get("DirectIp", [])),
-            proxy_sites=list(data.get("ProxySites", [])),
-            proxy_ip=list(data.get("ProxyIp", [])),
-            block_sites=list(data.get("BlockSites", [])),
-            block_ip=list(data.get("BlockIp", [])),
-            domain_strategy=data.get("DomainStrategy", "IPIfNonMatch"),
-            fake_dns=str(data.get("FakeDNS", "false")),
-            use_chunk_files=str(
-                data.get("UseChunkFiles", data.get("useChunkFiles", "true"))
-            ).lower(),
-            route_order=data.get("RouteOrder", "block-proxy-direct"),
-            last_updated=data.get("LastUpdated"),
-        )
+        kwargs: dict[str, Any] = {}
+        for f in fields(cls):
+            if f.metadata["key"] in data:
+                value = data[f.metadata["key"]]
+                kwargs[f.name] = str(value).lower() if f.name in _FLAGS else value
+        kwargs.setdefault("name", "Default")
+        return cls(**kwargs)
 
     @classmethod
     def load_from_file(cls, path: Path | str) -> ProfileConfig:
         with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return cls.from_dict(data)
+            return cls.from_dict(json.load(f))
 
     def to_client_dict(self, epoch: str | None = None) -> dict[str, Any]:
         """Convert to the standard Happ/INCY JSON dictionary structure preserving exact key order."""
-        out: dict[str, Any] = {
-            "Name": self.name,
-            "GlobalProxy": self.global_proxy,
-            "UseChunkFiles": self.use_chunk_files,
-            "RemoteDNSType": self.remote_dns_type,
-            "RemoteDNSDomain": self.remote_dns_domain,
-            "RemoteDNSIP": self.remote_dns_ip,
-            "DomesticDNSType": self.domestic_dns_type,
-            "DomesticDNSDomain": self.domestic_dns_domain,
-            "DomesticDNSIP": self.domestic_dns_ip,
-            "Geoipurl": self.geoip_url,
-            "Geositeurl": self.geosite_url,
-        }
-
-        # LastUpdated timestamp (Unix seconds)
-        if epoch is not None:
-            out["LastUpdated"] = str(epoch)
-        elif self.last_updated is not None:
-            out["LastUpdated"] = str(self.last_updated)
-
-        out["DnsHosts"] = self.dns_hosts
-        out["RouteOrder"] = self.route_order
-        out["DirectSites"] = self.direct_sites
-        out["DirectIp"] = self.direct_ip
-        out["ProxySites"] = self.proxy_sites
-        out["ProxyIp"] = self.proxy_ip
-        out["BlockSites"] = self.block_sites
-        out["BlockIp"] = self.block_ip
-        out["DomainStrategy"] = self.domain_strategy
-        out["FakeDNS"] = self.fake_dns
-
+        out: dict[str, Any] = {f.metadata["key"]: getattr(self, f.name) for f in fields(self)}
+        last_updated = epoch if epoch is not None else self.last_updated
+        if last_updated is None:
+            del out["LastUpdated"]
+        else:
+            out["LastUpdated"] = str(last_updated)
         return out

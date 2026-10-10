@@ -7,13 +7,14 @@ import datetime
 import json
 from pathlib import Path
 
-from pinrouting.emitters.happ import HappEmitter
-from pinrouting.emitters.incy import IncyEmitter
+from pinrouting.emitters.json_client import emit_incy_autolink, emit_json_profile
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.models import ProfileConfig
 
 
-def build_all(root_dir: Path, repo: str, epoch: str | None = None) -> None:
+def build_all(
+    root_dir: Path, repo: str, epoch: str | None = None, geoip_text_dir: Path | None = None
+) -> None:
     profiles_dir = root_dir / "profiles"
     happ_dir = root_dir / "HAPP"
     incy_dir = root_dir / "INCY"
@@ -40,13 +41,11 @@ def build_all(root_dir: Path, repo: str, epoch: str | None = None) -> None:
         except (ValueError, TypeError):
             pass
 
-    happ_emitter = HappEmitter()
-    incy_emitter = IncyEmitter()
     sr_emitter = ShadowrocketEmitter(root_dir)
 
     # 1. Build Shadowrocket rulesets
     print("Building Shadowrocket rulesets...")
-    counts = sr_emitter.build_all_rulesets(repo=repo, updated_str=updated_str)
+    counts = sr_emitter.build_all_rulesets(repo=repo, updated_str=updated_str, geoip_text_dir=geoip_text_dir)
     for name, cnt in sorted(counts.items()):
         print(f"  - {name}: {cnt} rules")
 
@@ -56,36 +55,34 @@ def build_all(root_dir: Path, repo: str, epoch: str | None = None) -> None:
         raise FileNotFoundError(f"No profile files found in {profiles_dir}")
 
     for pf in profile_files:
-        profile_id = pf.stem.upper()
-        print(f"\nProcessing profile: {profile_id} ({pf.name})...")
+        key = pf.stem.upper()
+        print(f"\nProcessing profile: {key} ({pf.name})...")
         cfg = ProfileConfig.load_from_file(pf)
 
-        happ_emitter.emit_profile(
-            profile_id, cfg, happ_dir, repo=repo, epoch=epoch
-        )
-        print(f"  ✓ Emitted HAPP: {profile_id}.JSON, .DEEPLINK")
+        emit_json_profile(key, cfg, happ_dir, scheme="happ", epoch=epoch)
+        print(f"  ✓ Emitted HAPP: {key}.JSON, .DEEPLINK")
 
-        incy_emitter.emit_profile(
-            profile_id, cfg, incy_dir, repo=repo, epoch=epoch
-        )
-        print(f"  ✓ Emitted INCY: {profile_id}.JSON, .DEEPLINK, .AUTOLINK")
+        emit_json_profile(key, cfg, incy_dir, scheme="incy", epoch=epoch)
+        emit_incy_autolink(key, incy_dir, repo=repo)
+        print(f"  ✓ Emitted INCY: {key}.JSON, .DEEPLINK, .AUTOLINK")
 
         sr_emitter.emit_profile(
-            profile_id,
+            key,
             cfg,
             shadowrocket_dir,
             repo=repo,
             epoch=epoch,
             updated_str=updated_str,
         )
-        print(f"  ✓ Emitted SHADOWROCKET: {profile_id}.CONF")
+        print(f"  ✓ Emitted SHADOWROCKET: {key}.CONF")
 
     print("\n✓ All client configurations generated successfully!")
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Build PinRouting configurations for HAPP, INCY, and Shadowrocket"
+        prog="pinrouting build",
+        description="Build PinRouting configurations for HAPP, INCY, and Shadowrocket",
     )
     parser.add_argument(
         "--repo",
@@ -95,17 +92,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--epoch",
         default=None,
-        help="Unix timestamp for LastUpdated field (defaults to current if not provided in CI)",
+        help="Unix timestamp for LastUpdated field (defaults to the existing value in HAPP/DEFAULT.JSON)",
     )
     parser.add_argument(
         "--root-dir",
         default=str(Path.cwd()),
         help="Root directory of PinRouting workspace",
     )
+    parser.add_argument(
+        "--geoip-text-dir",
+        default=None,
+        help="geoip builder output/text dir (direct.txt, whitelist.txt) to rebuild Shadowrocket IP lists; "
+        "if omitted, existing IP lists are kept",
+    )
     args = parser.parse_args(argv)
 
     root = Path(args.root_dir).resolve()
-    build_all(root, repo=args.repo, epoch=args.epoch)
+    geoip_text_dir = Path(args.geoip_text_dir).resolve() if args.geoip_text_dir else None
+    build_all(root, repo=args.repo, epoch=args.epoch, geoip_text_dir=geoip_text_dir)
     return 0
 
 
