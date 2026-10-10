@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 997
+# TOTAL: 994
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-10 12:21:25 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -40,7 +40,6 @@ DOMAIN-SUFFIX,typekit.net
 # Airbnb
 DOMAIN-SUFFIX,airbnb.com
 DOMAIN-SUFFIX,airbnb.ru
-DOMAIN-SUFFIX,airbnbcdn.com
 # AMD
 DOMAIN-SUFFIX,amd.com
 # Anaconda
@@ -472,7 +471,6 @@ DOMAIN-SUFFIX,musemuse.cn
 DOMAIN-SUFFIX,musica.ly
 DOMAIN-SUFFIX,musically-alternate.app.link
 DOMAIN-SUFFIX,musically.app.link
-DOMAIN-SUFFIX,musically.ly
 DOMAIN-SUFFIX,sgpstatp.com
 DOMAIN-SUFFIX,sgsnssdk.com
 DOMAIN-SUFFIX,tik-tokapi.com
@@ -513,7 +511,6 @@ DOMAIN-SUFFIX,bytedance.akadns.net
 DOMAIN-SUFFIX,bytegeo.akadns.net
 DOMAIN-SUFFIX,bytewlb.akadns.net
 DOMAIN-SUFFIX,p16-tiktokcdn-com.akamaized.net
-DOMAIN-SUFFIX,tiktokcdn-com.akamaized.net
 DOMAIN-SUFFIX,v16-tiktokcdn-com.akamaized.net
 DOMAIN-SUFFIX,tiktokcdn.liveplay.myqcloud.com
 DOMAIN-SUFFIX,bytedance.map.fastly.net

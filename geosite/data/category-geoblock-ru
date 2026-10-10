@@ -39,7 +39,6 @@ domain:typekit.net
 # Airbnb
 domain:airbnb.com
 domain:airbnb.ru
-domain:airbnbcdn.com
 
 # AMD
 domain:amd.com
@@ -571,7 +570,6 @@ domain:musemuse.cn
 domain:musica.ly
 domain:musically-alternate.app.link
 domain:musically.app.link
-domain:musically.ly
 domain:sgpstatp.com
 domain:sgsnssdk.com
 domain:tik-tokapi.com
@@ -612,7 +610,6 @@ domain:bytedance.akadns.net
 domain:bytegeo.akadns.net
 domain:bytewlb.akadns.net
 domain:p16-tiktokcdn-com.akamaized.net
-domain:tiktokcdn-com.akamaized.net
 domain:v16-tiktokcdn-com.akamaized.net
 domain:tiktokcdn.liveplay.myqcloud.com
 domain:bytedance.map.fastly.net
