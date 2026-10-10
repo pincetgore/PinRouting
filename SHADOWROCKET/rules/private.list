@@ -1,7 +1,7 @@
 # NAME: private.list
-# TOTAL: 130
+# TOTAL: 129
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-10 06:34:42 UTC
+# UPDATED: 2026-10-10 12:21:25 UTC
 # References:
 # https://www.iana.org/assignments/special-use-domain-names/special-use-domain-names.xhtml
 # https://unix.stackexchange.com/questions/92441/whats-the-difference-between-local-home-and-lan
@@ -118,7 +118,6 @@ DOMAIN-SUFFIX,125.100.in-addr.arpa
 DOMAIN-SUFFIX,126.100.in-addr.arpa
 DOMAIN-SUFFIX,127.100.in-addr.arpa
 # Dotless domains
-URL-REGEX,^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$
 # Aruba router
 DOMAIN,instant.arubanetworks.com
 DOMAIN,setmeup.arubanetworks.com
