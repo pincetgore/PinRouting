@@ -1,5 +1,5 @@
 # NAME: apple-push.list
-# TOTAL: 88
+# TOTAL: 86
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-10 12:21:25 UTC
 # Apple push notifications (APNs), iCloud, system updates, and captive portal checks.
@@ -61,7 +61,6 @@ DOMAIN-SUFFIX,icloud.ie
 DOMAIN-SUFFIX,icloud.is
 DOMAIN-SUFFIX,icloud.jp
 DOMAIN-SUFFIX,icloud.lv
-DOMAIN-SUFFIX,icloud.net.cn
 DOMAIN-SUFFIX,icloud.om
 DOMAIN-SUFFIX,icloud.org
 DOMAIN-SUFFIX,icloud.pt
@@ -71,7 +70,6 @@ DOMAIN-SUFFIX,icloud.si
 DOMAIN-SUFFIX,icloud.sk
 DOMAIN-SUFFIX,icloud.vn
 DOMAIN-SUFFIX,icloudads.net
-DOMAIN-SUFFIX,icloudapple.cn
 DOMAIN-SUFFIX,icloudbox.net
 DOMAIN-SUFFIX,icloudbrowser.net
 DOMAIN-SUFFIX,icloude.com

@@ -1,5 +1,5 @@
 # NAME: whitelist.list
-# TOTAL: 860
+# TOTAL: 857
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-10 12:21:25 UTC
 # Direct for checkers
@@ -126,7 +126,6 @@ DOMAIN-SUFFIX,tula.ru
 DOMAIN-SUFFIX,tver.ru
 DOMAIN-SUFFIX,tyumen.ru
 DOMAIN-SUFFIX,vladimir.ru
-DOMAIN-SUFFIX,vlg.ru
 DOMAIN-SUFFIX,volgograd.ru
 DOMAIN-SUFFIX,vologda.ru
 DOMAIN-SUFFIX,voronezh.ru
@@ -233,7 +232,6 @@ DOMAIN-SUFFIX,gpmdi.ru
 DOMAIN-SUFFIX,hh.ru
 DOMAIN-SUFFIX,idx5.ru
 DOMAIN-SUFFIX,imgsmail.ru
-DOMAIN-SUFFIX,investalfabank.com
 DOMAIN-SUFFIX,iz.ru
 DOMAIN-SUFFIX,jivo.ru
 DOMAIN-SUFFIX,jivochat.com
@@ -248,7 +246,6 @@ DOMAIN-SUFFIX,kp.ru
 DOMAIN-SUFFIX,krasyar.ru
 DOMAIN-SUFFIX,krd.ru
 DOMAIN-SUFFIX,kuper.ru
-DOMAIN-SUFFIX,lead-pro2023.online
 DOMAIN-SUFFIX,lemanapro.ru
 DOMAIN-SUFFIX,lenta.com
 DOMAIN-SUFFIX,lenta.ru
