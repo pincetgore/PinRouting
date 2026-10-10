@@ -1,7 +1,7 @@
 # NAME: whitelist-ips.list
 # TOTAL: 6943
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-10 12:21:25 UTC
+# UPDATED: 2026-10-10 14:03:05 UTC
 IP-CIDR,5.8.43.1/32,no-resolve
 IP-CIDR,5.8.43.2/31,no-resolve
 IP-CIDR,5.8.43.4/30,no-resolve
