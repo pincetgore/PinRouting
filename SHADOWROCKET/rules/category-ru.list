@@ -1,7 +1,7 @@
 # NAME: category-ru.list
 # TOTAL: 128
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-23 05:37:51 UTC
+# UPDATED: 2026-10-24 05:16:32 UTC
 # Direct for checkers
 DOMAIN-SUFFIX,ipify.org
 DOMAIN-SUFFIX,checkip.amazonaws.com
