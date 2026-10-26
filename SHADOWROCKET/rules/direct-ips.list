@@ -1,7 +1,7 @@
 # NAME: direct-ips.list
-# TOTAL: 36798
+# TOTAL: 36797
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-25 05:33:15 UTC
+# UPDATED: 2026-10-26 05:40:24 UTC
 IP-CIDR,2.26.8.0/24,no-resolve
 IP-CIDR,2.26.10.0/24,no-resolve
 IP-CIDR,2.26.89.0/24,no-resolve
@@ -1626,10 +1626,6 @@ IP-CIDR,5.253.164.0/22,no-resolve
 IP-CIDR,5.254.176.0/21,no-resolve
 IP-CIDR,5.254.224.0/19,no-resolve
 IP-CIDR,5.255.192.0/18,no-resolve
-IP-CIDR,8.20.122.0/24,no-resolve
-IP-CIDR,8.21.110.0/24,no-resolve
-IP-CIDR,8.40.27.0/24,no-resolve
-IP-CIDR,8.41.37.0/24,no-resolve
 IP-CIDR,8.209.0.0/19,no-resolve
 IP-CIDR,8.209.128.0/18,no-resolve
 IP-CIDR,9.247.4.0/24,no-resolve
@@ -21916,6 +21912,8 @@ IP-CIDR,176.10.93.0/24,no-resolve
 IP-CIDR,176.12.64.0/21,no-resolve
 IP-CIDR,176.12.96.0/21,no-resolve
 IP-CIDR,176.14.0.0/15,no-resolve
+IP-CIDR,176.22.136.0/24,no-resolve
+IP-CIDR,176.22.138.0/24,no-resolve
 IP-CIDR,176.28.64.0/25,no-resolve
 IP-CIDR,176.28.64.128/27,no-resolve
 IP-CIDR,176.28.64.160/28,no-resolve
@@ -36779,6 +36777,7 @@ IP-CIDR6,2a0e:fd87::/32,no-resolve
 IP-CIDR6,2a11:f740:20::/44,no-resolve
 IP-CIDR6,2a13:5940::/32,no-resolve
 IP-CIDR6,2a13:5942:420::/44,no-resolve
+IP-CIDR6,2a13:5942:c20::/44,no-resolve
 IP-CIDR6,2a13:5943:20::/44,no-resolve
 IP-CIDR6,2a13:5944:20::/44,no-resolve
 IP-CIDR6,2a13:5945:7::/48,no-resolve
