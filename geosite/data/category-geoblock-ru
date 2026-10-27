@@ -481,6 +481,8 @@ domain:audio4-ak-spotify-com.akamaized.net
 domain:cdn-spotify-experiments.conductrics.com
 domain:heads-ak-spotify-com.akamaized.net
 domain:heads4-ak-spotify-com.akamaized.net
+full:spotify.map.fastly.net
+full:spotify.map.fastlylb.net
 
 # Strava
 domain:strava.com

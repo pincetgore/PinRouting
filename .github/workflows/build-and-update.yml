@@ -113,7 +113,7 @@ jobs:
           ${{ env.CURL }} -o downloads/dbip-ipv4.csv https://github.com/sapics/ip-location-db/releases/download/latest/dbip-country-ipv4.csv & pids+=($!)
           ${{ env.CURL }} -o ipinfo_ru.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/ru.lst & pids+=($!)
           ${{ env.CURL }} -o ipinfo_by.lst https://raw.githubusercontent.com/Davoyan/ipinfo/refs/heads/main/geo/geoip/by.lst & pids+=($!)
-          ${{ env.CURL }} -o downloads/GeoLite2-ASN-CSV.zip https://dl.netsyms.net/dbs/geolite2/GeoLite2-ASN-CSV.zip & pids+=($!)
+          ${{ env.CURL }} -o downloads/GeoLite2-ASN-CSV.zip https://raw.githubusercontent.com/Loyalsoldier/geoip/refs/heads/release/GeoLite2-ASN-CSV.zip & pids+=($!)
 
           for pid in "${pids[@]}"; do
             wait "$pid"

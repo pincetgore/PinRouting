@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 994
+# TOTAL: 996
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-27 17:30:49 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -391,6 +391,8 @@ DOMAIN-SUFFIX,audio4-ak-spotify-com.akamaized.net
 DOMAIN-SUFFIX,cdn-spotify-experiments.conductrics.com
 DOMAIN-SUFFIX,heads-ak-spotify-com.akamaized.net
 DOMAIN-SUFFIX,heads4-ak-spotify-com.akamaized.net
+DOMAIN,spotify.map.fastly.net
+DOMAIN,spotify.map.fastlylb.net
 # Strava
 DOMAIN-SUFFIX,strava.com
 # Stripe

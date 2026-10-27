@@ -226,7 +226,7 @@ IP-списки не проверяются: APNs и RU-only хосты не о�
 ### 🌍 Базы IP-геолокации (GeoIP)
 * [@ip-location-db](https://github.com/sapics/ip-location-db) — ежедневные выгрузки сопоставления IP и стран (GeoLite2, DB-IP Lite).
 * [Davoyan/ipinfo](https://github.com/Davoyan/ipinfo) — ежедневные списки IP-диапазонов IPinfo Lite для России и Беларуси.
-* [Netsyms / MaxMind](https://dl.netsyms.net/dbs/geolite2/) — зеркало базы GeoLite2 ASN для фильтрации подсетей по номерам автономных систем (ASN).
+* [Loyalsoldier/geoip (ветка release)](https://github.com/Loyalsoldier/geoip/tree/release) — зеркало базы MaxMind GeoLite2 ASN для фильтрации подсетей по номерам автономных систем (ASN).
 
 ### 🛡️ Списки блокировок РКН (для исключения из прямого трафика)
 * [Re:filter](https://github.com/1andrevich/Re-filter-lists) — актуальные списки заблокированных ресурсов (ipsum, community).

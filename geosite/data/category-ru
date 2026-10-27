@@ -184,3 +184,19 @@ domain:spbbank.com
 domain:unistream.com
 domain:vakobank.com
 
+# Banks whose IPs are outside geoip:direct (Cloudflare, DDoS-Guard, blocked ranges), so they need a domain rule
+# Source: misha-tgshv/shadowrocket-configuration-file domains_banking.list, checked 2026-10-27
+domain:alnairao.ru
+domain:bank-globus.ru
+domain:bank-rk.ru
+domain:bantikov.ru
+domain:business.united.ru
+domain:promo.united.ru
+domain:ccbrussia.ru
+domain:dobro.chelind.ru
+domain:myweb.mbrus-bank.ru
+domain:newbank.ru
+domain:prostodar.ru
+domain:resortbank.ru
+domain:wealth-care.ru
+

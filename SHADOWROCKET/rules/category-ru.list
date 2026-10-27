@@ -1,5 +1,5 @@
 # NAME: category-ru.list
-# TOTAL: 128
+# TOTAL: 141
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-27 17:30:49 UTC
 # Direct for checkers
@@ -173,3 +173,18 @@ DOMAIN-SUFFIX,sovcombank.info
 DOMAIN-SUFFIX,spbbank.com
 DOMAIN-SUFFIX,unistream.com
 DOMAIN-SUFFIX,vakobank.com
+# Banks whose IPs are outside geoip:direct (Cloudflare, DDoS-Guard, blocked ranges), so they need a domain rule
+# Source: misha-tgshv/shadowrocket-configuration-file domains_banking.list, checked 2026-10-27
+DOMAIN-SUFFIX,alnairao.ru
+DOMAIN-SUFFIX,bank-globus.ru
+DOMAIN-SUFFIX,bank-rk.ru
+DOMAIN-SUFFIX,bantikov.ru
+DOMAIN-SUFFIX,business.united.ru
+DOMAIN-SUFFIX,promo.united.ru
+DOMAIN-SUFFIX,ccbrussia.ru
+DOMAIN-SUFFIX,dobro.chelind.ru
+DOMAIN-SUFFIX,myweb.mbrus-bank.ru
+DOMAIN-SUFFIX,newbank.ru
+DOMAIN-SUFFIX,prostodar.ru
+DOMAIN-SUFFIX,resortbank.ru
+DOMAIN-SUFFIX,wealth-care.ru
