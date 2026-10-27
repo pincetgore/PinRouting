@@ -30,6 +30,7 @@
   ],
   "ProxySites": [
     "geosite:category-geoblock-ru",
+    "geosite:youtube",
     "geosite:instagram",
     "geosite:twitter"
   ],

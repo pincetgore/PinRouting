@@ -80,7 +80,7 @@ class ShadowrocketEmitter:
                 if not cidr:
                     continue
                 rtype = "IP-CIDR6" if ipaddress.ip_network(cidr, strict=False).version == 6 else "IP-CIDR"
-                ip_lines.append(f"{rtype},{cidr},no-resolve")
+                ip_lines.append(f"{rtype},{cidr}")
 
         with open(dst_path, "w", encoding="utf-8") as f:
             f.write(f"# NAME: {dst_path.name}\n")
@@ -262,11 +262,12 @@ update-url = {raw_base}/{key}.CONF
                     rule_parts.append(f"RULE-SET,{rules_base}/{cat}.list,DIRECT")
             rule_parts.append("")
 
-        # 4. Direct IP rules (same CIDRs as geoip:direct / geoip:whitelist in geoip.dat)
+        # 4. Direct IP rules (same CIDRs as geoip:direct / geoip:whitelist in geoip.dat).
+        # No no-resolve: domains must be resolved and matched by IP, as Happ/INCY do with IPIfNonMatch.
         if "geoip:direct" in profile.direct_ip:
             rule_parts.append("# --- Прямое подключение по IP (DirectIp: RU/BY без заблокированных и CDN) ---")
             rule_parts.append(
-                f"RULE-SET,{rules_base}/direct-ips.list,DIRECT,no-resolve"
+                f"RULE-SET,{rules_base}/direct-ips.list,DIRECT"
             )
             rule_parts.append("")
         if "geoip:whitelist" in profile.direct_ip:
@@ -274,7 +275,7 @@ update-url = {raw_base}/{key}.CONF
                 "# --- Прямое подключение: IP белого списка РФ (DirectIp) ---"
             )
             rule_parts.append(
-                f"RULE-SET,{rules_base}/whitelist-ips.list,DIRECT,no-resolve"
+                f"RULE-SET,{rules_base}/whitelist-ips.list,DIRECT"
             )
             rule_parts.append("")
 

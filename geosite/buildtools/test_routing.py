@@ -216,6 +216,7 @@ class RoutingTestSuite:
             ("appldnld.apple.com", "DIRECT", "Apple software download CDN"),
             ("play.google.com", "DIRECT", "Google Play Store"),
             ("play.googleapis.com", "DIRECT", "Google Play API & APKs"),
+            ("ggpht.com", "PROXY", "YouTube / Google images"),
             # Direct media and gaming -> DIRECT
             ("twitch.tv", "DIRECT", "Twitch"),
             ("pinterest.com", "DIRECT", "Pinterest"),
@@ -299,6 +300,16 @@ class RoutingTestSuite:
 
             details = f"HAPP: {happ_res}, INCY: {incy_res}" if not (happ_ok and incy_ok) else happ_res
             print(f" {status} | {domain:<35} | exp: {expected:<6} | {details:<16} | {description}")
+
+        # With no-resolve Shadowrocket skips IP rules for domain requests, unlike Happ/INCY (IPIfNonMatch)
+        print("\n--- Shadowrocket IP rule sets resolve domains ---")
+        for path in sorted(SHADOWROCKET_RULES_DIR.glob("*-ips.list")) + sorted(SHADOWROCKET_DEFAULT_CONF.parent.glob("*.CONF")):
+            total += 1
+            bad = [ln for ln in path.read_text(encoding="utf-8").splitlines()
+                   if "no-resolve" in ln and not ln.startswith("#") and (path.suffix == ".list" or "-ips.list" in ln)]
+            if bad:
+                failed += 1
+            print(f" {'❌ FAIL' if bad else '✅ PASS'} | {path.name:<35} | {bad[0] if bad else 'no no-resolve'}")
 
         print("=" * 80)
         print(f"Summary: {total - failed}/{total} passed, {failed} failed")

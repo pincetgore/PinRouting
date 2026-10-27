@@ -60,7 +60,6 @@ domain:ip-check-perf.radar.cloudflare.com
 domain:ip-check.info
 domain:ip-score.com
 domain:ip.comss.net
-domain:ip.hetzner.com
 domain:ip.me
 domain:ip.pe.kr
 domain:ip.sb
@@ -90,7 +89,6 @@ domain:ipdata.co
 domain:ipecho.net
 domain:ipfind.io
 domain:ipfinder.io
-domain:ipgeo.vercel.app
 domain:ipgeolocation.io
 domain:ipify.cn
 domain:ipify.org

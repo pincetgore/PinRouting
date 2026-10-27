@@ -1,5 +1,5 @@
 # NAME: domains-geo-detect.list
-# TOTAL: 225
+# TOTAL: 223
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-27 05:50:38 UTC
 # Geo and IP detection domains (direct)
@@ -64,7 +64,6 @@ DOMAIN-SUFFIX,ip-check-perf.radar.cloudflare.com
 DOMAIN-SUFFIX,ip-check.info
 DOMAIN-SUFFIX,ip-score.com
 DOMAIN-SUFFIX,ip.comss.net
-DOMAIN-SUFFIX,ip.hetzner.com
 DOMAIN-SUFFIX,ip.me
 DOMAIN-SUFFIX,ip.pe.kr
 DOMAIN-SUFFIX,ip.sb
@@ -94,7 +93,6 @@ DOMAIN-SUFFIX,ipdata.co
 DOMAIN-SUFFIX,ipecho.net
 DOMAIN-SUFFIX,ipfind.io
 DOMAIN-SUFFIX,ipfinder.io
-DOMAIN-SUFFIX,ipgeo.vercel.app
 DOMAIN-SUFFIX,ipgeolocation.io
 DOMAIN-SUFFIX,ipify.cn
 DOMAIN-SUFFIX,ipify.org
