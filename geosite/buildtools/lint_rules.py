@@ -16,18 +16,28 @@ Usage:
 
 import argparse
 import ipaddress
+import re
 import sys
+from bisect import bisect_right
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT / "tools"))
+
+from pinrouting.geosite import is_valid_domain, is_valid_keyword, split_rule
+
 GEOSITE_DIR = REPO_ROOT / "geosite" / "data"
 GEOIP_DIR = REPO_ROOT / "geoip"
 
 VALID_GEOSITE_TYPES = {"domain", "full", "keyword", "regexp"}
+ATTR_RE = re.compile(r"@[a-z0-9!]+")
 
 
 def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
-    """Lints a single geosite file. Returns (error_count, warning_count)."""
+    """Lints a single geosite file with the same rules v2fly applies when building geosite.dat.
+
+    Returns (error_count, warning_count).
+    """
     errors = 0
     warnings = 0
     fn = filepath.name
@@ -36,57 +46,49 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     domain_rules = {}  # lower_domain -> line_num
     rules = []  # (line_num, type, value, raw_line)
 
+    def error(idx: int, msg: str) -> None:
+        nonlocal errors
+        print(f"[ERROR] [{fn}:{idx}] {msg}")
+        errors += 1
+
     with open(filepath, "r", encoding="utf-8") as f:
         for idx, raw_line in enumerate(f, 1):
             line = raw_line.strip()
-            if not line or line.startswith("#"):
+            parsed = split_rule(line)
+            if parsed is None:
                 continue
-
-            # Strip inline comments
-            content = line.split("#", 1)[0].strip()
-            if not content:
-                continue
-
-            # Strip attributes (e.g. @cn)
-            parts = content.split("@")[0].strip()
-            if ":" in parts:
-                rtype, val = parts.split(":", 1)
-                rtype = rtype.strip().lower()
-                val = val.strip().lower()
-            else:
-                rtype = "domain"
-                val = parts.lower()
+            rtype, fields = parsed
 
             if rtype not in VALID_GEOSITE_TYPES:
-                print(f"[ERROR] [{fn}:{idx}] Unknown rule type '{rtype}': {line}")
-                errors += 1
+                error(idx, f"Unknown rule type '{rtype}': {line}")
+                continue
+            if not fields:
+                error(idx, f"Empty rule value: {line}")
+                continue
+            # Only @attr is supported: &affiliation and include: are ignored by Shadowrocket and the tests
+            bad = [x for x in fields[1:] if not ATTR_RE.fullmatch(x)]
+            if bad:
+                error(idx, f"Unsupported field(s) {bad} (only @attr allowed): {line}")
                 continue
 
-            if not val:
-                print(f"[ERROR] [{fn}:{idx}] Empty rule value: {line}")
-                errors += 1
+            val = fields[0] if rtype == "regexp" else fields[0].lower()
+            if rtype in ("domain", "full") and not is_valid_domain(val):
+                error(idx, f"Invalid domain '{val}' (v2fly allows a-z, 0-9, '-', '.'; IDN must be punycode): {line}")
                 continue
-
-            # Syntax validation for domain and full rules
-            if rtype in ("domain", "full"):
-                if val.startswith(("http://", "https://")):
-                    print(f"[ERROR] [{fn}:{idx}] Rule should not include URL scheme: '{line}'")
-                    errors += 1
-                    continue
-                if "/" in val:
-                    print(f"[ERROR] [{fn}:{idx}] Domain rule should not include path: '{line}'")
-                    errors += 1
-                    continue
-                if any(ch.isspace() for ch in val):
-                    print(f"[ERROR] [{fn}:{idx}] Domain rule contains whitespace: '{line}'")
-                    errors += 1
+            if rtype == "keyword" and not is_valid_keyword(val):
+                error(idx, f"Invalid keyword '{val}': {line}")
+                continue
+            if rtype == "regexp":
+                try:
+                    re.compile(val)
+                except re.error as e:
+                    error(idx, f"Invalid regexp: {e}: {line}")
                     continue
 
             # Check exact duplicates
             key = f"{rtype}:{val}"
             if key in seen_exact:
-                print(f"[ERROR] [{fn}:{idx}] Exact duplicate of line {seen_exact[key]}: '{line}'")
-                errors += 1
+                error(idx, f"Exact duplicate of line {seen_exact[key]}: '{line}'")
             else:
                 seen_exact[key] = idx
 
@@ -124,13 +126,17 @@ def _format_collapse_details[TNetwork: (ipaddress.IPv4Network, ipaddress.IPv6Net
     line_map: dict[str, int],
 ) -> str:
     """Helper to format detailed information about collapsed subnets."""
-    orig_set = set(nets)
+    # Only networks that vanished on collapse need explaining; find each one's cover by binary search
+    # (scanning every pair is O(n^2) and took ~2 minutes on the 18k-line whitelist)
+    starts = [int(n.network_address) for n in collapsed]  # collapse_addresses returns sorted networks
+    covered: dict[TNetwork, list[TNetwork]] = {}
+    for s in set(nets) - set(collapsed):
+        cover = collapsed[bisect_right(starts, int(s.network_address)) - 1]
+        covered.setdefault(cover, []).append(s)
     details = []
-    for net in collapsed:
-        subs = [s for s in orig_set if s.subnet_of(net) and s != net]
-        if subs:
-            subs_str = ", ".join(f"{s} (line {line_map.get(str(s), '?')})" for s in sorted(subs))
-            details.append(f"'{net}' can cover: {subs_str}")
+    for net, subs in sorted(covered.items()):
+        subs_str = ", ".join(f"{s} (line {line_map.get(str(s), '?')})" for s in sorted(subs))
+        details.append(f"'{net}' can cover: {subs_str}")
     return "; ".join(details)
 
 

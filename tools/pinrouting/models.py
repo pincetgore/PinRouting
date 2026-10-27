@@ -54,6 +54,10 @@ class ProfileConfig:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ProfileConfig:
+        # A typo like "ProxySite" would otherwise silently ship a profile without those rules
+        unknown = data.keys() - {f.metadata["key"] for f in fields(cls)}
+        if unknown:
+            raise ValueError(f"Unknown profile key(s): {', '.join(sorted(unknown))}")
         kwargs: dict[str, Any] = {}
         for f in fields(cls):
             if f.metadata["key"] in data:

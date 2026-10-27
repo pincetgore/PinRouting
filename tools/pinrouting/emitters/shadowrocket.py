@@ -6,10 +6,12 @@ import datetime
 import ipaddress
 from pathlib import Path
 
+from pinrouting.geosite import parse_rule
 from pinrouting.models import ProfileConfig
 
 # Shadowrocket IP rule lists built from the compiled geoip text dumps (same data as geoip:<name> in Happ/INCY)
 GEOIP_RULESETS = {"direct": "direct-ips", "whitelist": "whitelist-ips"}
+SR_RULE_TYPES = {"domain": "DOMAIN-SUFFIX", "full": "DOMAIN", "keyword": "DOMAIN-KEYWORD"}
 
 
 class ShadowrocketEmitter:
@@ -20,34 +22,13 @@ class ShadowrocketEmitter:
 
     def convert_domain_rule(self, line: str) -> str | None:
         line = line.strip()
-        if not line:
-            return None
-
         # Pass through full-line comments and section headers as-is
         if line.startswith("#"):
             return line
-
-        # Parse directives: domain:example.com, full:example.com, keyword:example, regexp:...
-        if line.startswith("full:"):
-            domain = line.split(":", 1)[1].strip()
-            return f"DOMAIN,{domain}"
-        elif line.startswith("domain:"):
-            domain = line.split(":", 1)[1].strip()
-            return f"DOMAIN-SUFFIX,{domain}"
-        elif line.startswith("keyword:"):
-            kw = line.split(":", 1)[1].strip()
-            return f"DOMAIN-KEYWORD,{kw}"
-        elif line.startswith("regexp:"):
-            # Shadowrocket has no host-regex rule; URL-REGEX matches full URLs and never hits host patterns
-            return None
-        elif ":" in line:
-            parts = line.split(":", 1)
-            prefix, domain = parts[0].strip(), parts[1].strip()
-            if prefix == "include":
-                return None
-            return f"DOMAIN-SUFFIX,{domain}"
-        else:
-            return f"DOMAIN-SUFFIX,{line}"
+        rule = parse_rule(line)
+        # regexp: has no Shadowrocket equivalent (URL-REGEX matches full URLs, never host patterns)
+        rtype = SR_RULE_TYPES.get(rule[0]) if rule else None
+        return f"{rtype},{rule[1]}" if rule and rtype else None
 
     def build_ruleset_file(
         self, src_path: Path, dst_path: Path, repo: str, updated_str: str
