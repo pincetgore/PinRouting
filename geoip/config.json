@@ -195,8 +195,7 @@
       "action": "remove",
       "args": {
         "name": "direct",
-        "uri": "./cdn.lst",
-        "onlyIPType": "ipv4"
+        "uri": "./cdn.lst"
       }
     },
     {
@@ -204,8 +203,7 @@
       "action": "remove",
       "args": {
         "name": "direct",
-        "uri": "./merged.sum",
-        "onlyIPType": "ipv4"
+        "uri": "./merged.sum"
       }
     },
     {
