@@ -86,26 +86,28 @@
 
 ## 🧭 Логика маршрутизации
 
-Порядок обработки правил во всех профилях строго упорядочен:
+Правила проверяются по порядку `block → proxy → direct` (`RouteOrder: block-proxy-direct`), и срабатывает первое совпадение. Поэтому домен из списка Proxy уйдёт в VPN, даже если он (или его родительский домен) есть в списке Direct.
 
 1. **Блокировка (Block / Reject):**
    * Рекламные сети, трекеры и баннеры (`geosite:category-ads`).
    * Торрент-трекеры (`geosite:torrent`), предотвращающие утечки в туннель и нагрузку на сервер.
-2. **Системные исключения (Direct):**
+2. **Проксирование (Proxy):**
+   * Заблокированные и международные социальные сети: YouTube (`geosite:youtube`), Telegram (`geosite:telegram`), Instagram / Threads (`geosite:instagram`), X / Twitter (`geosite:twitter`).
+   * Инструменты разработки: GitHub (`geosite:github`).
+   * Ресурсы, блокирующие пользователей из РФ (GeoBlock): AI-сервисы (ChatGPT, Claude, Gemini, Copilot), Canva, Spotify, Notion и др. (`geosite:category-geoblock-ru`).
+3. **Системные исключения (Direct):**
    * Push-уведомления Apple (`geosite:apple-push`) и Google FCM / Huawei HMS / Xiaomi (`geosite:android-push`).
    * Загрузка системных обновлений iOS/macOS (`geosite:apple-update`).
    * Скачивание APK и приложений из Google Play (`geosite:google-play`).
    * Сетевые протоколы операторов связи (VoWiFi / IMS) и домены локального определения IP (`geosite:domains-geo-detect`).
-3. **Прямое соединение (Direct):**
+4. **Прямое соединение (Direct):**
    * Локальные и приватные адреса (`geosite:private`, `geoip:private`).
    * Российские ресурсы, порталы и банки (`geosite:category-ru`, `geoip:direct` — IP РФ/РБ без заблокированных РКН и зарубежных CDN, плюс `CUSTOM-LIST-ADD.txt`).
    * Ресурсы белого списка (`geosite:whitelist`, `geoip:whitelist`).
    * Стриминг и медиа: Twitch (`geosite:twitch`), Pinterest (`geosite:pinterest`).
-4. **Проксирование (Proxy):**
-   * Заблокированные и международные социальные сети: YouTube (`geosite:youtube`), Telegram (`geosite:telegram`), Instagram / Threads (`geosite:instagram`), X / Twitter (`geosite:twitter`).
-   * Инструменты разработки: GitHub (`geosite:github`).
-   * Ресурсы, блокирующие пользователей из РФ (GeoBlock): AI-сервисы (ChatGPT, Claude, Gemini, Copilot), Canva, Spotify, Notion и др. (`geosite:category-geoblock-ru`).
-   * **Финальное правило (Catch-all):** весь остальной зарубежный трафик направляется через Proxy.
+5. **Финальное правило (Catch-all):** весь остальной трафик, не попавший ни в одно правило выше (в том числе по IP), направляется через Proxy.
+
+В профиле WHITELIST в Proxy идут `category-geoblock-ru`, `youtube`, `instagram` и `twitter`, а напрямую — только системные исключения и белый список. Сайт, домен которого не найден в списках, проверяется по IP: Happ/INCY (`DomainStrategy: IPIfNonMatch`) и Shadowrocket одинаково узнают IP и сверяют его с `geoip:direct` / `geoip:whitelist`.
 
 ---
 
@@ -145,16 +147,17 @@
 2. **Загружает свежие списки** GeoLite2, DB-IP, IPinfo, Re:filter, Antifilter и CDN (пустой или битый список останавливает сборку).
 3. **Компилирует бинарные файлы** `geoip.dat` и `geosite.dat` через `geoip-tool` и `domain-list-community` (версии сборщиков закреплены по SHA).
 4. **Генерирует клиентские конфигурации** Happ, INCY и Shadowrocket (IP-списки Shadowrocket строятся из тех же `direct`/`whitelist`, что и `geoip.dat`).
-5. **Запускает симуляцию роутинга** (`pinrouting test`) на только что собранных конфигурациях.
-6. **Публикует релизы** с бинарниками, контрольными суммами и архивом `text.tar.gz`.
+5. **Запускает тесты** (`pinrouting test`): модульные тесты из `tests/` и симуляцию роутинга всех профилей на только что собранных конфигурациях.
+6. **Публикует релизы** с бинарниками, контрольными суммами и архивом `text.tar.gz` и сбрасывает кэш jsDelivr для `.dat`-файлов.
 
 Расписание запуска: **ежедневно в 01:00 UTC**, при каждом коммите в репозиторий или вручную через **Actions**.
 
-### 2. `check-dead-entries.yml` (Проверка и очистка неживых записей)
-1. **Проверяет домены** через 3 независимых DNS-резолвера (`1.1.1.1`, `8.8.8.8`, `77.88.8.8`): домен считается неживым, только если **все** резолверы ответили `NXDOMAIN`.
-2. **Проверяет IP и подсети** через TCP-пробы (443 TLS, 80 HTTP) и ICMP ping со сэмплированием хостов для сетей `/24` и шире. IP **только попадают в отчет и никогда не удаляются автоматически**: APNs и RU-only хосты не отвечают зарубежным CI-раннерам.
-3. **Формирует детальный отчет** в Markdown и JSON (прикрепляется к GitHub Step Summary и артефактам).
-4. **Удаляет неживые домены** и автоматически создает Pull Request (`action: pr`) либо коммитит в ветку.
+### 2. `check-dead-entries.yml` (Проверка и очистка неживых доменов)
+1. **Проверяет домены** через 3 независимых DNS-резолвера (`1.1.1.1`, `8.8.8.8`, `77.88.8.8`): домен считается неживым, только если **все** резолверы ответили `NXDOMAIN`. Ошибки и таймауты считаются «жив».
+2. **Формирует детальный отчет** в Markdown и JSON (прикрепляется к GitHub Step Summary и артефактам).
+3. **Удаляет неживые домены**, пересобирает конфиги, прогоняет линтер и тесты и создает Pull Request (`action: pr`) либо коммитит в ветку.
+
+IP-списки не проверяются: APNs и RU-only хосты не отвечают зарубежным CI-раннерам, поэтому «нет ответа» не значит «не используется».
 
 Расписание запуска: **ежемесячно 1-го числа в 03:00 UTC** или вручную через **Actions** (`workflow_dispatch`).
 
@@ -165,7 +168,7 @@
 ```text
 ├── .github/workflows/
 │   ├── build-and-update.yml   # Автоматизированный CI/CD пайплайн сборки
-│   └── check-dead-entries.yml # Проверка и очистка неживых доменов и IP (PR / Commit)
+│   └── check-dead-entries.yml # Проверка и очистка неживых доменов (PR / Commit)
 ├── HAPP/                      # Конфигурации и диплинки для клиента Happ
 │   ├── DEFAULT.JSON / .DEEPLINK
 │   ├── WHITELIST.JSON / .DEEPLINK
@@ -188,7 +191,7 @@
 │   └── CUSTOM-WHITELIST.txt   # Кастомный белый список подсетей
 ├── geosite/
 │   ├── buildtools/            # Скрипты тестирования, линтинга и дедупликации доменов
-│   │   ├── lint_rules.py      # Линтер синтаксиса и избыточности правил
+│   │   ├── lint_rules.py      # Линтер синтаксиса (по правилам v2fly) и избыточности правил
 │   │   ├── test_routing.py    # Симуляция и регрессионное тестирование роутинга
 │   │   └── deduplicate.py     # Анализатор пересечений IP и доменов
 │   └── data/                  # Текстовые списки доменов по категориям
@@ -197,11 +200,13 @@
 │   └── pinrouting/
 │       ├── cli/
 │       │   ├── build.py       # Сборка конфигураций всех клиентов
-│       │   ├── check_dead.py  # Проверка и очистка неживых доменов и IP
+│       │   ├── check_dead.py  # Проверка и очистка неживых доменов
 │       │   ├── lint.py        # Линтинг профилей и правил
-│       │   └── test.py        # Регрессионные тесты роутинга
+│       │   └── test.py        # Модульные тесты и регрессионные тесты роутинга
 │       ├── emitters/          # Генераторы форматов HAPP/INCY (json_client.py) и Shadowrocket
+│       ├── geosite.py         # Единый разбор строк geosite (как в v2fly)
 │       └── models.py          # Модели конфигураций и профилей
+├── tests/                     # Модульные тесты (запускаются в make test)
 ├── Makefile                   # make lint, make test, make build, make check-dead
 ├── pyproject.toml             # Конфигурация Python проекта и линтера Ruff
 ├── LICENSE                    # Лицензия MIT
