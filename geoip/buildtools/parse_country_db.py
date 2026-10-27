@@ -61,7 +61,7 @@ def main() -> None:
         sys.exit(1)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    networks_by_country: dict[str, list[str]] = defaultdict(list)
+    networks_by_country: dict[str, set[ipaddress.IPv4Network | ipaddress.IPv6Network]] = defaultdict(set)
 
     print(f"Processing '{args.input}' for countries: {', '.join(sorted(target_countries))}...")
 
@@ -84,11 +84,8 @@ def main() -> None:
 
     # Write output files
     for country_code in sorted(target_countries):
-        raw_list = networks_by_country[country_code]
-        # Deduplicate and sort by IP address (parsing once to avoid repeated object creation)
-        parsed_nets = {ipaddress.ip_network(x) for x in raw_list}
         unique_nets = sorted(
-            parsed_nets,
+            networks_by_country[country_code],
             key=lambda net: (net.version, int(net.network_address), net.prefixlen)
         )
         out_filename = f"{args.prefix}{country_code.lower()}.lst"
@@ -103,7 +100,7 @@ def main() -> None:
 def _process_row(
     row: list[str],
     target_countries: set[str],
-    networks_by_country: dict[str, list[str]],
+    networks_by_country: dict[str, set[ipaddress.IPv4Network | ipaddress.IPv6Network]],
 ) -> None:
     if len(row) < 3:
         return
@@ -121,8 +118,7 @@ def _process_row(
         if start_ip.version != end_ip.version or int(start_ip) > int(end_ip):
             return
 
-        for net in ipaddress.summarize_address_range(start_ip, end_ip):
-            networks_by_country[country].append(str(net))
+        networks_by_country[country].update(ipaddress.summarize_address_range(start_ip, end_ip))
     except ValueError:
         return
 

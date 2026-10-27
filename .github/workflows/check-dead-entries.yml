@@ -1,7 +1,7 @@
 # .github/workflows/check-dead-entries.yml
-# Separate workflow to inspect all domain names and IP CIDRs for liveness,
+# Separate workflow to inspect all geosite domains for liveness (NXDOMAIN on every resolver),
 # generate detailed reports, and clean up dead domains via PR or direct commit.
-# Unresponsive IPs are only reported (CI runners can't reliably probe APNs / RU-only hosts).
+# IP lists are not checked: CI runners can't reliably probe APNs / RU-only hosts.
 
 name: Check and Cleanup Dead Entries
 
@@ -11,17 +11,8 @@ on:
     - cron: '0 3 1 * *'
   workflow_dispatch:
     inputs:
-      target:
-        description: 'Resource target to check'
-        required: true
-        type: choice
-        options:
-          - all
-          - domains
-          - ips
-        default: all
       action:
-        description: 'Action to perform on dead domains (IPs are always report-only)'
+        description: 'Action to perform on dead domains'
         required: true
         type: choice
         options:
@@ -39,16 +30,11 @@ on:
         required: false
         type: number
         default: 2.0
-      ip_timeout:
-        description: 'Timeout for IP/CIDR check in seconds'
-        required: false
-        type: number
-        default: 1.5
       exclude_files:
-        description: 'Comma-separated filenames to exclude from checking'
+        description: 'Comma-separated geosite filenames to exclude from checking'
         required: false
         type: string
-        default: 'private,CUSTOM-LIST-ADD'
+        default: 'private'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -87,14 +73,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          TARGET="${{ inputs.target || 'all' }}"
           ACTION="${{ inputs.action || 'pr' }}"
           CONCURRENCY="${{ inputs.concurrency || 150 }}"
           DNS_TIMEOUT="${{ inputs.dns_timeout || 2.0 }}"
-          IP_TIMEOUT="${{ inputs.ip_timeout || 1.5 }}"
-          EXCLUDE_FILES="${{ inputs.exclude_files || 'private,CUSTOM-LIST-ADD' }}"
+          EXCLUDE_FILES="${{ inputs.exclude_files || 'private' }}"
 
-          CMD="python3 -m pinrouting check-dead --target $TARGET --exclude-files $EXCLUDE_FILES --concurrency $CONCURRENCY --dns-timeout $DNS_TIMEOUT --ip-timeout $IP_TIMEOUT --output-markdown dead-report.md --output-json dead-report.json"
+          CMD="python3 -m pinrouting check-dead --exclude-files $EXCLUDE_FILES --concurrency $CONCURRENCY --dns-timeout $DNS_TIMEOUT --output-markdown dead-report.md --output-json dead-report.json"
           if [ "$ACTION" != "dry-run" ]; then
             CMD="$CMD --remove"
           fi

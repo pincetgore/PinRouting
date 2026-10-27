@@ -32,14 +32,15 @@ def build_all(
     if epoch is not None:
         epoch = str(epoch)
 
-    # Format consistent updated_str for ruleset headers
-    updated_str: str | None = None
+    # One timestamp for every Shadowrocket header; "now" when there is no (valid) epoch
+    stamp = datetime.datetime.now(datetime.UTC)
     if epoch:
         try:
-            dt = datetime.datetime.fromtimestamp(int(epoch), tz=datetime.UTC)
-            updated_str = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
+            stamp = datetime.datetime.fromtimestamp(int(epoch), tz=datetime.UTC)
         except (ValueError, TypeError):
             pass
+    updated_str = stamp.strftime("%Y-%m-%d %H:%M:%S UTC")
+    sr_epoch = str(int(stamp.timestamp()))
 
     sr_emitter = ShadowrocketEmitter(root_dir)
 
@@ -71,7 +72,7 @@ def build_all(
             cfg,
             shadowrocket_dir,
             repo=repo,
-            epoch=epoch,
+            epoch=sr_epoch,
             updated_str=updated_str,
         )
         print(f"  ✓ Emitted SHADOWROCKET: {key}.CONF")

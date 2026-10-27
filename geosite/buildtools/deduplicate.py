@@ -20,8 +20,8 @@ from __future__ import annotations
 import argparse
 import ipaddress
 import json
-import re
 import struct
+import sys
 import time
 import urllib.error
 import urllib.request
@@ -29,6 +29,10 @@ from bisect import bisect_right
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "tools"))
+
+from pinrouting.geosite import parse_rule
 
 # Ссылка на опубликованные списки IP-диапазонов ({name}.txt) в ветке release
 RELEASE_TEXT_URL = "https://raw.githubusercontent.com/pincetgore/PinRouting/release/text/{name}.txt"
@@ -267,24 +271,6 @@ def resolve_domain(domain: str) -> dict[str, list[str] | None]:
 
 # ── Разбор строк geosite-файла ──────────────────────────────────────────────
 
-# Регулярка для удаления комментариев и атрибутов из строки (всё после @, # или //)
-_INLINE_STRIP = re.compile(r"\s*[@#].*|[ \t]*//.*")
-
-
-def parse_entry(line: str) -> tuple[str | None, str | None]:
-    """Разбирает строку geosite-файла. Если строка содержит domain: или full: —
-    возвращает (тип, домен). Иначе возвращает (None, None)."""
-    s = line.strip()
-    if not s or s.startswith(("#", "//")):
-        return None, None
-    s = _INLINE_STRIP.sub("", s).strip()
-    if s.startswith("domain:"):
-        return "domain", s[7:].lstrip(".")
-    if s.startswith("full:"):
-        return "full", s[5:].lstrip(".")
-    return None, None
-
-
 # ── Проверка одного домена ──────────────────────────────────────────────────
 
 def classify_node(ips: list[str] | None, tag: str,
@@ -406,9 +392,9 @@ def main() -> None:
 
     entries: list[tuple[int, str, str]] = []  # (номер строки, тип, домен)
     for i, line in enumerate(lines):
-        pfx, dom = parse_entry(line)
-        if pfx and dom:
-            entries.append((i, pfx, dom))
+        rule = parse_rule(line)
+        if rule and rule[0] in ("domain", "full"):
+            entries.append((i, rule[0], rule[1]))
 
     total = len(entries)
     print(f"  {total} domain/full entries to check (keyword/regexp skipped)\n")
@@ -439,6 +425,10 @@ def main() -> None:
         print(log_line)
         if should_remove:
             to_remove.add(line_idx)
+
+    # Если API не ответил ни разу, итог "удалить 0" был бы ложным: выходим с ошибкой, файл не трогаем
+    if total and all(log_line.endswith("(API error)") for _, _, log_line, _ in results.values()):
+        sys.exit(f"\nОшибка: check-host.net не ответил ни на один из {total} запросов. Файл не изменён.")
 
     # Шаг 4. Выводим итоги
     print(f"\n{'='*60}")

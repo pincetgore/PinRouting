@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import datetime
 import ipaddress
 from pathlib import Path
 
@@ -73,28 +72,30 @@ class ShadowrocketEmitter:
         return len(ip_lines)
 
     def build_all_rulesets(
-        self, repo: str, updated_str: str | None = None, geoip_text_dir: Path | None = None
+        self, repo: str, updated_str: str, geoip_text_dir: Path | None = None
     ) -> dict[str, int]:
-        """Generate all .list files in SHADOWROCKET/rules/.
+        """Generate all .list files in SHADOWROCKET/rules/ and delete lists whose source is gone.
 
         IP lists are rebuilt only when `geoip_text_dir` (the geoip builder's output/text) is given,
         so they always match geoip.dat. Without it the committed IP lists are left untouched.
         """
         self.rules_dir.mkdir(parents=True, exist_ok=True)
-        if not updated_str:
-            updated_str = datetime.datetime.now(datetime.UTC).strftime(
-                "%Y-%m-%d %H:%M:%S UTC"
-            )
-
         counts: dict[str, int] = {}
 
-        # 1. Geosite domain lists (preserve existing list coverage)
-        for p in sorted(self.geosite_data_dir.glob("*")):
-            if p.is_file() and not p.name.startswith(".") and p.name != "android-push":
-                out = self.rules_dir / f"{p.name}.list"
-                counts[p.name] = self.build_ruleset_file(
-                    p, out, repo=repo, updated_str=updated_str
-                )
+        # 1. Geosite domain lists (android-push is Android-only, Shadowrocket is iOS)
+        sources = [
+            p for p in sorted(self.geosite_data_dir.glob("*"))
+            if p.is_file() and not p.name.startswith(".") and p.name != "android-push"
+        ]
+        keep = {p.name for p in sources} | set(GEOIP_RULESETS.values())
+        for stale in self.rules_dir.glob("*.list"):
+            if stale.stem not in keep:
+                stale.unlink()
+                print(f"  - removed stale {stale.name}")
+        for p in sources:
+            counts[p.name] = self.build_ruleset_file(
+                p, self.rules_dir / f"{p.name}.list", repo=repo, updated_str=updated_str
+            )
 
         # 2. GeoIP CIDR lists
         if geoip_text_dir is None:
@@ -117,28 +118,14 @@ class ShadowrocketEmitter:
         profile: ProfileConfig,
         output_dir: Path,
         repo: str,
-        epoch: str | None = None,
-        updated_str: str | None = None,
+        epoch: str,
+        updated_str: str,
     ) -> None:
         """Emit Shadowrocket .CONF file."""
         output_dir.mkdir(parents=True, exist_ok=True)
         branch = "main"
         raw_base = f"https://raw.githubusercontent.com/{repo}/{branch}/SHADOWROCKET"
         rules_base = f"{raw_base}/rules"
-
-        if not epoch:
-            now = datetime.datetime.now(datetime.UTC)
-            epoch_str = str(int(now.timestamp()))
-            if not updated_str:
-                updated_str = now.strftime("%Y-%m-%d %H:%M:%S UTC")
-        else:
-            epoch_str = str(epoch)
-            if not updated_str:
-                # convert epoch to UTC format
-                dt = datetime.datetime.fromtimestamp(
-                    int(epoch), tz=datetime.UTC
-                )
-                updated_str = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
 
         # Format DnsHosts string
         hosts_lines = [
@@ -155,7 +142,7 @@ class ShadowrocketEmitter:
         # Header template
         conf_header = f"""# @PinRouting for Shadowrocket
 # Profile: {profile_display}
-# LastUpdated: {epoch_str} ({updated_str})
+# LastUpdated: {epoch} ({updated_str})
 # Repository: https://github.com/{repo}
 
 [General]
