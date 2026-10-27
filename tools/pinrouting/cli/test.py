@@ -1,24 +1,24 @@
-"""Automated test runner for PinRouting."""
+"""Automated test runner for PinRouting: unit tests (tests/) and the routing simulation suite."""
 
 from __future__ import annotations
 
 import argparse
 import subprocess
 import sys
+import unittest
 from pathlib import Path
 
 
 def run_tests(root_dir: Path) -> int:
-    test_script = root_dir / "geosite" / "buildtools" / "test_routing.py"
-    if not test_script.exists():
-        print(f"Test script not found at {test_script}")
-        return 1
+    print("Running unit tests (tests/)...")
+    suite = unittest.defaultTestLoader.discover(str(root_dir / "tests"))
+    unit_ok = unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful()
 
-    print(f"Running regression test suite: {test_script.name}...")
-    res = subprocess.run(
-        [sys.executable, str(test_script)], cwd=str(root_dir), check=False
-    )
-    return res.returncode
+    test_script = root_dir / "geosite" / "buildtools" / "test_routing.py"
+    print(f"\nRunning regression test suite: {test_script.name}...")
+    routing = subprocess.run([sys.executable, str(test_script)], cwd=str(root_dir), check=False)
+
+    return 0 if unit_ok and routing.returncode == 0 else 1
 
 
 def main(argv: list[str] | None = None) -> int:

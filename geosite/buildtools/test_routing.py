@@ -14,11 +14,13 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT / "tools"))
+
+from pinrouting.geosite import parse_rule
+
 GEOSITE_DATA_DIR = REPO_ROOT / "geosite" / "data"
-HAPP_DEFAULT_JSON = REPO_ROOT / "HAPP" / "DEFAULT.JSON"
-INCY_DEFAULT_JSON = REPO_ROOT / "INCY" / "DEFAULT.JSON"
-SHADOWROCKET_DEFAULT_CONF = REPO_ROOT / "SHADOWROCKET" / "DEFAULT.CONF"
-SHADOWROCKET_RULES_DIR = REPO_ROOT / "SHADOWROCKET" / "rules"
+SHADOWROCKET_DIR = REPO_ROOT / "SHADOWROCKET"
+SHADOWROCKET_RULES_DIR = SHADOWROCKET_DIR / "rules"
 
 
 class GeositeMatcher:
@@ -37,22 +39,10 @@ class GeositeMatcher:
             return
         with open(filepath, "r", encoding="utf-8") as f:
             for raw_line in f:
-                line = raw_line.strip()
-                if not line or line.startswith("#"):
+                rule = parse_rule(raw_line)
+                if rule is None:
                     continue
-                content = line.split("#", 1)[0].strip()
-                parts = content.split("@")[0].strip()
-                if not parts:
-                    continue
-
-                if ":" in parts:
-                    rtype, val = parts.split(":", 1)
-                    rtype = rtype.strip().lower()
-                    val = val.strip().lower()
-                else:
-                    rtype = "domain"
-                    val = parts.lower()
-
+                rtype, val = rule
                 if rtype == "domain":
                     self.domain_suffixes.add(val)
                 elif rtype == "full":
@@ -60,10 +50,7 @@ class GeositeMatcher:
                 elif rtype == "keyword":
                     self.keywords.append(val)
                 elif rtype == "regexp":
-                    try:
-                        self.regexps.append(re.compile(val, re.IGNORECASE))
-                    except re.error:
-                        pass
+                    self.regexps.append(re.compile(val, re.IGNORECASE))
 
     def matches(self, domain: str) -> bool:
         domain = domain.lower().strip(".")
@@ -257,6 +244,29 @@ class RoutingTestSuite:
             ("token-drcn.push.dbankcloud.com", "DIRECT", "Huawei HMS push token"),
         ]
 
+        whitelist_cases = [
+            ("gosuslugi.ru", "DIRECT", "State services"),
+            ("sberbank.ru", "DIRECT", "Sberbank"),
+            ("gateway.icloud.com", "DIRECT", "Apple push/iCloud"),
+            ("youtube.com", "PROXY", "YouTube web"),
+            ("ggpht.com", "PROXY", "YouTube / Google images"),
+            ("wide-youtube.l.google.com", "PROXY", "YouTube via google.com subdomain"),
+            ("instagram.com", "PROXY", "Instagram web"),
+            ("chatgpt.com", "PROXY", "OpenAI ChatGPT"),
+            ("adservice.google.com", "BLOCK", "Google adservice"),
+            ("random-foreign-service.org", "PROXY", "Generic foreign site"),
+        ]
+
+        basic_cases = [
+            ("gateway.icloud.com", "DIRECT", "Apple push/iCloud"),
+            ("gosuslugi.ru", "PROXY", "No site rules: everything else via VPN"),
+            ("youtube.com", "PROXY", "YouTube web"),
+        ]
+
+        basic_android_cases = [
+            ("mtalk.google.com", "DIRECT", "Google FCM push"),
+        ]
+
         print("=" * 80)
         print("  PinRouting Routing Simulation & Regression Test Suite")
         print("=" * 80)
@@ -264,46 +274,39 @@ class RoutingTestSuite:
         failed = 0
         total = 0
 
-        print("\n--- Universal Profiles (HAPP, INCY, Shadowrocket) ---")
-        for domain, expected, description in universal_cases:
-            total += 1
-            happ_res = self._resolve_json(HAPP_DEFAULT_JSON, domain)
-            sr_res = self._resolve_shadowrocket(SHADOWROCKET_DEFAULT_CONF, domain)
-            sr_normalized = "BLOCK" if sr_res in ("REJECT", "REJECT-DROP") else sr_res
+        def happ(profile: str):
+            return "HAPP", lambda d: self._resolve_json(REPO_ROOT / "HAPP" / f"{profile}.JSON", d)
 
-            happ_ok = happ_res == expected
-            sr_ok = sr_normalized == expected
+        def incy(profile: str):
+            return "INCY", lambda d: self._resolve_json(REPO_ROOT / "INCY" / f"{profile}.JSON", d)
 
-            if happ_ok and sr_ok:
-                status = "✅ PASS"
-            else:
-                status = "❌ FAIL"
-                failed += 1
+        def shadowrocket(profile: str):
+            def resolve(d: str) -> str:
+                res = self._resolve_shadowrocket(SHADOWROCKET_DIR / f"{profile}.CONF", d)
+                return "BLOCK" if res in ("REJECT", "REJECT-DROP") else res
+            return "SR", resolve
 
-            details = f"HAPP: {happ_res}, SR: {sr_res}" if not (happ_ok and sr_ok) else happ_res
-            print(f" {status} | {domain:<35} | exp: {expected:<6} | {details:<16} | {description}")
-
-        print("\n--- Android-specific Services (HAPP & INCY) ---")
-        for domain, expected, description in android_cases:
-            total += 1
-            happ_res = self._resolve_json(HAPP_DEFAULT_JSON, domain)
-            incy_res = self._resolve_json(INCY_DEFAULT_JSON, domain)
-
-            happ_ok = happ_res == expected
-            incy_ok = incy_res == expected
-
-            if happ_ok and incy_ok:
-                status = "✅ PASS"
-            else:
-                status = "❌ FAIL"
-                failed += 1
-
-            details = f"HAPP: {happ_res}, INCY: {incy_res}" if not (happ_ok and incy_ok) else happ_res
-            print(f" {status} | {domain:<35} | exp: {expected:<6} | {details:<16} | {description}")
+        suites = [
+            ("DEFAULT (HAPP, INCY, Shadowrocket)", universal_cases, [happ("DEFAULT"), incy("DEFAULT"), shadowrocket("DEFAULT")]),
+            ("DEFAULT Android-specific (HAPP & INCY)", android_cases, [happ("DEFAULT"), incy("DEFAULT")]),
+            ("WHITELIST (HAPP, INCY, Shadowrocket)", whitelist_cases, [happ("WHITELIST"), incy("WHITELIST"), shadowrocket("WHITELIST")]),
+            ("BASIC (HAPP, INCY, Shadowrocket)", basic_cases, [happ("BASIC"), incy("BASIC"), shadowrocket("BASIC")]),
+            ("BASIC Android-specific (HAPP & INCY)", basic_android_cases, [happ("BASIC"), incy("BASIC")]),
+        ]
+        for title, cases, clients in suites:
+            print(f"\n--- {title} ---")
+            for domain, expected, description in cases:
+                total += 1
+                results = [(label, resolve(domain)) for label, resolve in clients]
+                ok = all(res == expected for _, res in results)
+                if not ok:
+                    failed += 1
+                details = expected if ok else ", ".join(f"{label}: {res}" for label, res in results)
+                print(f" {'✅ PASS' if ok else '❌ FAIL'} | {domain:<35} | exp: {expected:<6} | {details:<16} | {description}")
 
         # With no-resolve Shadowrocket skips IP rules for domain requests, unlike Happ/INCY (IPIfNonMatch)
         print("\n--- Shadowrocket IP rule sets resolve domains ---")
-        for path in sorted(SHADOWROCKET_RULES_DIR.glob("*-ips.list")) + sorted(SHADOWROCKET_DEFAULT_CONF.parent.glob("*.CONF")):
+        for path in sorted(SHADOWROCKET_RULES_DIR.glob("*-ips.list")) + sorted(SHADOWROCKET_DIR.glob("*.CONF")):
             total += 1
             bad = [ln for ln in path.read_text(encoding="utf-8").splitlines()
                    if "no-resolve" in ln and not ln.startswith("#") and (path.suffix == ".list" or "-ips.list" in ln)]
