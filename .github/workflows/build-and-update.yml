@@ -68,13 +68,13 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Lint Python Code
         run: |
-          pip install --upgrade ruff
+          pip install ruff==0.17.3  # pinned: a new ruff rule must not block the daily geodata release
           ruff check .
 
       - name: Setup Go
         uses: actions/setup-go@v7
         with:
-          go-version: '>=1.21'
+          go-version: '1.26'  # builders need go 1.26 (geoip) and 1.25.12 (v2fly)
           cache: false
 
       # -----------------------------------------------------------------------

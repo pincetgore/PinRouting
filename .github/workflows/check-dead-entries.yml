@@ -62,7 +62,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install --upgrade dnspython ruff
+          pip install --upgrade dnspython ruff==0.17.3  # ruff pinned like in build-and-update.yml
 
       - name: Lint Python Code
         run: |
