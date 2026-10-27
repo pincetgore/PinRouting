@@ -1,7 +1,7 @@
 # NAME: apple-update.list
 # TOTAL: 8
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-26 05:40:24 UTC
+# UPDATED: 2026-10-27 05:50:38 UTC
 # Apple App Store, OS Updates & Assets Delivery
 DOMAIN-SUFFIX,appldnld.apple.com
 DOMAIN-SUFFIX,osxapps.itunes.apple.com
