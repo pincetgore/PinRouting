@@ -268,10 +268,27 @@ jobs:
           git push -f origin release
 
           # Happ/INCY load geodata from jsDelivr, which can serve a branch alias from cache for days;
-          # without a purge a profile referencing a new geosite category can outrun the cached geosite.dat
-          for f in geoip.dat geosite.dat geoip.dat.sha256 geosite.dat.sha256; do
-            curl -fsS --retry 3 "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/$f" >/dev/null \
-              || echo "::warning::jsDelivr purge failed for $f"
+          # without a purge a profile referencing a new geosite category can outrun the cached geosite.dat.
+          # GitHub serves the new branch with a delay, so a purge right after the push can re-cache the old
+          # file: wait, purge, then check the .sha256 jsDelivr serves against this build and retry.
+          for attempt in 1 2 3 4 5; do
+            sleep 20
+            for f in geoip.dat geosite.dat geoip.dat.sha256 geosite.dat.sha256; do
+              curl -fsS --retry 3 "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/$f" >/dev/null || true
+            done
+            sleep 10
+            ok=1
+            for f in geoip.dat.sha256 geosite.dat.sha256; do
+              [ "$(curl -fsS "https://cdn.jsdelivr.net/gh/${{ github.repository }}@release/$f" || true)" = "$(cat "$f")" ] || ok=0
+            done
+            if [ "$ok" = 1 ]; then
+              echo "jsDelivr serves the new release (attempt $attempt)"
+              break
+            fi
+            echo "jsDelivr still serves an old .sha256 (attempt $attempt)"
+            if [ "$attempt" = 5 ]; then
+              echo "::warning::jsDelivr still serves an old .sha256 after 5 purges"
+            fi
           done
 
       - name: Publish GitHub Release
