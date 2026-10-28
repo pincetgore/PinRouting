@@ -213,6 +213,31 @@ jobs:
           cp -f release/*.dat release/*.dat.sha256 /tmp/dist/
 
       # -----------------------------------------------------------------------
+      # Push to Release Branch (before building configs: they pin this commit)
+      # -----------------------------------------------------------------------
+      - name: Push to Release Branch
+        id: release
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          cd release
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b release
+          git add -A
+          git commit -m "Release ${TAG}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push -f origin release
+          # Happ/INCY profiles pin this commit (jsDelivr @<sha> is immutable, @release can stay stale for hours)
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          # Best effort for people using the @release links from the README; purges are not reliable
+          for f in geoip.dat geosite.dat geoip.dat.sha256 geosite.dat.sha256; do
+            curl -fsS --retry 3 "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/$f" >/dev/null || true
+          done
+
+      # -----------------------------------------------------------------------
       # Build All Client Routing Configs (HAPP, INCY, Shadowrocket) via PinRouting
       # -----------------------------------------------------------------------
       - name: Build PinRouting Client Configurations
@@ -223,7 +248,7 @@ jobs:
 
           echo "Building unified client routing configs for repo $REPO with epoch $EPOCH..."
           PYTHONPATH=tools python3 -m pinrouting build --repo "$REPO" --epoch "$EPOCH" \
-            --geoip-text-dir geoip-builder/output/text
+            --geoip-text-dir geoip-builder/output/text --geodata-ref "${{ steps.release.outputs.sha }}"
 
       # Tests must run on the freshly generated configs, i.e. exactly what is about to be published
       - name: Run Routing Simulation Tests
@@ -251,46 +276,8 @@ jobs:
           git push origin "$TAG" --force
 
       # -----------------------------------------------------------------------
-      # Push to Release Branch & Publish Release
+      # Publish Release
       # -----------------------------------------------------------------------
-      - name: Push to Release Branch
-        run: |
-          set -euo pipefail
-          TAG="${{ steps.meta.outputs.tag }}"
-          cd release
-          git init
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b release
-          git add -A
-          git commit -m "Release ${TAG}"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git push -f origin release
-
-          # Happ/INCY load geodata from jsDelivr, which can serve a branch alias from cache for days;
-          # without a purge a profile referencing a new geosite category can outrun the cached geosite.dat.
-          # GitHub serves the new branch with a delay, so a purge right after the push can re-cache the old
-          # file: wait, purge, then check the .sha256 jsDelivr serves against this build and retry.
-          for attempt in 1 2 3 4 5; do
-            sleep 20
-            for f in geoip.dat geosite.dat geoip.dat.sha256 geosite.dat.sha256; do
-              curl -fsS --retry 3 "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/$f" >/dev/null || true
-            done
-            sleep 10
-            ok=1
-            for f in geoip.dat.sha256 geosite.dat.sha256; do
-              [ "$(curl -fsS "https://cdn.jsdelivr.net/gh/${{ github.repository }}@release/$f" || true)" = "$(cat "$f")" ] || ok=0
-            done
-            if [ "$ok" = 1 ]; then
-              echo "jsDelivr serves the new release (attempt $attempt)"
-              break
-            fi
-            echo "jsDelivr still serves an old .sha256 (attempt $attempt)"
-            if [ "$attempt" = 5 ]; then
-              echo "::warning::jsDelivr still serves an old .sha256 after 5 purges"
-            fi
-          done
-
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v3
         with:

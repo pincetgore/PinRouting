@@ -13,24 +13,40 @@ from pinrouting.models import ProfileConfig
 
 
 def build_all(
-    root_dir: Path, repo: str, epoch: str | None = None, geoip_text_dir: Path | None = None
+    root_dir: Path,
+    repo: str,
+    epoch: str | None = None,
+    geoip_text_dir: Path | None = None,
+    geodata_ref: str | None = None,
 ) -> None:
     profiles_dir = root_dir / "profiles"
     happ_dir = root_dir / "HAPP"
     incy_dir = root_dir / "INCY"
     shadowrocket_dir = root_dir / "SHADOWROCKET"
 
-    # If epoch is None, preserve existing LastUpdated from HAPP/DEFAULT.JSON to avoid diff churn
+    # Values not given on the command line are kept from the published HAPP/DEFAULT.JSON to avoid diff churn
+    published: dict = {}
+    default_happ = happ_dir / "DEFAULT.JSON"
+    if default_happ.is_file():
+        try:
+            with open(default_happ, "r", encoding="utf-8") as f:
+                published = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            pass
     if epoch is None:
-        default_happ = happ_dir / "DEFAULT.JSON"
-        if default_happ.is_file():
-            try:
-                with open(default_happ, "r", encoding="utf-8") as f:
-                    epoch = json.load(f).get("LastUpdated")
-            except (json.JSONDecodeError, OSError):
-                pass
+        epoch = published.get("LastUpdated")
     if epoch is not None:
         epoch = str(epoch)
+
+    # Geodata URLs pin a release-branch commit: jsDelivr serves @<sha> immutably, while @release
+    # stayed stale for hours even after a purge
+    if geodata_ref:
+        base = f"https://cdn.jsdelivr.net/gh/{repo}@{geodata_ref}"
+        geodata_urls = (f"{base}/geoip.dat", f"{base}/geosite.dat")
+    elif "Geoipurl" in published and "Geositeurl" in published:
+        geodata_urls = (published["Geoipurl"], published["Geositeurl"])
+    else:
+        geodata_urls = None  # first build: use the URLs from profiles/*.json
 
     # One timestamp for every Shadowrocket header; "now" when there is no (valid) epoch
     stamp = datetime.datetime.now(datetime.UTC)
@@ -59,6 +75,8 @@ def build_all(
         key = pf.stem.upper()
         print(f"\nProcessing profile: {key} ({pf.name})...")
         cfg = ProfileConfig.load_from_file(pf)
+        if geodata_urls:
+            cfg.geoip_url, cfg.geosite_url = geodata_urls
 
         emit_json_profile(key, cfg, happ_dir, scheme="happ", epoch=epoch)
         print(f"  ✓ Emitted HAPP: {key}.JSON, .DEEPLINK")
@@ -106,11 +124,19 @@ def main(argv: list[str] | None = None) -> int:
         help="geoip builder output/text dir (direct.txt, whitelist.txt) to rebuild Shadowrocket IP lists; "
         "if omitted, existing IP lists are kept",
     )
+    parser.add_argument(
+        "--geodata-ref",
+        default=None,
+        help="release-branch commit to pin Geoipurl/Geositeurl to on jsDelivr "
+        "(defaults to the URLs in the published HAPP/DEFAULT.JSON)",
+    )
     args = parser.parse_args(argv)
 
     root = Path(args.root_dir).resolve()
     geoip_text_dir = Path(args.geoip_text_dir).resolve() if args.geoip_text_dir else None
-    build_all(root, repo=args.repo, epoch=args.epoch, geoip_text_dir=geoip_text_dir)
+    build_all(
+        root, repo=args.repo, epoch=args.epoch, geoip_text_dir=geoip_text_dir, geodata_ref=args.geodata_ref
+    )
     return 0
 
 

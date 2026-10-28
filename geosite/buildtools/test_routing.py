@@ -21,6 +21,8 @@ from pinrouting.geosite import parse_rule
 GEOSITE_DATA_DIR = REPO_ROOT / "geosite" / "data"
 SHADOWROCKET_DIR = REPO_ROOT / "SHADOWROCKET"
 SHADOWROCKET_RULES_DIR = SHADOWROCKET_DIR / "rules"
+# jsDelivr serves @<commit> immutably; @release stayed stale for hours even after a purge
+PINNED_GEODATA_URL = re.compile(r"https://cdn\.jsdelivr\.net/gh/[^/@]+/[^/@]+@[0-9a-f]{40}/geo(ip|site)\.dat")
 
 
 class GeositeMatcher:
@@ -313,6 +315,15 @@ class RoutingTestSuite:
             if bad:
                 failed += 1
             print(f" {'❌ FAIL' if bad else '✅ PASS'} | {path.name:<35} | {bad[0] if bad else 'no no-resolve'}")
+
+        print("\n--- Happ/INCY geodata URLs pinned to a release commit ---")
+        for path in sorted((REPO_ROOT / "HAPP").glob("*.JSON")) + sorted((REPO_ROOT / "INCY").glob("*.JSON")):
+            total += 1
+            cfg = json.loads(path.read_text(encoding="utf-8"))
+            bad = [u for u in (cfg["Geoipurl"], cfg["Geositeurl"]) if not PINNED_GEODATA_URL.fullmatch(u)]
+            if bad:
+                failed += 1
+            print(f" {'❌ FAIL' if bad else '✅ PASS'} | {path.parent.name + '/' + path.name:<35} | {bad[0] if bad else 'pinned'}")
 
         print("=" * 80)
         print(f"Summary: {total - failed}/{total} passed, {failed} failed")
