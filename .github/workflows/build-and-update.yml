@@ -293,3 +293,17 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Keep only the release just published; --cleanup-tag also deletes the tag of each removed release
+      - name: Delete Previous Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          gh release list --repo "${{ github.repository }}" --limit 1000 --json tagName --jq '.[].tagName' \
+            | { grep -vxF "$TAG" || true; } \
+            | while read -r old; do
+                gh release delete "$old" --repo "${{ github.repository }}" --yes --cleanup-tag
+                echo "Deleted release and tag $old"
+              done
