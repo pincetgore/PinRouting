@@ -226,6 +226,8 @@ class RoutingTestSuite:
             # AI & Geoblocked services -> PROXY
             ("gemini.google.com", "PROXY", "Google Gemini AI"),
             ("gemini.gstatic.com", "PROXY", "Google Gemini static assets"),
+            ("console.cloud.google.com", "PROXY", "Google Cloud console (google.com is DIRECT)"),
+            ("www.google.com", "DIRECT", "Google search via geosite:whitelist"),
             ("copilot.microsoft.com", "PROXY", "Microsoft Copilot AI"),
             ("chatgpt.com", "PROXY", "OpenAI ChatGPT"),
             ("oaistatic.com", "PROXY", "OpenAI static assets"),
@@ -253,6 +255,7 @@ class RoutingTestSuite:
             ("youtube.com", "PROXY", "YouTube web"),
             ("ggpht.com", "PROXY", "YouTube / Google images"),
             ("wide-youtube.l.google.com", "PROXY", "YouTube via google.com subdomain"),
+            ("pay.google.com", "PROXY", "Google Pay via google.com subdomain"),
             ("instagram.com", "PROXY", "Instagram web"),
             ("chatgpt.com", "PROXY", "OpenAI ChatGPT"),
             ("adservice.google.com", "BLOCK", "Google adservice"),

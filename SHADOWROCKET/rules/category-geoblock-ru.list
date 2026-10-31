@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 994
+# TOTAL: 1000
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -195,6 +195,13 @@ DOMAIN-SUFFIX,developerprofiles-pa.googleapis.com
 DOMAIN-SUFFIX,lookerstudio.google.com
 DOMAIN-SUFFIX,o.pki.goog
 DOMAIN-SUFFIX,suggestqueries.google.com
+# Google services restricted for RU (google.com itself is DIRECT via geosite:whitelist)
+DOMAIN-SUFFIX,ads.google.com
+DOMAIN-SUFFIX,cloud.google.com
+DOMAIN-SUFFIX,one.google.com
+DOMAIN-SUFFIX,pay.google.com
+DOMAIN-SUFFIX,payments.google.com
+DOMAIN-SUFFIX,store.google.com
 # Grok
 DOMAIN-SUFFIX,grok.com
 DOMAIN-SUFFIX,grok.x.com

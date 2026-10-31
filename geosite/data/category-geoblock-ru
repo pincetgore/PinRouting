@@ -237,6 +237,14 @@ domain:lookerstudio.google.com
 domain:o.pki.goog
 domain:suggestqueries.google.com
 
+# Google services restricted for RU (google.com itself is DIRECT via geosite:whitelist)
+domain:ads.google.com
+domain:cloud.google.com
+domain:one.google.com
+domain:pay.google.com
+domain:payments.google.com
+domain:store.google.com
+
 # Grok
 domain:grok.com
 domain:grok.x.com
