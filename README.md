@@ -99,7 +99,8 @@
    * Push-уведомления Apple (`geosite:apple-push`) и Google FCM / Huawei HMS / Xiaomi (`geosite:android-push`).
    * Загрузка системных обновлений iOS/macOS (`geosite:apple-update`).
    * Скачивание APK и приложений из Google Play (`geosite:google-play`).
-   * Сетевые протоколы операторов связи (VoWiFi / IMS) и домены локального определения IP (`geosite:domains-geo-detect`).
+   * Домены локального определения IP (`geosite:domains-geo-detect`).
+   * VoWiFi / IMS операторов связи: домен `3gppnetwork.org` в `geosite:whitelist` и IP шлюзов ePDG в `geoip:whitelist` (IKE/IPsec не несёт домена, поэтому маршрут выбирается по IP).
 4. **Прямое соединение (Direct):**
    * Локальные и приватные адреса (`geosite:private`, `geoip:private`).
    * Российские ресурсы, порталы и банки (`geosite:category-ru`, `geoip:direct` — IP РФ/РБ без заблокированных РКН и зарубежных CDN, плюс `CUSTOM-LIST-ADD.txt`).
@@ -188,7 +189,7 @@ IP-списки не проверяются: APNs и RU-only хосты не о�
 ├── geoip/                     # Конфигурация и кастомные списки GeoIP
 │   ├── buildtools/            # Скрипты генерации IP-списков по странам
 │   ├── config.json            # Правила объединения баз и вычитания списков РКН
-│   ├── CUSTOM-LIST-ADD.txt    # Зарубежная инфраструктура Yandex, VK, Apple APNs
+│   ├── CUSTOM-LIST-ADD.txt    # Зарубежная инфраструктура Yandex и Apple APNs
 │   └── CUSTOM-WHITELIST.txt   # Кастомный белый список подсетей
 ├── geosite/
 │   ├── buildtools/            # Скрипты тестирования, линтинга и дедупликации доменов
