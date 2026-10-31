@@ -9,6 +9,11 @@ on:
     # Run every 24 hours: 01:00 UTC (04:00 MSK / UTC+3)
     - cron: '0 1 * * *'
   workflow_dispatch:
+    inputs:
+      accept_list_sizes:
+        description: 'Accept current IP list sizes as the new baseline (skips the half-of-previous-release check)'
+        type: boolean
+        default: false
   push:
     branches:
       - main
@@ -127,9 +132,19 @@ jobs:
             wait "$pid"
           done
 
-          # Every CIDR list must start with a CIDR line and keep at least <min> CIDRs (about half its 10.2026
-          # size): an empty, HTML or truncated "remove" list would silently route blocked IPs DIRECT.
-          # refiltercommunity has held 1..14 entries over its history, so it only has to be non-empty.
+          # Every CIDR list must start with a CIDR line and keep enough CIDRs: an empty, HTML or truncated
+          # "remove" list would silently route blocked IPs DIRECT. A list that had 1000+ CIDRs in the previous
+          # release (list-counts.txt there) must keep half of that, so the limit follows real changes. Smaller
+          # lists swing too much for that and use the fixed floor (about half their 10.2026 size), which is
+          # also the fallback without a previous count. refiltercommunity has held 1..14 entries: non-empty only.
+          prev=$(git -C "$GITHUB_WORKSPACE" show origin/release:list-counts.txt 2>/dev/null || true)
+          if [[ "${{ inputs.accept_list_sizes || false }}" == "true" ]]; then
+            prev=""
+            echo "::warning::accept_list_sizes: today's list sizes become the new baseline"
+          elif [[ -z "$prev" ]]; then
+            echo "::warning::No list-counts.txt in the release branch: only the fixed floors are checked"
+          fi
+          : > list-counts.txt
           for spec in whitelist.txt:40 antifilterdownloadcommunity.txt:400 refilter.txt:10000 refiltercommunity.txt:1 \
                       antifilternetwork.txt:50000 cdn.lst:1500 merged.sum:9000 ipinfo_ru.lst:30000 ipinfo_by.lst:1000; do
             f=${spec%%:*}; min=${spec#*:}
@@ -139,10 +154,14 @@ jobs:
               exit 1
             fi
             count=$(grep -c -E '^[0-9a-fA-F:.]+/[0-9]+' "$f" || true)
+            last=$(awk -v f="$f" '$1 == f { print $2 }' <<< "$prev")
+            why=""
+            if (( ${last:-0} >= 1000 )); then min=$(( last / 2 )); why=" (half of $last in the previous release)"; fi
             if (( count < min )); then
-              echo "::error::Download $f has $count CIDRs, expected at least $min (truncated upstream?)"
+              echo "::error::Download $f has $count CIDRs, expected at least $min$why. Truncated upstream? If the drop is real, run this workflow by hand with accept_list_sizes."
               exit 1
             fi
+            echo "$f $count" >> list-counts.txt
           done
           test -s downloads/geolite2-cidr.csv && test -s downloads/dbip-cidr.csv
 
@@ -217,6 +236,7 @@ jobs:
           # GeoIP files
           cp -f geoip-builder/output/dat/geoip.dat release/
           cp -f geoip-builder/output/text/*.txt   release/text/
+          cp -f geoip-builder/list-counts.txt     release/  # baseline for the next run's size check
 
           # Geosite files
           cp -f /tmp/geosite-artifacts/geosite.dat release/
