@@ -1,7 +1,7 @@
 # NAME: category-geoblock-ru.list
 # TOTAL: 996
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-10-30 06:41:03 UTC
+# UPDATED: 2026-10-31 06:31:45 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
 DOMAIN-SUFFIX,4pda.ru
 DOMAIN-SUFFIX,4pda.to
