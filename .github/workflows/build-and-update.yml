@@ -119,13 +119,19 @@ jobs:
             wait "$pid"
           done
 
-          # Every CIDR list must be non-empty and start with a CIDR line: an empty or HTML "remove" list
-          # would silently route blocked IPs DIRECT.
-          for f in whitelist.txt antifilterdownloadcommunity.txt refilter.txt refiltercommunity.txt \
-                   antifilternetwork.txt cdn.lst merged.sum ipinfo_ru.lst ipinfo_by.lst; do
+          # Every CIDR list must start with a CIDR line and keep at least <min> CIDRs (about half its 10.2026
+          # size): an empty, HTML or truncated "remove" list would silently route blocked IPs DIRECT.
+          for spec in whitelist.txt:40 antifilterdownloadcommunity.txt:400 refilter.txt:10000 refiltercommunity.txt:5 \
+                      antifilternetwork.txt:50000 cdn.lst:1500 merged.sum:9000 ipinfo_ru.lst:30000 ipinfo_by.lst:1000; do
+            f=${spec%%:*}; min=${spec#*:}
             first=$(grep -v -m1 -E '^\s*(#|$)' "$f" || true)
             if ! [[ "$first" =~ ^[0-9a-fA-F:.]+/[0-9]+[[:space:]]*$ ]]; then
               echo "::error::Download $f is empty or not a CIDR list (first line: '${first:0:80}')"
+              exit 1
+            fi
+            count=$(grep -c -E '^[0-9a-fA-F:.]+/[0-9]+' "$f" || true)
+            if (( count < min )); then
+              echo "::error::Download $f has $count CIDRs, expected at least $min (truncated upstream?)"
               exit 1
             fi
           done
