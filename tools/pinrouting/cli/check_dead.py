@@ -29,6 +29,9 @@ DEFAULT_CONCURRENCY = 150
 DEFAULT_DNS_TIMEOUT = 2.0
 DEFAULT_RETRIES = 2
 DEFAULT_EXCLUDED_FILES = ["private"]
+# Probed under a suffix rule before calling it dead: some authoritative servers answer NXDOMAIN for an empty
+# non-terminal (xmpush.xiaomi.com) although names below it resolve (api.xmpush.xiaomi.com)
+SUBDOMAIN_PROBES = ("www", "api")
 
 
 @dataclass
@@ -57,12 +60,14 @@ async def check_domain_liveness(
     resolvers: list[str],
     timeout: float = DEFAULT_DNS_TIMEOUT,
     retries: int = DEFAULT_RETRIES,
+    suffix: bool = False,
 ) -> tuple[bool, str]:
     """Checks whether a domain is alive across multiple DNS resolvers.
 
-    A domain is dead ONLY IF every resolver answers NXDOMAIN. NXDOMAIN also means no subdomain
-    exists (RFC 8020), so this is safe for suffix rules. NoAnswer (name exists, no A record) is
-    alive: `domain:cdn.example.com` may have no A record while `img.cdn.example.com` does.
+    A domain is dead ONLY IF every resolver answers NXDOMAIN. NoAnswer (name exists, no A record) is
+    alive: `domain:cdn.example.com` may have no A record while `img.cdn.example.com` does. RFC 8020 says
+    NXDOMAIN also rules out subdomains, but not every server follows it, so a suffix rule is dead only
+    if the SUBDOMAIN_PROBES names below it are dead too.
     """
     nxdomain_count = 0
     last_error = ""
@@ -87,6 +92,10 @@ async def check_domain_liveness(
                     await asyncio.sleep(0.3)
 
     if nxdomain_count == len(resolvers):
+        for label in SUBDOMAIN_PROBES if suffix else ():
+            alive, reason = await check_domain_liveness(f"{label}.{domain}", resolvers, timeout, retries)
+            if alive:
+                return True, f"{label}.{domain}: {reason}"
         return False, f"NXDOMAIN on all {len(resolvers)} DNS resolvers"
 
     # Some resolvers failed with errors/timeouts: play safe, do not mark dead
@@ -95,9 +104,9 @@ async def check_domain_liveness(
 
 def collect_domain_tasks(
     geosite_dir: Path, excluded_files: set[str], summary: CheckSummary
-) -> list[tuple[str, int, Path]]:
-    """Reads geosite files and collects (domain, line number, file) for every domain:/full: rule."""
-    domain_tasks: list[tuple[str, int, Path]] = []
+) -> list[tuple[str, int, Path, bool]]:
+    """Reads geosite files and collects (domain, line number, file, is suffix rule) for every domain:/full: rule."""
+    domain_tasks: list[tuple[str, int, Path, bool]] = []
     for file_path in sorted(geosite_dir.iterdir()):
         if not file_path.is_file() or file_path.name.startswith(".") or file_path.name in excluded_files:
             continue
@@ -110,7 +119,7 @@ def collect_domain_tasks(
                 rule = parse_rule(line)
                 if not rule or rule[0] not in ("domain", "full"):
                     continue
-                domain_tasks.append((rule[1], line_no, file_path))
+                domain_tasks.append((rule[1], line_no, file_path, rule[0] == "domain"))
                 summary.file_stats[file_key]["total"] += 1
                 summary.total_domains += 1
 
@@ -145,13 +154,14 @@ class DeadEntriesChecker:
         sem = asyncio.Semaphore(self.concurrency)
         total = len(domain_tasks)
 
-        async def worker(domain: str, line_no: int, file_path: Path) -> tuple[bool, str, str, int, Path]:
+        async def worker(domain: str, line_no: int, file_path: Path, suffix: bool) -> tuple[bool, str, str, int, Path]:
             async with sem:
                 alive, reason = await check_domain_liveness(
                     domain,
                     resolvers=self.resolvers,
                     timeout=self.dns_timeout,
                     retries=self.retries,
+                    suffix=suffix,
                 )
                 return alive, reason, domain, line_no, file_path
 

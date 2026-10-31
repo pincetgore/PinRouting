@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import asyncio
+import importlib.util
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.geosite import is_valid_domain, parse_rule, remove_domains
@@ -55,6 +58,28 @@ class RemoveDomainsTest(unittest.TestCase):
                 path.read_text(encoding="utf-8"),
                 "# Banks\n\nfull:alive.example\ndomain:dead.example.org\nkeyword:dead\n" r"regexp:^dead\.example$" "\n",
             )
+
+
+@unittest.skipUnless(importlib.util.find_spec("dns"), "dnspython is not installed")
+class DomainLivenessTest(unittest.TestCase):
+    def test_suffix_rule_alive_when_subdomain_resolves(self):
+        import dns.asyncresolver
+        import dns.resolver
+        from pinrouting.cli.check_dead import check_domain_liveness
+
+        # Like xmpush.xiaomi.com: NXDOMAIN for the rule itself, a live name below it
+        async def fake_resolve(self, name, rdtype):
+            if name == "api.ent.example":
+                return object()
+            raise dns.resolver.NXDOMAIN
+
+        def alive(domain: str, suffix: bool) -> bool:
+            return asyncio.run(check_domain_liveness(domain, ["192.0.2.1"], retries=0, suffix=suffix))[0]
+
+        with mock.patch.object(dns.asyncresolver.Resolver, "resolve", fake_resolve):
+            self.assertTrue(alive("ent.example", suffix=True))
+            self.assertFalse(alive("ent.example", suffix=False))
+            self.assertFalse(alive("dead.example", suffix=True))
 
 
 class ProfileConfigTest(unittest.TestCase):
