@@ -196,6 +196,7 @@ class RoutingTestSuite:
             ("nalog.gov.ru", "DIRECT", "Tax service"),
             ("cbr.ru", "DIRECT", "Central Bank of Russia"),
             ("nspk.ru", "DIRECT", "NSPK Mir"),
+            ("images.biggeek.ru", "DIRECT", "Shop images on a blocked-listed shared IP"),
             # Push notifications and VoWiFi -> strictly DIRECT
             ("3gppnetwork.org", "DIRECT", "VoWiFi root"),
             ("epdg.epc.mnc002.mcc250.pub.3gppnetwork.org", "DIRECT", "Megafon VoWiFi ePDG"),

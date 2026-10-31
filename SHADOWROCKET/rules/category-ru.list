@@ -1,5 +1,5 @@
 # NAME: category-ru.list
-# TOTAL: 139
+# TOTAL: 140
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 # Direct for checkers
@@ -19,6 +19,8 @@ DOMAIN-SUFFIX,tilda.cc
 DOMAIN-SUFFIX,kinescope.io
 DOMAIN-SUFFIX,kinescopecdn.net
 DOMAIN-SUFFIX,redheadsound.studio
+# images.biggeek.ru sits on a shared Yandex Cloud website IP that Re:filter lists as blocked
+DOMAIN-SUFFIX,biggeek.ru
 # VTB
 DOMAIN-SUFFIX,vtbglobalperspectives.com
 # Sberbank / Sber

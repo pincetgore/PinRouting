@@ -256,15 +256,6 @@
           "::/128"
         ]
       }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "direct",
-        "uri": "./CUSTOM-FIX-ADD.txt",
-        "onlyIPType": "ipv4"
-      }
     }
   ],
   "output": [
