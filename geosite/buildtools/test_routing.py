@@ -244,6 +244,8 @@ class RoutingTestSuite:
         android_cases = [
             ("connectivitycheck.gstatic.com", "DIRECT", "Android captive portal check"),
             ("mtalk.google.com", "DIRECT", "Google FCM push"),
+            ("fcmregistrations.googleapis.com", "DIRECT", "Google FCM token registration"),
+            ("api.xmpush.global.xiaomi.com", "DIRECT", "Xiaomi push (global ROM)"),
             ("push.hicloud.com", "DIRECT", "Huawei Push root"),
             ("pushtrs.push.hicloud.com", "DIRECT", "Huawei Push delivery node"),
             ("token-drcn.push.dbankcloud.com", "DIRECT", "Huawei HMS push token"),
