@@ -75,13 +75,14 @@ def build_all(
         key = pf.stem.upper()
         print(f"\nProcessing profile: {key} ({pf.name})...")
         cfg = ProfileConfig.load_from_file(pf)
+        release_geodata = (cfg.geoip_url, cfg.geosite_url)  # @release URLs from profiles/*.json
         if geodata_urls:
             cfg.geoip_url, cfg.geosite_url = geodata_urls
 
-        emit_json_profile(key, cfg, happ_dir, scheme="happ", epoch=epoch)
+        emit_json_profile(key, cfg, happ_dir, scheme="happ", epoch=epoch, deeplink_geodata=release_geodata)
         print(f"  ✓ Emitted HAPP: {key}.JSON, .DEEPLINK")
 
-        emit_json_profile(key, cfg, incy_dir, scheme="incy", epoch=epoch)
+        emit_json_profile(key, cfg, incy_dir, scheme="incy", epoch=epoch, deeplink_geodata=release_geodata)
         emit_incy_autolink(key, incy_dir, repo=repo)
         print(f"  ✓ Emitted INCY: {key}.JSON, .DEEPLINK, .AUTOLINK")
 

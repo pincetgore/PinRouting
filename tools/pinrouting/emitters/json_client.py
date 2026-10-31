@@ -21,14 +21,22 @@ def emit_json_profile(
     output_dir: Path,
     scheme: str,
     epoch: str | None = None,
+    deeplink_geodata: tuple[str, str] | None = None,
 ) -> None:
-    """Write <key>.JSON and <key>.DEEPLINK (<scheme>://routing/onadd/{base64})."""
+    """Write <key>.JSON and <key>.DEEPLINK (<scheme>://routing/onadd/{base64}).
+
+    `deeplink_geodata` replaces Geoipurl/Geositeurl in the deeplink only.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     data = profile.to_client_dict(epoch=epoch)
 
     with open(output_dir / f"{key}.JSON", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
+
+    # A deeplink is imported once and never refreshed, so a pinned commit would freeze its geodata forever
+    if deeplink_geodata:
+        data = {**data, "Geoipurl": deeplink_geodata[0], "Geositeurl": deeplink_geodata[1]}
 
     minified = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
     b64 = base64.b64encode(minified.encode("utf-8")).decode("utf-8")

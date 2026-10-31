@@ -8,6 +8,7 @@ Usage:
   python3 test_routing.py
 """
 
+import base64
 import json
 import re
 import sys
@@ -23,6 +24,7 @@ SHADOWROCKET_DIR = REPO_ROOT / "SHADOWROCKET"
 SHADOWROCKET_RULES_DIR = SHADOWROCKET_DIR / "rules"
 # jsDelivr serves @<commit> immutably; @release stayed stale for hours even after a purge
 PINNED_GEODATA_URL = re.compile(r"https://cdn\.jsdelivr\.net/gh/[^/@]+/[^/@]+@[0-9a-f]{40}/geo(ip|site)\.dat")
+RELEASE_GEODATA_URL = re.compile(r"https://cdn\.jsdelivr\.net/gh/[^/@]+/[^/@]+@release/geo(ip|site)\.dat")
 
 
 class GeositeMatcher:
@@ -332,6 +334,16 @@ class RoutingTestSuite:
             if bad:
                 failed += 1
             print(f" {'❌ FAIL' if bad else '✅ PASS'} | {path.parent.name + '/' + path.name:<35} | {bad[0] if bad else 'pinned'}")
+
+        # A deeplink is imported once and never refreshed: a pinned commit would freeze its geodata
+        print("\n--- Happ/INCY deeplinks follow @release ---")
+        for path in sorted((REPO_ROOT / "HAPP").glob("*.DEEPLINK")) + sorted((REPO_ROOT / "INCY").glob("*.DEEPLINK")):
+            total += 1
+            cfg = json.loads(base64.b64decode(path.read_text(encoding="utf-8").strip().split("/onadd/", 1)[1]))
+            bad = [u for u in (cfg["Geoipurl"], cfg["Geositeurl"]) if not RELEASE_GEODATA_URL.fullmatch(u)]
+            if bad:
+                failed += 1
+            print(f" {'❌ FAIL' if bad else '✅ PASS'} | {path.parent.name + '/' + path.name:<35} | {bad[0] if bad else '@release'}")
 
         print("=" * 80)
         print(f"Summary: {total - failed}/{total} passed, {failed} failed")
