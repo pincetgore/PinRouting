@@ -132,6 +132,13 @@ jobs:
             wait "$pid"
           done
 
+          test -s downloads/geolite2-cidr.csv && test -s downloads/dbip-cidr.csv
+          # sapics *-cidr.csv rows are "cidr,country": take RU & BY from GeoLite2 and DB-IP
+          awk -F, '$2=="RU"{print $1}' downloads/geolite2-cidr.csv > geolite_ru.lst
+          awk -F, '$2=="BY"{print $1}' downloads/geolite2-cidr.csv > geolite_by.lst
+          awk -F, '$2=="RU"{print $1}' downloads/dbip-cidr.csv > dbip_ru.lst
+          awk -F, '$2=="BY"{print $1}' downloads/dbip-cidr.csv > dbip_by.lst
+
           # Every CIDR list must start with a CIDR line and keep enough CIDRs: an empty, HTML or truncated
           # "remove" list would silently route blocked IPs DIRECT. A list that had 1000+ CIDRs in the previous
           # release (list-counts.txt there) must keep half of that, so the limit follows real changes. Smaller
@@ -146,7 +153,8 @@ jobs:
           fi
           : > list-counts.txt
           for spec in whitelist.txt:40 antifilterdownloadcommunity.txt:400 refilter.txt:10000 refiltercommunity.txt:1 \
-                      antifilternetwork.txt:50000 cdn.lst:1500 merged.sum:9000 ipinfo_ru.lst:30000 ipinfo_by.lst:1000; do
+                      antifilternetwork.txt:50000 cdn.lst:1500 merged.sum:9000 ipinfo_ru.lst:30000 ipinfo_by.lst:1000 \
+                      geolite_ru.lst:6000 dbip_ru.lst:6000; do
             f=${spec%%:*}; min=${spec#*:}
             first=$(grep -v -m1 -E '^\s*(#|$)' "$f" || true)
             if ! [[ "$first" =~ ^[0-9a-fA-F:.]+/[0-9]+[[:space:]]*$ ]]; then
@@ -163,16 +171,8 @@ jobs:
             fi
             echo "$f $count" >> list-counts.txt
           done
-          test -s downloads/geolite2-cidr.csv && test -s downloads/dbip-cidr.csv
 
-          # sapics *-cidr.csv rows are "cidr,country": take RU & BY from GeoLite2 and DB-IP
-          awk -F, '$2=="RU"{print $1}' downloads/geolite2-cidr.csv > geolite_ru.lst
-          awk -F, '$2=="BY"{print $1}' downloads/geolite2-cidr.csv > geolite_by.lst
-          awk -F, '$2=="RU"{print $1}' downloads/dbip-cidr.csv > dbip_ru.lst
-          awk -F, '$2=="BY"{print $1}' downloads/dbip-cidr.csv > dbip_by.lst
-
-          test -s geolite_ru.lst && test -s geolite_by.lst
-          test -s dbip_ru.lst && test -s dbip_by.lst
+          test -s geolite_by.lst && test -s dbip_by.lst
           test -s downloads/GeoLite2-ASN-CSV.zip
           unzip -j downloads/GeoLite2-ASN-CSV.zip '*/GeoLite2-ASN-Blocks-*.csv' -d ./geolite2
           rm -rf downloads
