@@ -129,7 +129,8 @@ jobs:
 
           # Every CIDR list must start with a CIDR line and keep at least <min> CIDRs (about half its 10.2026
           # size): an empty, HTML or truncated "remove" list would silently route blocked IPs DIRECT.
-          for spec in whitelist.txt:40 antifilterdownloadcommunity.txt:400 refilter.txt:10000 refiltercommunity.txt:5 \
+          # refiltercommunity has held 1..14 entries over its history, so it only has to be non-empty.
+          for spec in whitelist.txt:40 antifilterdownloadcommunity.txt:400 refilter.txt:10000 refiltercommunity.txt:1 \
                       antifilternetwork.txt:50000 cdn.lst:1500 merged.sum:9000 ipinfo_ru.lst:30000 ipinfo_by.lst:1000; do
             f=${spec%%:*}; min=${spec#*:}
             first=$(grep -v -m1 -E '^\s*(#|$)' "$f" || true)
