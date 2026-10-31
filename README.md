@@ -13,7 +13,7 @@
 
 Оптимизированные конфигурации маршрутизации (роутинга) для мобильных устройств для клиентов **Happ**, **INCY** и **Shadowrocket** на базе кастомных легковесных баз GeoIP и Geosite.
 
-Проект автоматически собирает компактные бинарные базы правил (`geoip.dat` и `geosite.dat`), исключает рекламу, телеметрию, трекеры и обеспечивает прямое соединение (Direct) с российскими сервисами без задержек VPN, направляя заблокированные и зарубежные ресурсы в прокси-туннель.
+Проект автоматически собирает компактные бинарные базы правил (`geoip.dat` и `geosite.dat`), блокирует крупные рекламные сети и обеспечивает прямое соединение (Direct) с российскими сервисами без задержек VPN, направляя заблокированные и зарубежные ресурсы в прокси-туннель.
 
 ---
 
@@ -28,7 +28,7 @@
   <td><b>DEFAULT</b></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.DEEPLINK">DEFAULT.DEEPLINK</a></td>
   <td><a href="https://raw.githubusercontent.com/pincetgore/PinRouting/refs/heads/main/HAPP/DEFAULT.JSON">DEFAULT.JSON</a></td>
-  <td><b>Основной профиль:</b> RU/BY, банки, гос. сервисы, Twitch напрямую. YouTube, Telegram, GitHub и зарубежный интернет — через прокси. Реклама и телеметрия заблокированы.</td>
+  <td><b>Основной профиль:</b> RU/BY, банки, гос. сервисы, Twitch напрямую. YouTube, Telegram, GitHub и зарубежный интернет — через прокси. Реклама заблокирована.</td>
 </tr>
 <tr>
   <td><b>WHITELIST</b></td>
@@ -89,7 +89,7 @@
 Правила проверяются по порядку `block → proxy → direct` (`RouteOrder: block-proxy-direct`), и срабатывает первое совпадение. Поэтому домен из списка Proxy уйдёт в VPN, даже если он (или его родительский домен) есть в списке Direct.
 
 1. **Блокировка (Block / Reject):**
-   * Рекламные сети, трекеры и баннеры (`geosite:category-ads`).
+   * Рекламные сети и баннеры (`geosite:category-ads`). Аналитика (Google Analytics, AppsFlyer и т.п.) не блокируется: без неё ломаются сайты и ссылки в приложениях.
    * Торрент-трекеры (`geosite:torrent`), предотвращающие утечки в туннель и нагрузку на сервер.
 2. **Проксирование (Proxy):**
    * Заблокированные и международные социальные сети: YouTube (`geosite:youtube`), Telegram (`geosite:telegram`), Instagram / Threads (`geosite:instagram`), X / Twitter (`geosite:twitter`).

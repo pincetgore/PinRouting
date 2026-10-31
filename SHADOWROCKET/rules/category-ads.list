@@ -1,5 +1,5 @@
 # NAME: category-ads.list
-# TOTAL: 41
+# TOTAL: 53
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 # Google Ads
@@ -27,7 +27,21 @@ DOMAIN-SUFFIX,realsrv.com
 DOMAIN-SUFFIX,trafficfactory.biz
 DOMAIN-SUFFIX,trafficjunky.net
 DOMAIN-SUFFIX,tsyndicate.com
-# Russian Ad Networks (Mail.ru / VK / MyTarget)
+# Programmatic / Native Ads (analytics like google-analytics or appsflyer stay allowed: blocking them breaks sites and app links)
+DOMAIN-SUFFIX,adnxs.com
+DOMAIN-SUFFIX,amazon-adsystem.com
+DOMAIN-SUFFIX,criteo.com
+DOMAIN-SUFFIX,criteo.net
+DOMAIN-SUFFIX,outbrain.com
+DOMAIN-SUFFIX,pubmatic.com
+DOMAIN-SUFFIX,rubiconproject.com
+DOMAIN-SUFFIX,taboola.com
+# Mobile Ad SDKs
+DOMAIN-SUFFIX,applovin.com
+DOMAIN-SUFFIX,applvn.com
+DOMAIN-SUFFIX,unityads.unity3d.com
+# Russian Ad Networks (Mail.ru / VK / MyTarget / AdRiver)
+DOMAIN-SUFFIX,adriver.ru
 DOMAIN-SUFFIX,ad.mail.ru
 DOMAIN-SUFFIX,ad4.mail.ru
 DOMAIN-SUFFIX,alt-ad.mail.ru

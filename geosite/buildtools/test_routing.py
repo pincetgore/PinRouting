@@ -237,6 +237,7 @@ class RoutingTestSuite:
             # Blocked trackers and ads -> BLOCK
             ("tracker.opentrackr.com", "BLOCK", "Torrent tracker"),
             ("adservice.google.com", "BLOCK", "Google adservice"),
+            ("aax.amazon-adsystem.com", "BLOCK", "Amazon ads"),
             # Unlisted foreign domain -> fallback to PROXY
             ("random-foreign-service.org", "PROXY", "Generic foreign site"),
         ]

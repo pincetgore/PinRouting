@@ -25,7 +25,23 @@ domain:trafficfactory.biz
 domain:trafficjunky.net
 domain:tsyndicate.com
 
-# Russian Ad Networks (Mail.ru / VK / MyTarget)
+# Programmatic / Native Ads (analytics like google-analytics or appsflyer stay allowed: blocking them breaks sites and app links)
+domain:adnxs.com
+domain:amazon-adsystem.com
+domain:criteo.com
+domain:criteo.net
+domain:outbrain.com
+domain:pubmatic.com
+domain:rubiconproject.com
+domain:taboola.com
+
+# Mobile Ad SDKs
+domain:applovin.com
+domain:applvn.com
+domain:unityads.unity3d.com
+
+# Russian Ad Networks (Mail.ru / VK / MyTarget / AdRiver)
+domain:adriver.ru
 domain:ad.mail.ru
 domain:ad4.mail.ru
 domain:alt-ad.mail.ru
