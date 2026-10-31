@@ -11,7 +11,7 @@ Checks:
 - Collapsible/redundant CIDR blocks in GeoIP text files with detailed suggestions.
 
 Usage:
-  python3 lint_rules.py [--fail-on-error] [--strict]
+  python3 lint_rules.py [--fail-on-error]
 """
 
 import argparse
@@ -33,7 +33,7 @@ VALID_GEOSITE_TYPES = {"domain", "full", "keyword", "regexp"}
 ATTR_RE = re.compile(r"@[a-z0-9!]+")
 
 
-def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
+def lint_geosite_file(filepath: Path) -> tuple[int, int]:
     """Lints a single geosite file with the same rules v2fly applies when building geosite.dat.
 
     Returns (error_count, warning_count).
@@ -108,13 +108,8 @@ def lint_geosite_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
             for i in range(1, len(parts)):
                 parent = ".".join(parts[i:])
                 if parent in domain_rules and parent != val:
-                    msg = f"[{fn}:{idx}] '{line}' is redundant (covered by 'domain:{parent}' on line {domain_rules[parent]})"
-                    if strict:
-                        print(f"[ERROR] {msg}")
-                        errors += 1
-                    else:
-                        print(f"[WARN] {msg}")
-                        warnings += 1
+                    print(f"[WARN] [{fn}:{idx}] '{line}' is redundant (covered by 'domain:{parent}' on line {domain_rules[parent]})")
+                    warnings += 1
                     break
 
     return errors, warnings
@@ -140,7 +135,7 @@ def _format_collapse_details[TNetwork: (ipaddress.IPv4Network, ipaddress.IPv6Net
     return "; ".join(details)
 
 
-def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
+def lint_geoip_file(filepath: Path) -> tuple[int, int]:
     """Lints a GeoIP CIDR text file. Returns (error_count, warning_count)."""
     errors = 0
     warnings = 0
@@ -182,25 +177,15 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
     if len(c4) < len(v4_nets):
         diff = len(v4_nets) - len(c4)
         details = _format_collapse_details(v4_nets, c4, line_map)
-        msg = f"[{fn}] {diff} IPv4 network(s) can be collapsed: {details}"
-        if strict:
-            print(f"[ERROR] {msg}")
-            errors += 1
-        else:
-            print(f"[WARN] {msg}")
-            warnings += 1
+        print(f"[WARN] [{fn}] {diff} IPv4 network(s) can be collapsed: {details}")
+        warnings += 1
 
     c6 = list(ipaddress.collapse_addresses(v6_nets))
     if len(c6) < len(v6_nets):
         diff = len(v6_nets) - len(c6)
         details = _format_collapse_details(v6_nets, c6, line_map)
-        msg = f"[{fn}] {diff} IPv6 network(s) can be collapsed: {details}"
-        if strict:
-            print(f"[ERROR] {msg}")
-            errors += 1
-        else:
-            print(f"[WARN] {msg}")
-            warnings += 1
+        print(f"[WARN] [{fn}] {diff} IPv6 network(s) can be collapsed: {details}")
+        warnings += 1
 
     return errors, warnings
 
@@ -208,7 +193,6 @@ def lint_geoip_file(filepath: Path, strict: bool = False) -> tuple[int, int]:
 def main():
     parser = argparse.ArgumentParser(description="Lint PinRouting Geosite and GeoIP rulesets")
     parser.add_argument("--fail-on-error", action="store_true", help="Exit with non-zero code if errors found")
-    parser.add_argument("--strict", action="store_true", help="Treat warnings as errors")
     args = parser.parse_args()
 
     total_errors = 0
@@ -218,7 +202,7 @@ def main():
     if GEOSITE_DIR.is_dir():
         for item in sorted(GEOSITE_DIR.iterdir()):
             if item.is_file() and not item.name.startswith("."):
-                errs, warns = lint_geosite_file(item, strict=args.strict)
+                errs, warns = lint_geosite_file(item)
                 total_errors += errs
                 total_warnings += warns
     else:
@@ -228,7 +212,7 @@ def main():
     print("\n=== Linting GeoIP Custom Text Lists ===")
     if GEOIP_DIR.is_dir():
         for item in sorted(GEOIP_DIR.glob("*.txt")):
-            errs, warns = lint_geoip_file(item, strict=args.strict)
+            errs, warns = lint_geoip_file(item)
             total_errors += errs
             total_warnings += warns
 
@@ -237,8 +221,6 @@ def main():
     print(f"Total Warnings: {total_warnings}")
 
     if total_errors > 0 and args.fail_on_error:
-        sys.exit(1)
-    if args.strict and (total_errors > 0 or total_warnings > 0):
         sys.exit(1)
 
 
