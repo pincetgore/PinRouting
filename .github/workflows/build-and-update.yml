@@ -68,7 +68,8 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Lint Python Code
         run: |
-          pip install ruff==0.17.3  # pinned: a new ruff rule must not block the daily geodata release
+          # pinned: a new release must not block the daily geodata; dnspython runs the check-dead unit test
+          pip install ruff==0.17.3 dnspython==2.9.1
           ruff check .
 
       - name: Setup Go
