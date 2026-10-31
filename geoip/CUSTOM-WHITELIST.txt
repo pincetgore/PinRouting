@@ -18366,3 +18366,18 @@
 217.20.157.145/32
 217.118.87.98/32
 217.148.54.180/32
+
+# VoWiFi ePDG, epdg.epc.mncXXX.mcc250.pub.3gppnetwork.org via 77.88.8.8, 10.2026
+# IKE/IPsec carries no domain to sniff, so only the IP keeps it DIRECT
+
+# MTS
+213.87.142.77/32
+# MegaFon / Yota
+31.173.34.209/32
+85.26.231.145/32
+# Beeline
+85.249.16.248/32
+85.249.19.248/32
+# T2
+176.59.63.78/31
+176.59.159.190/31
