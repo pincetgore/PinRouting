@@ -84,6 +84,13 @@ jobs:
         run: |
           PYTHONPATH=tools python3 -m pinrouting lint
 
+      # A bad geosite rule must fail here, before the release branch serves it at @release.
+      # Configs are rebuilt with the current pinned URLs; the final build below overwrites them.
+      - name: Run Routing Tests Before Release
+        run: |
+          PYTHONPATH=tools python3 -m pinrouting build --repo "${{ github.repository }}"
+          PYTHONPATH=tools python3 -m pinrouting test
+
       # -----------------------------------------------------------------------
       # Build GeoIP
       # -----------------------------------------------------------------------
