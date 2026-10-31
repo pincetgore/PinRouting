@@ -1,5 +1,5 @@
 # NAME: instagram.list
-# TOTAL: 13
+# TOTAL: 14
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 DOMAIN-SUFFIX,instagram.com
@@ -15,3 +15,4 @@ DOMAIN-SUFFIX,instagram-press.com
 DOMAIN-SUFFIX,instagram-press.net
 DOMAIN-SUFFIX,instagrm.com
 DOMAIN-SUFFIX,threads.net
+DOMAIN-SUFFIX,threads.com

@@ -213,6 +213,7 @@ class RoutingTestSuite:
             ("instagram.com", "PROXY", "Instagram web"),
             ("cdninstagram.com", "PROXY", "Instagram media CDN"),
             ("threads.net", "PROXY", "Threads"),
+            ("www.threads.com", "PROXY", "Threads (main domain since 2025)"),
             ("x.com", "PROXY", "X"),
             ("twitter.com", "PROXY", "Twitter"),
             ("twimg.com", "PROXY", "Twitter image CDN"),
