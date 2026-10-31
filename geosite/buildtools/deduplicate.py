@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """
-Скрипт удаляет домены из geosite-файла, если они указывают
-только на IP-адреса, которые уже есть в списке geoip:direct/geoip:whitelist.
+Скрипт показывает домены geosite-файла, которые указывают
+только на IP-адреса, уже входящие в список geoip:direct/geoip:whitelist.
 
 Проверка выполняется через DNS-серверы в разных странах (check-host.net).
-Если все серверы подтвердили, что домен ведёт на IP из direct — домен удаляется.
+Если все серверы подтвердили, что домен ведёт на IP из direct — домен попадает в кандидаты.
+
+Файл не меняется: для domain:-правила проверяется только сам домен, а его поддомены
+(online.bank.ru) могут стоять на других IP (DDoS-Guard, Cloudflare). Удалять кандидатов —
+вручную, проверив поддомены. Мёртвые (NXDOMAIN) домены удаляет pinrouting check-dead.
 
 Список IP нужно выбрать явно под профиль, который использует этот geosite-файл:
   category-ru (профиль DEFAULT, geoip:direct)      → --list direct
@@ -295,7 +299,7 @@ def check_one_domain(
     intervals: list[tuple[int, int]], starts: list[int],
 ) -> tuple[int, str, str, bool]:
     """Проверяет один домен. Весь вывод собирается в строку (не печатается).
-    Возвращает (номер строки, заголовок, текст лога, нужно ли удалять)."""
+    Возвращает (номер строки, заголовок, текст лога, кандидат ли на удаление)."""
     header = f"{pfx}:{domain}"
 
     node_ips = resolve_domain(domain)
@@ -348,24 +352,25 @@ def check_one_domain(
     # Принятие решения:
     # - Должны ответить минимум 1 российский и 2 зарубежных сервера
     # - Если хоть один сервер нашёл IP вне direct — оставляем домен
-    # - Если все ответившие серверы дали direct или NXDOMAIN — удаляем
+    # - Если хоть один сервер дал direct, а остальные direct или NXDOMAIN — кандидат
+    # - Если все дали NXDOMAIN — не кандидат: мёртвыми доменами занимается check-dead
     ru_responded = len(RU_NODES) - ru_missing
     foreign_responded = len(FOREIGN_NODES) - foreign_missing
     if nodes_outside > 0:
         return idx, header, f"  → KEEP    [{nodes_ok}/{responded} direct]  {detail}", False
     if ru_responded < 1 or foreign_responded < 2:
         return idx, header, f"  → KEEP    [insufficient responses]  {detail}", False
-    if nodes_ok > 0 or nodes_nxdomain == responded:
-        return idx, header, f"  → REMOVE  [{nodes_ok} direct, {nodes_nxdomain} nxdomain / {responded} responded]  {detail}", True
+    if nodes_ok > 0:
+        return idx, header, f"  → CANDIDATE [{nodes_ok} direct, {nodes_nxdomain} nxdomain / {responded} responded]  {detail}", True
     return idx, header, f"  → KEEP    [{nodes_ok}/{responded} direct]  {detail}", False
 
 
 # ── Основная логика ─────────────────────────────────────────────────────────
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Deduplicate geosite domains covered by geoip:direct/geoip:whitelist")
+    ap = argparse.ArgumentParser(description="List geosite domains already covered by geoip:direct/geoip:whitelist")
     ap.add_argument("geosite_file", help="Geosite data file (e.g. data/category-ru, data/whitelist)")
-    # Required on purpose: checking data/whitelist against direct.txt removes domains the WHITELIST profile needs
+    # Required on purpose: checking data/whitelist against direct.txt flags domains the WHITELIST profile needs
     source = ap.add_mutually_exclusive_group(required=True)
     source.add_argument(
         "--list",
@@ -400,7 +405,7 @@ def main() -> None:
     print(f"  {total} domain/full entries to check (keyword/regexp skipped)\n")
 
     # Шаг 3. Проверяем домены параллельно через DNS-серверы
-    to_remove: set[int] = set()
+    candidates: set[int] = set()
 
     # Собираем все результаты, потом выводим в исходном порядке
     results: dict[int, tuple[int, str, str, bool]] = {}
@@ -420,34 +425,28 @@ def main() -> None:
 
     # Выводим результаты в исходном порядке
     for seq in range(total):
-        line_idx, header, log_line, should_remove = results[seq]
+        line_idx, header, log_line, is_candidate = results[seq]
         print(f"[{seq+1}/{total}] {header}")
         print(log_line)
-        if should_remove:
-            to_remove.add(line_idx)
+        if is_candidate:
+            candidates.add(line_idx)
 
-    # Если API не ответил ни разу, итог "удалить 0" был бы ложным: выходим с ошибкой, файл не трогаем
+    # Если API не ответил ни разу, итог "кандидатов 0" был бы ложным: выходим с ошибкой
     if total and all(log_line.endswith("(API error)") for _, _, log_line, _ in results.values()):
-        sys.exit(f"\nОшибка: check-host.net не ответил ни на один из {total} запросов. Файл не изменён.")
+        sys.exit(f"\nОшибка: check-host.net не ответил ни на один из {total} запросов.")
 
     # Шаг 4. Выводим итоги
     print(f"\n{'='*60}")
     print(f"Total checked : {total}")
-    print(f"To remove     : {len(to_remove)}")
-    print(f"Kept          : {total - len(to_remove)}")
+    print(f"Candidates    : {len(candidates)}")
+    print(f"Kept          : {total - len(candidates)}")
 
-    if to_remove:
-        print("\nRemoved entries:")
-        for idx in sorted(to_remove):
+    if candidates:
+        print("\nCandidates (check their subdomains, then delete by hand):")
+        for idx in sorted(candidates):
             print(f"  L{idx+1}: {lines[idx].rstrip()}")
 
-    # Шаг 5. Записываем результат (без удалённых строк)
-    with open(args.geosite_file, "w", encoding="utf-8") as f:
-        for i, line in enumerate(lines):
-            if i not in to_remove:
-                f.write(line)
-
-    print(f"\nWritten → {args.geosite_file}")
+    print(f"\n{args.geosite_file} is not modified.")
 
 
 if __name__ == "__main__":
