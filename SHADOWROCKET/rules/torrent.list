@@ -1,5 +1,5 @@
 # NAME: torrent.list
-# TOTAL: 370
+# TOTAL: 357
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 DOMAIN-SUFFIX,dht.aelitis.com
@@ -45,12 +45,10 @@ DOMAIN-SUFFIX,bt2.edwardk.info
 DOMAIN-SUFFIX,bubu.mapfactor.com
 DOMAIN-SUFFIX,camera.lei001.com
 DOMAIN-SUFFIX,carbon-bonsai-621.appspot.com
-DOMAIN-SUFFIX,chanchan.uchuu.co.uk
 DOMAIN-SUFFIX,chihaya.de
 DOMAIN-SUFFIX,chihaya.toss.li
 DOMAIN-SUFFIX,code2chicken.nl
 DOMAIN-SUFFIX,concen.org
-DOMAIN-SUFFIX,cutiegirl.ru
 DOMAIN-SUFFIX,data-bg.net
 DOMAIN-SUFFIX,datascene.net
 DOMAIN-SUFFIX,daveking.com
@@ -58,9 +56,7 @@ DOMAIN-SUFFIX,denis.stalker.upeer.me
 DOMAIN-SUFFIX,deviloid.net
 DOMAIN-SUFFIX,discord.heihachi.pw
 DOMAIN-SUFFIX,dpiui.reedlan.com
-DOMAIN-SUFFIX,drumkitx.com
 DOMAIN-SUFFIX,eddie4.nl
-DOMAIN-SUFFIX,edu.uifr.ru
 DOMAIN-SUFFIX,engplus.ru
 DOMAIN-SUFFIX,exodus.desync.com
 DOMAIN-SUFFIX,explodie.org
@@ -71,11 +67,9 @@ DOMAIN-SUFFIX,funfile.org
 DOMAIN-SUFFIX,git.vulnix.sh
 DOMAIN-SUFFIX,h4.trakx.nibba.trade
 DOMAIN-SUFFIX,hdreactor.org
-DOMAIN-SUFFIX,inferno.demonoid.is
 DOMAIN-SUFFIX,inferno.demonoid.pw
 DOMAIN-SUFFIX,tracker.zerobytes.xyz
 DOMAIN-SUFFIX,jsb.by
-DOMAIN-SUFFIX,kanal-4.de
 DOMAIN-SUFFIX,kinorun.com
 DOMAIN-SUFFIX,learnbits.me
 DOMAIN-SUFFIX,line-net.ru
@@ -85,10 +79,8 @@ DOMAIN-SUFFIX,mail.realliferpg.de
 DOMAIN-SUFFIX,mail2.zelenaya.net
 DOMAIN-SUFFIX,masters-tb.com
 DOMAIN-SUFFIX,mediaclub.tv
-DOMAIN-SUFFIX,megatorrents.kg
 DOMAIN-SUFFIX,metal.iplay.ro
 DOMAIN-SUFFIX,mgtracker.org
-DOMAIN-SUFFIX,milliontorrent.pl
 DOMAIN-SUFFIX,mixfiend.com
 DOMAIN-SUFFIX,movies.zsw.ca
 DOMAIN-SUFFIX,mvgroup.org
@@ -235,7 +227,6 @@ DOMAIN-SUFFIX,tracker.trackerfix.com
 DOMAIN-SUFFIX,tracker.trackton.ga
 DOMAIN-SUFFIX,tracker.tricitytorrents.com
 DOMAIN-SUFFIX,tracker.tvunderground.org.ru
-DOMAIN-SUFFIX,tracker.uw0.xyz
 DOMAIN-SUFFIX,tracker.v6speed.org
 DOMAIN-SUFFIX,tracker.vectahosting.eu
 DOMAIN-SUFFIX,tracker.vulnix.sh
@@ -325,11 +316,9 @@ DOMAIN-SUFFIX,tracker.plx.im
 DOMAIN-SUFFIX,tracker.fnix.net
 DOMAIN-SUFFIX,tracker.ducks.party
 DOMAIN-SUFFIX,tracker.1h.is
-DOMAIN-SUFFIX,torrentclub.online
 DOMAIN-SUFFIX,rekcart.duckdns.org
 DOMAIN-SUFFIX,tracker.zhuqiy.com
 DOMAIN-SUFFIX,tracker.gcrenwp.top
-DOMAIN-SUFFIX,tracker.belmult.online
 DOMAIN-SUFFIX,t.213891.xyz
 DOMAIN-SUFFIX,torrentsnipe.info
 DOMAIN-SUFFIX,genesis-sp.org
@@ -341,7 +330,6 @@ DOMAIN-SUFFIX,home.yxgz.club
 DOMAIN-SUFFIX,buny.uk
 DOMAIN-SUFFIX,bt1.xxxxbt.cc
 DOMAIN-SUFFIX,bt.poletracker.org
-DOMAIN-SUFFIX,aboutbeautifulgallopinghorsesinthegreenpasture.online
 # Trackers from ngosang/trackerslist
 DOMAIN-SUFFIX,004430.xyz
 DOMAIN-SUFFIX,admin.52ywp.com
@@ -351,7 +339,6 @@ DOMAIN-SUFFIX,kolanopentracker.airdns.org
 DOMAIN-SUFFIX,mail.segso.net
 DOMAIN-SUFFIX,ns575949.ip-51-222-82.net
 DOMAIN-SUFFIX,open.ftorrent.com
-DOMAIN-SUFFIX,pybittrack.retiolus.net
 DOMAIN-SUFFIX,seedpeer.net
 DOMAIN-SUFFIX,tr3.ysagin.top
 DOMAIN-SUFFIX,tracker.7471.top

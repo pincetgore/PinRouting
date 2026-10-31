@@ -1,5 +1,5 @@
 # NAME: category-ru.list
-# TOTAL: 141
+# TOTAL: 139
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 # Direct for checkers
@@ -21,7 +21,6 @@ DOMAIN-SUFFIX,kinescopecdn.net
 DOMAIN-SUFFIX,redheadsound.studio
 # VTB
 DOMAIN-SUFFIX,vtbglobalperspectives.com
-DOMAIN-SUFFIX,vtb-direct.com
 # Sberbank / Sber
 DOMAIN-SUFFIX,sber.world
 DOMAIN-SUFFIX,sber.ws
@@ -74,7 +73,6 @@ DOMAIN-SUFFIX,tagbank.ru
 DOMAIN-SUFFIX,korona.com
 # ПАО Банк ЗЕНИТ (Рег. № 3255)
 DOMAIN-SUFFIX,credit-zenit.ru
-DOMAIN-SUFFIX,zenit-card.ru
 # ООО "Дойче Банк" (Рег. № 3328)
 DOMAIN-SUFFIX,autobahn.db.com
 # АО "КОММЕРЦБАНК (ЕВРАЗИЯ)" (Рег. № 3333)

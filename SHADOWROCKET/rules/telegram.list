@@ -1,5 +1,5 @@
 # NAME: telegram.list
-# TOTAL: 26
+# TOTAL: 25
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 DOMAIN-SUFFIX,cdn-telegram.org
@@ -12,7 +12,6 @@ DOMAIN-SUFFIX,t.me
 DOMAIN-SUFFIX,tdesktop.com
 DOMAIN-SUFFIX,telega.one
 DOMAIN-SUFFIX,telegra.ph
-DOMAIN-SUFFIX,telegram-cdn.org
 DOMAIN-SUFFIX,telegram.dog
 DOMAIN-SUFFIX,telegram.me
 DOMAIN-SUFFIX,telegram.org

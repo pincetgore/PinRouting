@@ -26,10 +26,8 @@ domain:clients3.google.com
 domain:time.android.com
 
 # Android Vendor Push & Captive Portal (Xiaomi, Huawei, Samsung)
-domain:mipush.xiaomi.com
 domain:xmpush.xiaomi.com
 domain:connect.rom.miui.com
 domain:push.hicloud.com
 domain:dbankcloud.com
 domain:connectivitycheck.platform.hicloud.com
-domain:connectivitycheck.samsungcloud.com

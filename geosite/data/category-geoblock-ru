@@ -293,8 +293,8 @@ domain:lumalabs.ai
 domain:make.com
 
 # Manus
-domain:manus.cdn
 domain:manus.im
+domain:manuscdn.com
 
 # Meta AI
 domain:meta.ai
@@ -482,7 +482,6 @@ domain:cdn-spotify-experiments.conductrics.com
 domain:heads-ak-spotify-com.akamaized.net
 domain:heads4-ak-spotify-com.akamaized.net
 full:spotify.map.fastly.net
-full:spotify.map.fastlylb.net
 
 # Strava
 domain:strava.com
@@ -1216,7 +1215,6 @@ domain:discordapp.io
 domain:discordapp.net
 domain:discordcdn.com
 domain:discordmerch.com
-domain:discordpartygames.com
 domain:discordsays.com
 domain:discordstatus.com
 

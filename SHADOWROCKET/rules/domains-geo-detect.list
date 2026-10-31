@@ -1,5 +1,5 @@
 # NAME: domains-geo-detect.list
-# TOTAL: 223
+# TOTAL: 222
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 # Geo and IP detection domains (direct)
@@ -194,7 +194,6 @@ DOMAIN-SUFFIX,test-ipv6.cl
 DOMAIN-SUFFIX,test-ipv6.com
 DOMAIN-SUFFIX,test-ipv6.csclub.uwaterloo.ca
 DOMAIN-SUFFIX,test-ipv6.cz
-DOMAIN-SUFFIX,test-ipv6.fratec.net
 DOMAIN-SUFFIX,test-ipv6.jp
 DOMAIN-SUFFIX,test-ipv6.nl
 DOMAIN-SUFFIX,test-ipv6.noroutetohost.net

@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 996
+# TOTAL: 994
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-10-31 06:31:45 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -237,8 +237,8 @@ DOMAIN-SUFFIX,lumalabs.ai
 # Make
 DOMAIN-SUFFIX,make.com
 # Manus
-DOMAIN-SUFFIX,manus.cdn
 DOMAIN-SUFFIX,manus.im
+DOMAIN-SUFFIX,manuscdn.com
 # Meta AI
 DOMAIN-SUFFIX,meta.ai
 DOMAIN-SUFFIX,llamameta.net
@@ -392,7 +392,6 @@ DOMAIN-SUFFIX,cdn-spotify-experiments.conductrics.com
 DOMAIN-SUFFIX,heads-ak-spotify-com.akamaized.net
 DOMAIN-SUFFIX,heads4-ak-spotify-com.akamaized.net
 DOMAIN,spotify.map.fastly.net
-DOMAIN,spotify.map.fastlylb.net
 # Strava
 DOMAIN-SUFFIX,strava.com
 # Stripe
@@ -1101,7 +1100,6 @@ DOMAIN-SUFFIX,discordapp.io
 DOMAIN-SUFFIX,discordapp.net
 DOMAIN-SUFFIX,discordcdn.com
 DOMAIN-SUFFIX,discordmerch.com
-DOMAIN-SUFFIX,discordpartygames.com
 DOMAIN-SUFFIX,discordsays.com
 DOMAIN-SUFFIX,discordstatus.com
 # Community blocked & geoblocked services
