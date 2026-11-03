@@ -1,7 +1,7 @@
 # NAME: direct-ips.list
 # TOTAL: 36770
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-11-02 07:01:53 UTC
+# UPDATED: 2026-11-03 07:26:18 UTC
 IP-CIDR,2.26.8.0/24
 IP-CIDR,2.26.10.0/24
 IP-CIDR,2.26.89.0/24
