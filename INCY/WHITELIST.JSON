@@ -8,9 +8,9 @@
   "DomesticDNSType": "DoH",
   "DomesticDNSDomain": "https://common.dot.dns.yandex.net/dns-query",
   "DomesticDNSIP": "77.88.8.8",
-  "Geoipurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@66501f072f0ec176942398c48dfc7adae6fc682d/geoip.dat",
-  "Geositeurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@66501f072f0ec176942398c48dfc7adae6fc682d/geosite.dat",
-  "LastUpdated": "1794120708",
+  "Geoipurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@1cc4320934be4725e05ec35126cdd6951e0d5270/geoip.dat",
+  "Geositeurl": "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@1cc4320934be4725e05ec35126cdd6951e0d5270/geosite.dat",
+  "LastUpdated": "1794209414",
   "DnsHosts": {
     "lkfl2.nalog.ru": "213.24.64.175",
     "lknpd.nalog.ru": "213.24.64.181"
