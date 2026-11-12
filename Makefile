@@ -9,7 +9,7 @@ help:
 	@echo "  make test       - Run regression routing test suite"
 	@echo "  make build      - Build HAPP, INCY, and SHADOWROCKET configurations"
 	@echo "  make check-dead - Check for dead domains (dry-run)"
-	@echo "  make all        - Lint, test, and build"
+	@echo "  make all        - Lint, build, and test"
 
 lint:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m pinrouting lint
@@ -23,4 +23,5 @@ build:
 check-dead:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m pinrouting check-dead
 
-all: lint test build
+# build before test: the tests read the generated configs
+all: lint build test
