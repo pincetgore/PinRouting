@@ -11,10 +11,9 @@ Checks:
 - Collapsible/redundant CIDR blocks in GeoIP text files with detailed suggestions.
 
 Usage:
-  python3 lint_rules.py [--fail-on-error]
+  python3 lint_rules.py   (exits 1 when errors are found)
 """
 
-import argparse
 import ipaddress
 import re
 import sys
@@ -196,10 +195,6 @@ def lint_geoip_file(filepath: Path) -> tuple[int, int]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Lint PinRouting Geosite and GeoIP rulesets")
-    parser.add_argument("--fail-on-error", action="store_true", help="Exit with non-zero code if errors found")
-    args = parser.parse_args()
-
     total_errors = 0
     total_warnings = 0
 
@@ -225,7 +220,7 @@ def main():
     print(f"Total Errors:   {total_errors}")
     print(f"Total Warnings: {total_warnings}")
 
-    if total_errors > 0 and args.fail_on_error:
+    if total_errors > 0:
         sys.exit(1)
 
 

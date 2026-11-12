@@ -10,12 +10,13 @@ from pathlib import Path
 
 
 def run_tests(root_dir: Path) -> int:
-    print("Running unit tests (tests/)...")
+    # flush: in CI logs our buffered lines would otherwise land after unittest's stderr and the child's output
+    print("Running unit tests (tests/)...", flush=True)
     suite = unittest.defaultTestLoader.discover(str(root_dir / "tests"))
     unit_ok = unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful()
 
     test_script = root_dir / "geosite" / "buildtools" / "test_routing.py"
-    print(f"\nRunning regression test suite: {test_script.name}...")
+    print(f"\nRunning regression test suite: {test_script.name}...", flush=True)
     routing = subprocess.run([sys.executable, str(test_script)], cwd=str(root_dir), check=False)
 
     return 0 if unit_ok and routing.returncode == 0 else 1

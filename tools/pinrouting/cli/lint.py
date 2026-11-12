@@ -131,8 +131,9 @@ def lint_profiles(root_dir: Path) -> list[str]:
 
 def run_rules_linter(root_dir: Path) -> int:
     rules_linter = root_dir / "geosite" / "buildtools" / "lint_rules.py"
+    sys.stdout.flush()  # or the child's output lands before ours in CI logs
     res = subprocess.run(
-        [sys.executable, str(rules_linter), "--fail-on-error"],
+        [sys.executable, str(rules_linter)],
         cwd=str(root_dir),
         check=False,
     )
