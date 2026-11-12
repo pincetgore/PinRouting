@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from pinrouting.cli.check_iplists import check_built_list
+from pinrouting.cli.check_iplists import check_built_list, check_download
 from pinrouting.cli.lint import lint_profiles
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.geosite import is_valid_domain, parse_rule, remove_domains
@@ -116,6 +116,16 @@ class ShadowrocketProfileTest(unittest.TestCase):
 
 
 class IpListGateTest(unittest.TestCase):
+    def test_download_must_be_a_cidr_list_of_enough_size(self):
+        full = "# header\n" + "".join(f"10.0.{i}.0/24\n" for i in range(50))
+        self.assertEqual(check_download("whitelist.txt", full), (50, None))
+        self.assertIn("not a CIDR list", check_download("whitelist.txt", "<html>\n10.0.0.0/24\n")[1])
+        self.assertIn("not a CIDR list", check_download("whitelist.txt", "")[1])
+        self.assertIn("at least 40", check_download("whitelist.txt", "10.0.0.0/24\n")[1])
+        # 1000+ CIDRs in the previous release: half of that replaces the fixed floor
+        self.assertIn("at least 1000", check_download("whitelist.txt", full, last=2000)[1])
+        self.assertIsNone(check_download("whitelist.txt", full, last=100)[1])
+
     def test_built_list_too_big_or_foreign(self):
         self.assertEqual(check_built_list("whitelist", "77.88.8.0/24\n2a02:6b8::/32\n"), [])
         errors = check_built_list("whitelist", "77.88.8.0/24\n0.0.0.0/0\n")

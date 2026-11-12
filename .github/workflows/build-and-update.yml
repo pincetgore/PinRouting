@@ -139,38 +139,11 @@ jobs:
           awk -F, '$2=="RU"{print $1}' downloads/dbip-cidr.csv > dbip_ru.lst
           awk -F, '$2=="BY"{print $1}' downloads/dbip-cidr.csv > dbip_by.lst
 
-          # Every CIDR list must start with a CIDR line and keep enough CIDRs: an empty, HTML or truncated
-          # "remove" list would silently route blocked IPs DIRECT. A list that had 1000+ CIDRs in the previous
-          # release (list-counts.txt there) must keep half of that, so the limit follows real changes. Smaller
-          # lists swing too much for that and use the fixed floor (about half their 10.2026 size), which is
-          # also the fallback without a previous count. refiltercommunity has held 1..14 entries: non-empty only.
-          prev=$(git -C "$GITHUB_WORKSPACE" show origin/release:list-counts.txt 2>/dev/null || true)
-          if [[ "${{ inputs.accept_list_sizes || false }}" == "true" ]]; then
-            prev=""
-            echo "::warning::accept_list_sizes: today's list sizes become the new baseline"
-          elif [[ -z "$prev" ]]; then
-            echo "::warning::No list-counts.txt in the release branch: only the fixed floors are checked"
-          fi
-          : > list-counts.txt
-          for spec in whitelist.txt:40 antifilterdownloadcommunity.txt:400 refilter.txt:10000 refiltercommunity.txt:1 \
-                      antifilternetwork.txt:50000 cdn.lst:1500 merged.sum:9000 ipinfo_ru.lst:30000 ipinfo_by.lst:1000 \
-                      geolite_ru.lst:6000 dbip_ru.lst:6000; do
-            f=${spec%%:*}; min=${spec#*:}
-            first=$(grep -v -m1 -E '^\s*(#|$)' "$f" || true)
-            if ! [[ "$first" =~ ^[0-9a-fA-F:.]+/[0-9]+[[:space:]]*$ ]]; then
-              echo "::error::Download $f is empty or not a CIDR list (first line: '${first:0:80}')"
-              exit 1
-            fi
-            count=$(grep -c -E '^[0-9a-fA-F:.]+/[0-9]+' "$f" || true)
-            last=$(awk -v f="$f" '$1 == f { print $2 }' <<< "$prev")
-            why=""
-            if (( ${last:-0} >= 1000 )); then min=$(( last / 2 )); why=" (half of $last in the previous release)"; fi
-            if (( count < min )); then
-              echo "::error::Download $f has $count CIDRs, expected at least $min$why. Truncated upstream? If the drop is real, run this workflow by hand with accept_list_sizes."
-              exit 1
-            fi
-            echo "$f $count" >> list-counts.txt
-          done
+          # Empty, HTML or shrunken lists stop the build (floors and rules: tools/pinrouting/cli/check_iplists.py).
+          # Writes list-counts.txt, which the release branch keeps as the baseline for the next run.
+          git -C "$GITHUB_WORKSPACE" show origin/release:list-counts.txt > "$RUNNER_TEMP/prev-counts.txt" 2>/dev/null || true
+          PYTHONPATH="$GITHUB_WORKSPACE/tools" python3 -m pinrouting check-iplists downloads . \
+            --prev "$RUNNER_TEMP/prev-counts.txt" ${{ inputs.accept_list_sizes && '--accept' || '' }}
 
           test -s geolite_by.lst && test -s dbip_by.lst
           test -s downloads/GeoLite2-ASN-CSV.zip
