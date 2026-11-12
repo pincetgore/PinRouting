@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import asyncio
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
 from pinrouting.cli.check_iplists import check_built_list
+from pinrouting.cli.lint import lint_profiles
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.geosite import is_valid_domain, parse_rule, remove_domains
 from pinrouting.models import ProfileConfig
@@ -81,6 +83,29 @@ class DomainLivenessTest(unittest.TestCase):
             self.assertTrue(alive("ent.example", suffix=True))
             self.assertFalse(alive("ent.example", suffix=False))
             self.assertFalse(alive("dead.example", suffix=True))
+
+
+class LintProfilesTest(unittest.TestCase):
+    def test_typos_in_profile_values_are_errors(self):
+        profile = {
+            "Name": "x",
+            "FakeDNS": "ture",
+            "RemoteDNSIP": "9.9.9",
+            "DomainStrategy": "Bogus",
+            "DirectSites": ["geosite:ok"],
+            "ProxySites": ["domain:example.org"],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for d in ("profiles", "geosite/data", "geoip"):
+                (root / d).mkdir(parents=True)
+            (root / "geosite/data/ok").write_text("example.com\n", encoding="utf-8")
+            (root / "geoip/config.json").write_text('{"input": []}', encoding="utf-8")
+            (root / "profiles/X.json").write_text(json.dumps(profile), encoding="utf-8")
+            errors = "\n".join(lint_profiles(root))
+        for expected in ("FakeDNS", "RemoteDNSIP", "DomainStrategy", "domain:example.org"):
+            self.assertIn(expected, errors)
+        self.assertEqual(errors.count("\n"), 3, errors)  # nothing else is reported
 
 
 class ShadowrocketProfileTest(unittest.TestCase):

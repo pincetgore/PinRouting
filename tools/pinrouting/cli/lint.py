@@ -15,9 +15,10 @@ import ipaddress
 import json
 import subprocess
 import sys
+from dataclasses import fields
 from pathlib import Path
 
-from pinrouting.models import ProfileConfig
+from pinrouting.models import _FLAGS, ProfileConfig
 
 
 def built_geoip_categories(root_dir: Path) -> set[str]:
@@ -65,10 +66,18 @@ def lint_profiles(root_dir: Path) -> list[str]:
         # Check required fields
         if not cfg.name:
             errors.append(f"[{pf.name}] Profile Name cannot be empty")
-        if cfg.global_proxy not in ("true", "false"):
-            errors.append(
-                f"[{pf.name}] GlobalProxy must be 'true' or 'false', got '{cfg.global_proxy}'"
-            )
+        for f in fields(cfg):
+            if f.name in _FLAGS and getattr(cfg, f.name) not in ("true", "false"):
+                errors.append(
+                    f"[{pf.name}] {f.metadata['key']} must be 'true' or 'false', got '{getattr(cfg, f.name)}'"
+                )
+        if cfg.domain_strategy not in ("AsIs", "IPIfNonMatch", "IPOnDemand"):
+            errors.append(f"[{pf.name}] DomainStrategy '{cfg.domain_strategy}' is not supported")
+        for label, ip in (("RemoteDNSIP", cfg.remote_dns_ip), ("DomesticDNSIP", cfg.domestic_dns_ip)):
+            try:
+                ipaddress.ip_address(ip)
+            except ValueError:
+                errors.append(f"[{pf.name}] {label} '{ip}' is not an IP address")
         if cfg.remote_dns_type not in ("DoH", "DoH3", "DoU", "DoT"):
             errors.append(
                 f"[{pf.name}] RemoteDNSType '{cfg.remote_dns_type}' is not supported"
@@ -96,6 +105,9 @@ def lint_profiles(root_dir: Path) -> list[str]:
                     errors.append(
                         f"[{pf.name}] Unknown geosite category '{cat}' (referenced as '{site}')"
                     )
+            else:
+                # The Shadowrocket emitter and the routing tests only understand geosite: categories
+                errors.append(f"[{pf.name}] Site rule '{site}' must be 'geosite:<category>'")
 
         # Check geoip references
         all_ips = cfg.direct_ip + cfg.proxy_ip + cfg.block_ip
