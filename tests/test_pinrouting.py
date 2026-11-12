@@ -9,6 +9,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+from pinrouting.cli.check_iplists import check_built_list
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.geosite import is_valid_domain, parse_rule, remove_domains
 from pinrouting.models import ProfileConfig
@@ -80,6 +81,14 @@ class DomainLivenessTest(unittest.TestCase):
             self.assertTrue(alive("ent.example", suffix=True))
             self.assertFalse(alive("ent.example", suffix=False))
             self.assertFalse(alive("dead.example", suffix=True))
+
+
+class IpListGateTest(unittest.TestCase):
+    def test_built_list_too_big_or_foreign(self):
+        self.assertEqual(check_built_list("whitelist", "77.88.8.0/24\n2a02:6b8::/32\n"), [])
+        errors = check_built_list("whitelist", "77.88.8.0/24\n0.0.0.0/0\n")
+        self.assertEqual(len(errors), 2)  # over the address limit, and 8.8.8.8 goes DIRECT
+        self.assertEqual(len(check_built_list("direct", "8.8.8.0/24\n")), 1)
 
 
 class ProfileConfigTest(unittest.TestCase):

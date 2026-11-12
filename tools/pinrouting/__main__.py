@@ -12,6 +12,7 @@ SUBCOMMANDS = {
     "lint": "lint",
     "test": "test",
     "check-dead": "check_dead",
+    "check-iplists": "check_iplists",
 }
 
 

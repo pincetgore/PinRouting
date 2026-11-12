@@ -194,6 +194,8 @@ jobs:
           ./geoip-tool convert -c config.json
           test -s output/dat/geoip.dat
           test -s output/text/direct.txt && test -s output/text/whitelist.txt
+          # Too-big lists (an upstream 0.0.0.0/0) must fail here, before the release branch serves them
+          PYTHONPATH="$GITHUB_WORKSPACE/tools" python3 -m pinrouting check-iplists output output/text
           ls -lh output/dat/*.dat
 
       # -----------------------------------------------------------------------
