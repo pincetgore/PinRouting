@@ -122,6 +122,12 @@ class ShadowrocketEmitter:
         updated_str: str,
     ) -> None:
         """Emit Shadowrocket .CONF file."""
+        # Happ/INCY would obey these rules while Shadowrocket silently dropped them
+        # (geoip:private is covered by skip-proxy / tun-excluded-routes below)
+        supported = {"geoip:private", "geoip:direct", "geoip:whitelist"}
+        unsupported = [r for r in profile.direct_ip if r not in supported] + profile.proxy_ip + profile.block_ip
+        if unsupported:
+            raise ValueError(f"[{key}] IP rules with no Shadowrocket equivalent: {', '.join(unsupported)}")
         output_dir.mkdir(parents=True, exist_ok=True)
         branch = "main"
         raw_base = f"https://raw.githubusercontent.com/{repo}/{branch}/SHADOWROCKET"

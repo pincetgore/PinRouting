@@ -83,6 +83,13 @@ class DomainLivenessTest(unittest.TestCase):
             self.assertFalse(alive("dead.example", suffix=True))
 
 
+class ShadowrocketProfileTest(unittest.TestCase):
+    def test_ip_rule_without_equivalent_is_an_error(self):
+        cfg = ProfileConfig.from_dict({"Name": "x", "DirectIp": ["geoip:private"], "BlockIp": ["203.0.113.0/24"]})
+        with tempfile.TemporaryDirectory() as tmp, self.assertRaisesRegex(ValueError, "203.0.113.0/24"):
+            ShadowrocketEmitter(Path(tmp)).emit_profile("X", cfg, Path(tmp), repo="o/r", epoch="0", updated_str="")
+
+
 class IpListGateTest(unittest.TestCase):
     def test_built_list_too_big_or_foreign(self):
         self.assertEqual(check_built_list("whitelist", "77.88.8.0/24\n2a02:6b8::/32\n"), [])
