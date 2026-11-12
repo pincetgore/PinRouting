@@ -105,12 +105,17 @@ def lint_geosite_file(filepath: Path) -> tuple[int, int]:
     for idx, rtype, val, line in rules:
         if rtype in ("domain", "full"):
             parts = val.split(".")
-            for i in range(1, len(parts)):
+            for i in range(0 if rtype == "full" else 1, len(parts)):
                 parent = ".".join(parts[i:])
-                if parent in domain_rules and parent != val:
+                if parent not in domain_rules:
+                    continue
+                if parent == val:
+                    # check-dead removes lines by value: a dead full:x would take a live domain:x with it
+                    error(idx, f"'{line}' repeats 'domain:{parent}' on line {domain_rules[parent]}")
+                else:
                     print(f"[WARN] [{fn}:{idx}] '{line}' is redundant (covered by 'domain:{parent}' on line {domain_rules[parent]})")
                     warnings += 1
-                    break
+                break
 
     return errors, warnings
 

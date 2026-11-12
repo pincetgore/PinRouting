@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import importlib.util
+import io
 import json
 import tempfile
 import unittest
@@ -38,6 +40,27 @@ class GeositeParseTest(unittest.TestCase):
             self.assertTrue(is_valid_domain(ok), ok)
         for bad in ("госуслуги.рф", "_dmarc.example.com", "example..com", "-a.com", "a-.com", "a" * 64 + ".com"):
             self.assertFalse(is_valid_domain(bad), bad)
+
+
+def load_buildtool(name: str):
+    """Imports a standalone script from geosite/buildtools."""
+    path = Path(__file__).resolve().parent.parent / "geosite" / "buildtools" / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(name, path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class LintRulesTest(unittest.TestCase):
+    def test_full_rule_repeating_a_domain_rule_is_an_error(self):
+        lint_geosite_file = load_buildtool("lint_rules").lint_geosite_file
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            path = Path(tmp) / "cat"
+            path.write_text("full:x.example\ndomain:x.example\n", encoding="utf-8")
+            self.assertEqual(lint_geosite_file(path), (1, 0))
+            path.write_text("full:a.x.example\ndomain:x.example\nfull:y.example\n", encoding="utf-8")
+            self.assertEqual(lint_geosite_file(path), (0, 1))
 
 
 class RemoveDomainsTest(unittest.TestCase):
