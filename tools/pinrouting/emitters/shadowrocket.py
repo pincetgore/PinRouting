@@ -10,6 +10,7 @@ from pinrouting.models import ProfileConfig
 
 # Shadowrocket IP rule lists built from the compiled geoip text dumps (same data as geoip:<name> in Happ/INCY)
 GEOIP_RULESETS = {"direct": "direct-ips", "whitelist": "whitelist-ips"}
+ANDROID_ONLY = "android-push"  # no list and no rule for it: Shadowrocket is iOS
 SR_RULE_TYPES = {"domain": "DOMAIN-SUFFIX", "full": "DOMAIN", "keyword": "DOMAIN-KEYWORD"}
 
 
@@ -82,10 +83,10 @@ class ShadowrocketEmitter:
         self.rules_dir.mkdir(parents=True, exist_ok=True)
         counts: dict[str, int] = {}
 
-        # 1. Geosite domain lists (android-push is Android-only, Shadowrocket is iOS)
+        # 1. Geosite domain lists
         sources = [
             p for p in sorted(self.geosite_data_dir.glob("*"))
-            if p.is_file() and not p.name.startswith(".") and p.name != "android-push"
+            if p.is_file() and not p.name.startswith(".") and p.name != ANDROID_ONLY
         ]
         keep = {p.name for p in sources} | set(GEOIP_RULESETS.values())
         for stale in self.rules_dir.glob("*.list"):
@@ -204,36 +205,25 @@ update-url = {raw_base}/{key}.CONF
         # Build [Rule] section dynamically from ProfileConfig
         rule_parts: list[str] = ["[Rule]"]
 
-        # 1. Block rules
-        if profile.block_sites:
-            rule_parts.append("# --- Блокировка (BlockSites) ---")
-            for s in profile.block_sites:
+        # 1-3. Site rules, in RouteOrder: block -> proxy -> direct
+        direct_title = (
+            "# --- Прямое подключение (DirectSites: системные пуш-уведомления) ---"
+            if key == "BASIC"
+            else "# --- Прямое подключение (DirectSites) ---"
+        )
+        sections = [
+            (profile.block_sites, "REJECT", "# --- Блокировка (BlockSites) ---"),
+            (profile.proxy_sites, "PROXY", "# --- Проксируемые зарубежные сервисы (ProxySites) ---"),
+            (profile.direct_sites, "DIRECT", direct_title),
+        ]
+        for sites, policy, title in sections:
+            if not sites:
+                continue
+            rule_parts.append(title)
+            for s in sites:
                 cat = s.split(":", 1)[1] if ":" in s else s
-                rule_parts.append(f"RULE-SET,{rules_base}/{cat}.list,REJECT")
-            rule_parts.append("")
-
-        # 2. Proxy rules (for DEFAULT and WHITELIST)
-        if profile.proxy_sites:
-            rule_parts.append(
-                "# --- Проксируемые зарубежные сервисы (ProxySites) ---"
-            )
-            for s in profile.proxy_sites:
-                cat = s.split(":", 1)[1] if ":" in s else s
-                rule_parts.append(f"RULE-SET,{rules_base}/{cat}.list,PROXY")
-            rule_parts.append("")
-
-        # 3. Direct rules
-        if profile.direct_sites:
-            if key == "BASIC":
-                rule_parts.append(
-                    "# --- Прямое подключение (DirectSites: системные пуш-уведомления) ---"
-                )
-            else:
-                rule_parts.append("# --- Прямое подключение (DirectSites) ---")
-            for s in profile.direct_sites:
-                cat = s.split(":", 1)[1] if ":" in s else s
-                if cat not in ("android-push",):
-                    rule_parts.append(f"RULE-SET,{rules_base}/{cat}.list,DIRECT")
+                if cat != ANDROID_ONLY:
+                    rule_parts.append(f"RULE-SET,{rules_base}/{cat}.list,{policy}")
             rule_parts.append("")
 
         # 4. Direct IP rules (same CIDRs as geoip:direct / geoip:whitelist in geoip.dat).
