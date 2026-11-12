@@ -24,7 +24,6 @@ from __future__ import annotations
 import argparse
 import ipaddress
 import json
-import struct
 import sys
 import time
 import urllib.error
@@ -75,19 +74,15 @@ def http_get(url: str, timeout: int = 5, headers: dict[str, str] | None = None, 
     if headers:
         req_headers.update(headers)
     req = urllib.request.Request(url, headers=req_headers)
-    last_err: Exception | None = None
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 return resp.read().decode("utf-8", errors="replace")
-        except (urllib.error.URLError, TimeoutError, OSError) as e:
-            last_err = e
-            if attempt < retries - 1:
-                time.sleep(1)
-    if last_err:
-        raise last_err
-    raise RuntimeError(f"Failed to fetch {url}")
-
+        except (urllib.error.URLError, TimeoutError, OSError):
+            if attempt == retries - 1:
+                raise
+            time.sleep(1)
+    raise ValueError("retries must be at least 1")
 
 
 def curl_json(url: str) -> dict[str, Any] | None:
@@ -100,25 +95,10 @@ def curl_json(url: str) -> dict[str, Any] | None:
         return None
 
 
-def merge_intervals(intervals: list[tuple[int, int]]) -> list[tuple[int, int]]:
-    """Объединяет перекрывающиеся и смежные интервалы в непрерывные непересекающиеся диапазоны."""
-    if not intervals:
-        return []
-    intervals.sort()
-    merged = [intervals[0]]
-    for start, end in intervals[1:]:
-        prev_start, prev_end = merged[-1]
-        if start <= prev_end + 1:
-            merged[-1] = (prev_start, max(prev_end, end))
-        else:
-            merged.append((start, end))
-    return merged
-
-
-def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
-    """Разбирает текст с IP-диапазонами/CIDR и возвращает отсортированный объединенный
-    список непересекающихся диапазонов и список начал."""
-    raw_intervals: list[tuple[int, int]] = []
+def parse_cidrs_from_text(data: str) -> tuple[list[ipaddress.IPv4Network], list[int]]:
+    """Разбирает текст с CIDR и возвращает отсортированный список непересекающихся
+    IPv4-сетей и список их начал (для двоичного поиска)."""
+    nets: list[ipaddress.IPv4Network] = []
     for line in data.splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
@@ -127,14 +107,13 @@ def parse_cidrs_from_text(data: str) -> tuple[list[tuple[int, int]], list[int]]:
             net = ipaddress.ip_network(line, strict=False)
         except ValueError:
             continue
-        if net.version == 4:
-            raw_intervals.append((int(net.network_address), int(net.broadcast_address)))
-    intervals = merge_intervals(raw_intervals)
-    starts = [iv[0] for iv in intervals]
-    return intervals, starts
+        if isinstance(net, ipaddress.IPv4Network):
+            nets.append(net)
+    intervals = list(ipaddress.collapse_addresses(nets))  # отсортированы и не пересекаются
+    return intervals, [int(n.network_address) for n in intervals]
 
 
-def load_direct_cidrs(file_path: str | None, direct_url: str | None) -> tuple[list[tuple[int, int]], list[int]]:
+def load_direct_cidrs(file_path: str | None, direct_url: str | None) -> tuple[list[ipaddress.IPv4Network], list[int]]:
     """Загружает direct.txt/whitelist.txt из локального файла или скачивает по ссылке."""
     if file_path:
         path = Path(file_path)
@@ -148,27 +127,14 @@ def load_direct_cidrs(file_path: str | None, direct_url: str | None) -> tuple[li
     return parse_cidrs_from_text(data)
 
 
-def ip_to_int(ip_str: str) -> int | None:
-    """Быстро превращает IPv4-строку в число. Возвращает None если формат не IPv4."""
-    parts = ip_str.split(".")
-    if len(parts) != 4:
-        return None
+def ip_in_direct(ip_str: str, intervals: list[ipaddress.IPv4Network], starts: list[int]) -> bool:
+    """Проверяет, входит ли IPv4-адрес в одну из сетей direct (двоичный поиск по началам сетей)."""
     try:
-        return struct.unpack("!I", bytes(int(p) for p in parts))[0]
-    except (ValueError, struct.error):
-        return None
-
-
-def ip_in_direct(ip_str: str, intervals: list[tuple[int, int]], starts: list[int]) -> bool:
-    """Проверяет, входит ли IP-адрес в один из диапазонов direct.
-    Использует быстрый поиск по отсортированному списку непересекающихся диапазонов."""
-    val = ip_to_int(ip_str)
-    if val is None:
+        ip = ipaddress.IPv4Address(ip_str)
+    except ValueError:
         return False
-    idx = bisect_right(starts, val) - 1
-    if idx < 0:
-        return False
-    return intervals[idx][0] <= val <= intervals[idx][1]
+    idx = bisect_right(starts, int(ip)) - 1
+    return idx >= 0 and ip in intervals[idx]
 
 
 # ── Работа с API check-host.net ──────────────────────────────────────────────
@@ -273,12 +239,10 @@ def resolve_domain(domain: str) -> dict[str, list[str] | None]:
     return node_ips
 
 
-# ── Разбор строк geosite-файла ──────────────────────────────────────────────
-
 # ── Проверка одного домена ──────────────────────────────────────────────────
 
 def classify_node(ips: list[str] | None, tag: str,
-                  intervals: list[tuple[int, int]], starts: list[int],
+                  intervals: list[ipaddress.IPv4Network], starts: list[int],
                   detail_parts: list[str]) -> str:
     """Классифицирует ответ одного сервера: 'nxdomain', 'direct', 'outside'.
     Добавляет описание в detail_parts."""
@@ -296,7 +260,7 @@ def classify_node(ips: list[str] | None, tag: str,
 
 def check_one_domain(
     idx: int, pfx: str, domain: str,
-    intervals: list[tuple[int, int]], starts: list[int],
+    intervals: list[ipaddress.IPv4Network], starts: list[int],
 ) -> tuple[int, str, str, bool]:
     """Проверяет один домен. Весь вывод собирается в строку (не печатается).
     Возвращает (номер строки, заголовок, текст лога, кандидат ли на удаление)."""

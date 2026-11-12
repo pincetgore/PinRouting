@@ -63,6 +63,15 @@ class LintRulesTest(unittest.TestCase):
             self.assertEqual(lint_geosite_file(path), (0, 1))
 
 
+class DeduplicateTest(unittest.TestCase):
+    def test_ip_in_direct(self):
+        dedup = load_buildtool("deduplicate")
+        nets, starts = dedup.parse_cidrs_from_text("# c\n10.0.1.0/24\n10.0.0.0/24\n10.0.0.128/25\n2a02:6b8::/32\nbad\n")
+        self.assertEqual([str(n) for n in nets], ["10.0.0.0/23"])
+        for ip, inside in (("10.0.0.0", True), ("10.0.1.255", True), ("10.0.2.0", False), ("9.255.255.255", False), ("x", False)):
+            self.assertEqual(dedup.ip_in_direct(ip, nets, starts), inside, ip)
+
+
 class RemoveDomainsTest(unittest.TestCase):
     def test_removes_only_dead_domain_lines(self):
         source = (
