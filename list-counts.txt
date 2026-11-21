@@ -1,0 +1,11 @@
+whitelist.txt 88
+antifilterdownloadcommunity.txt 931
+refilter.txt 27622
+refiltercommunity.txt 14
+antifilternetwork.txt 100372
+cdn.lst 3354
+merged.sum 19388
+ipinfo_ru.lst 65496
+ipinfo_by.lst 1964
+geolite_ru.lst 13203
+dbip_ru.lst 12902
