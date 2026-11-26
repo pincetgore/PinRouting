@@ -192,6 +192,7 @@ domain:aistudio.google.com
 domain:bard.google.com
 domain:gemini.google
 domain:gemini.google.com
+domain:geminiweb-pa.clients.google.com
 domain:gemini.gstatic.com
 
 # Google DeepMind - Gemini Code Assist
@@ -204,6 +205,7 @@ domain:notebooklm-pa.googleapis.com
 domain:notebooklm.googleapis.com
 domain:notebooklm.google
 domain:notebooklm.google.com
+domain:notebook.google.com
 
 # Google DeepMind - Jules
 domain:jules.google
@@ -212,6 +214,7 @@ domain:jules.google.com
 # Google DeepMind - Google AI Labs
 domain:labs.google
 domain:labs.google.com
+domain:flow.google.com
 domain:aisandbox-pa.googleapis.com
 
 # Google DeepMind - Android Studio Gemini Code Assist
@@ -240,6 +243,8 @@ domain:suggestqueries.google.com
 # Google services restricted for RU (google.com itself is DIRECT via geosite:whitelist)
 domain:ads.google.com
 domain:cloud.google.com
+domain:datastudio.google.com
+domain:news.google.com
 domain:one.google.com
 domain:pay.google.com
 domain:payments.google.com

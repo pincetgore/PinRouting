@@ -1,5 +1,5 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 1000
+# TOTAL: 1005
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-11-26 19:36:45 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
@@ -159,6 +159,7 @@ DOMAIN-SUFFIX,aistudio.google.com
 DOMAIN-SUFFIX,bard.google.com
 DOMAIN-SUFFIX,gemini.google
 DOMAIN-SUFFIX,gemini.google.com
+DOMAIN-SUFFIX,geminiweb-pa.clients.google.com
 DOMAIN-SUFFIX,gemini.gstatic.com
 # Google DeepMind - Gemini Code Assist
 DOMAIN-SUFFIX,cloudaicompanion.googleapis.com
@@ -169,12 +170,14 @@ DOMAIN-SUFFIX,notebooklm-pa.googleapis.com
 DOMAIN-SUFFIX,notebooklm.googleapis.com
 DOMAIN-SUFFIX,notebooklm.google
 DOMAIN-SUFFIX,notebooklm.google.com
+DOMAIN-SUFFIX,notebook.google.com
 # Google DeepMind - Jules
 DOMAIN-SUFFIX,jules.google
 DOMAIN-SUFFIX,jules.google.com
 # Google DeepMind - Google AI Labs
 DOMAIN-SUFFIX,labs.google
 DOMAIN-SUFFIX,labs.google.com
+DOMAIN-SUFFIX,flow.google.com
 DOMAIN-SUFFIX,aisandbox-pa.googleapis.com
 # Google DeepMind - Android Studio Gemini Code Assist
 DOMAIN-SUFFIX,aida.googleapis.com
@@ -198,6 +201,8 @@ DOMAIN-SUFFIX,suggestqueries.google.com
 # Google services restricted for RU (google.com itself is DIRECT via geosite:whitelist)
 DOMAIN-SUFFIX,ads.google.com
 DOMAIN-SUFFIX,cloud.google.com
+DOMAIN-SUFFIX,datastudio.google.com
+DOMAIN-SUFFIX,news.google.com
 DOMAIN-SUFFIX,one.google.com
 DOMAIN-SUFFIX,pay.google.com
 DOMAIN-SUFFIX,payments.google.com
