@@ -170,6 +170,24 @@ class ProfileConfigTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ProxySite"):
             ProfileConfig.from_dict({"Name": "x", "ProxySite": ["geosite:youtube"]})
 
+    def test_bad_values_are_rejected_on_load(self):
+        # build loads profiles without lint: a bad value must not reach the emitted configs
+        bad = {
+            "Name": "",
+            "FakeDNS": "ture",
+            "RemoteDNSIP": "9.9.9",
+            "DomesticDNSType": "DoQ",
+            "DomainStrategy": "Bogus",
+            "DnsHosts": {"a.example": "nope"},
+            "ProxySites": ["domain:example.org"],
+            "BlockIp": ["10.0.0.0/33"],
+        }
+        with self.assertRaises(ValueError) as cm:
+            ProfileConfig.from_dict(bad)
+        for expected in ("Name", "FakeDNS", "RemoteDNSIP", "DomesticDNSType", "DomainStrategy",
+                         "a.example", "domain:example.org", "10.0.0.0/33"):
+            self.assertIn(expected, str(cm.exception))
+
     def test_known_keys_load(self):
         cfg = ProfileConfig.from_dict({"Name": "x", "ProxySites": ["geosite:youtube"], "GlobalProxy": True})
         self.assertEqual(cfg.proxy_sites, ["geosite:youtube"])

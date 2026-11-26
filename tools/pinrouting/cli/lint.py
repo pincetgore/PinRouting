@@ -11,14 +11,12 @@ Verifies:
 from __future__ import annotations
 
 import argparse
-import ipaddress
 import json
 import subprocess
 import sys
-from dataclasses import fields
 from pathlib import Path
 
-from pinrouting.models import _FLAGS, ProfileConfig
+from pinrouting.models import ProfileConfig, ProfileError
 
 
 def built_geoip_categories(root_dir: Path) -> set[str]:
@@ -59,72 +57,25 @@ def lint_profiles(root_dir: Path) -> list[str]:
     for pf in profile_files:
         try:
             cfg = ProfileConfig.load_from_file(pf)
-        except (json.JSONDecodeError, OSError, ValueError, TypeError) as e:
+        except ProfileError as e:
+            errors += [f"[{pf.name}] {p}" for p in e.problems]
+            continue
+        except (json.JSONDecodeError, OSError, TypeError) as e:
             errors.append(f"[{pf.name}] Failed to parse profile: {e}")
             continue
 
-        # Check required fields
-        if not cfg.name:
-            errors.append(f"[{pf.name}] Profile Name cannot be empty")
-        for f in fields(cfg):
-            if f.name in _FLAGS and getattr(cfg, f.name) not in ("true", "false"):
+        # The model checked the values; what is left needs the repo: do the categories exist?
+        for site in cfg.direct_sites + cfg.proxy_sites + cfg.block_sites:
+            cat = site.split(":", 1)[1]
+            if cat not in available_geosites:
+                errors.append(f"[{pf.name}] Unknown geosite category '{cat}' (referenced as '{site}')")
+        for ip_rule in cfg.direct_ip + cfg.proxy_ip + cfg.block_ip:
+            cat = ip_rule.removeprefix("geoip:")
+            if cat != ip_rule and cat not in available_geoips:
                 errors.append(
-                    f"[{pf.name}] {f.metadata['key']} must be 'true' or 'false', got '{getattr(cfg, f.name)}'"
+                    f"[{pf.name}] geoip category '{cat}' is not built by geoip/config.json "
+                    f"(available: {', '.join(sorted(available_geoips))})"
                 )
-        if cfg.domain_strategy not in ("AsIs", "IPIfNonMatch", "IPOnDemand"):
-            errors.append(f"[{pf.name}] DomainStrategy '{cfg.domain_strategy}' is not supported")
-        for label, ip in (("RemoteDNSIP", cfg.remote_dns_ip), ("DomesticDNSIP", cfg.domestic_dns_ip)):
-            try:
-                ipaddress.ip_address(ip)
-            except ValueError:
-                errors.append(f"[{pf.name}] {label} '{ip}' is not an IP address")
-        if cfg.remote_dns_type not in ("DoH", "DoH3", "DoU", "DoT"):
-            errors.append(
-                f"[{pf.name}] RemoteDNSType '{cfg.remote_dns_type}' is not supported"
-            )
-        if cfg.domestic_dns_type not in ("DoH", "DoH3", "DoU", "DoT"):
-            errors.append(
-                f"[{pf.name}] DomesticDNSType '{cfg.domestic_dns_type}' is not supported"
-            )
-
-        # Validate DnsHosts
-        for domain, ip in cfg.dns_hosts.items():
-            try:
-                ipaddress.ip_address(ip)
-            except ValueError:
-                errors.append(
-                    f"[{pf.name}] Invalid IP '{ip}' for host '{domain}' in DnsHosts"
-                )
-
-        # Check geosite references
-        all_sites = cfg.direct_sites + cfg.proxy_sites + cfg.block_sites
-        for site in all_sites:
-            if site.startswith("geosite:"):
-                cat = site.split(":", 1)[1]
-                if cat not in available_geosites:
-                    errors.append(
-                        f"[{pf.name}] Unknown geosite category '{cat}' (referenced as '{site}')"
-                    )
-            else:
-                # The Shadowrocket emitter and the routing tests only understand geosite: categories
-                errors.append(f"[{pf.name}] Site rule '{site}' must be 'geosite:<category>'")
-
-        # Check geoip references
-        all_ips = cfg.direct_ip + cfg.proxy_ip + cfg.block_ip
-        for ip_rule in all_ips:
-            if ip_rule.startswith("geoip:"):
-                cat = ip_rule.split(":", 1)[1]
-                if cat not in available_geoips:
-                    errors.append(
-                        f"[{pf.name}] geoip category '{cat}' is not built by geoip/config.json "
-                        f"(available: {', '.join(sorted(available_geoips))})"
-                    )
-            else:
-                # Must be a valid CIDR
-                try:
-                    ipaddress.ip_network(ip_rule, strict=False)
-                except ValueError:
-                    errors.append(f"[{pf.name}] Invalid CIDR rule '{ip_rule}'")
 
     return errors
 
