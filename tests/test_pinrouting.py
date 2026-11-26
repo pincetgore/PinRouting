@@ -80,7 +80,7 @@ class DeduplicateTest(unittest.TestCase):
             self.assertEqual(dedup.ip_in_direct(ip, nets, starts), inside, ip)
 
     def test_inline_comment_keeps_the_cidr(self):
-        nets, _ = load_buildtool("deduplicate").parse_cidrs_from_text("10.0.0.0/24 # office\n")
+        nets, _ = load_buildtool("deduplicate").parse_cidrs_from_text("10.0.0.0/24 # office # floor 2\n")
         self.assertEqual([str(n) for n in nets], ["10.0.0.0/24"])
 
 
@@ -151,6 +151,32 @@ class LintProfilesTest(unittest.TestCase):
             self.assertIn(expected, errors)
         self.assertEqual(errors.count("\n"), 3, errors)  # nothing else is reported
 
+    def test_categories_must_exist_in_the_repo(self):
+        geoip_config = {"input": [
+            {"type": "text", "action": "remove", "args": {"name": "gone"}},
+            {"type": "private", "action": "add"},
+            {"type": "text", "action": "add", "args": {"name": "RU"}},
+            {"type": "maxmindMMDB", "action": "add", "args": {"wantedList": ["BY"]}},
+        ]}
+        profile = {
+            "Name": "x",
+            "ProxySites": ["geosite:ok", "geosite:missing", "geosite:.DS_Store"],
+            "DirectIp": ["geoip:ru", "geoip:by", "geoip:private", "geoip:gone", "10.0.0.0/8"],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for d in ("profiles", "geosite/data", "geoip"):
+                (root / d).mkdir(parents=True)
+            (root / "geosite/data/ok").write_text("example.com\n", encoding="utf-8")
+            (root / "geosite/data/.DS_Store").write_text("", encoding="utf-8")  # Finder litter is not a category
+            (root / "geoip/config.json").write_text(json.dumps(geoip_config), encoding="utf-8")
+            (root / "profiles/X.json").write_text(json.dumps(profile), encoding="utf-8")
+            errors = lint_profiles(root)
+        self.assertEqual(len(errors), 3, errors)
+        self.assertIn("'missing'", errors[0])
+        self.assertIn("'.DS_Store'", errors[1])
+        self.assertIn("'gone'", errors[2])
+
 
 class ShadowrocketProfileTest(unittest.TestCase):
     def test_ip_rule_without_equivalent_is_an_error(self):
@@ -201,9 +227,16 @@ class ProfileConfigTest(unittest.TestCase):
             self.assertIn(expected, str(cm.exception))
 
     def test_known_keys_load(self):
-        cfg = ProfileConfig.from_dict({"Name": "x", "ProxySites": ["geosite:youtube"], "GlobalProxy": True})
+        cfg = ProfileConfig.from_dict({
+            "Name": "x",
+            "ProxySites": ["geosite:youtube"],
+            "GlobalProxy": True,
+            "DnsHosts": {"a.example": "203.0.113.7"},
+            "ProxyIp": ["10.0.0.1/24"],  # host bits set: clients accept it, so must we
+        })
         self.assertEqual(cfg.proxy_sites, ["geosite:youtube"])
         self.assertEqual(cfg.global_proxy, "true")
+        self.assertEqual(ProfileConfig.from_dict({}).name, "Default")
 
 
 if __name__ == "__main__":
