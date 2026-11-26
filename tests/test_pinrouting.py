@@ -12,7 +12,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from pinrouting.cli.check_iplists import check_built_list, check_download
+from pinrouting.cli.check_iplists import check_built_list, check_download, check_whitelist_geo
 from pinrouting.cli.lint import lint_profiles
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.geosite import is_valid_domain, parse_rule, remove_domains
@@ -201,6 +201,18 @@ class IpListGateTest(unittest.TestCase):
         errors = check_built_list("whitelist", "77.88.8.0/24\n0.0.0.0/0\n")
         self.assertEqual(len(errors), 2)  # over the address limit, and 8.8.8.8 goes DIRECT
         self.assertEqual(len(check_built_list("direct", "8.8.8.0/24\n")), 1)
+        # A /13 (524k addresses) fits under the old 1M whitelist limit: twice today's whole list
+        self.assertEqual(len(check_built_list("whitelist", "10.0.0.0/13\n")), 1)
+
+    def test_whitelist_must_stay_inside_ru_by(self):
+        # whitelist.txt comes from a third-party repo and goes DIRECT: foreign ranges would bypass the VPN
+        geo = ["77.88.0.0/18\n", "# custom\n5.255.255.0/24\n"]
+        self.assertEqual(check_whitelist_geo("77.88.8.0/24\n5.255.255.0/24\n", geo), [])
+        self.assertEqual(check_whitelist_geo("77.88.8.0/24\n151.236.93.0/24\n", geo), [])  # a few stray /24s
+        errors = check_whitelist_geo("77.88.8.0/24\n104.16.0.0/13\n", geo)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("104.16.0.0/13", errors[0])
+        self.assertEqual(len(check_whitelist_geo("77.88.0.0/16\n", geo)), 1)  # 48k of the /16 lie outside the /18
 
 
 class ProfileConfigTest(unittest.TestCase):
