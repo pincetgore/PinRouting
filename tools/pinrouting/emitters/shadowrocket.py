@@ -228,7 +228,7 @@ update-url = {raw_base}/{key}.CONF
                 continue
             rule_parts.append(title)
             for s in sites:
-                cat = s.split(":", 1)[1] if ":" in s else s
+                cat = s.removeprefix("geosite:")  # ProfileConfig allows only geosite: site rules
                 if cat != ANDROID_ONLY:
                     rule_parts.append(f"RULE-SET,{rules_base}/{cat}.list,{policy}")
             rule_parts.append("")
