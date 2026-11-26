@@ -12,7 +12,13 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from pinrouting.cli.check_iplists import check_built_list, check_download, check_whitelist_geo
+from pinrouting.cli.check_iplists import (
+    MIN_CIDRS,
+    check_built_list,
+    check_download,
+    check_downloads,
+    check_whitelist_geo,
+)
 from pinrouting.cli.lint import lint_profiles
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
 from pinrouting.geosite import is_valid_domain, parse_rule, remove_domains
@@ -210,6 +216,28 @@ class IpListGateTest(unittest.TestCase):
         self.assertEqual(len(check_built_list("direct", "8.8.8.0/24\n")), 1)
         # A /13 (524k addresses) fits under the old 1M whitelist limit: twice today's whole list
         self.assertEqual(len(check_built_list("whitelist", "10.0.0.0/13\n")), 1)
+
+    def test_failed_check_keeps_yesterdays_baseline(self):
+        # list-counts.txt is tomorrow's baseline: written after a failure, a truncated size would
+        # lower the half-of-previous floor for good
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            d = Path(tmp)
+            for name, floor in MIN_CIDRS.items():
+                (d / name).write_text("".join(f"10.{i >> 8 & 255}.{i & 255}.0/24\n" for i in range(floor)))
+            baseline = d / "list-counts.txt"
+            self.assertEqual(check_downloads(d, None, accept=False), [])
+            self.assertIn("refilter.txt 10000\n", baseline.read_text())
+            self.assertEqual(check_downloads(d, baseline, accept=False), [])  # reads its own output back
+
+            yesterday = d / "prev.txt"
+            yesterday.write_text("refilter.txt 30000\n")
+            baseline.unlink()
+            errors = check_downloads(d, yesterday, accept=False)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("at least 15000", errors[0])
+            self.assertFalse(baseline.exists())
+            self.assertEqual(check_downloads(d, yesterday, accept=True), [])  # a real drop, accepted by hand
+            self.assertTrue(baseline.exists())
 
     def test_whitelist_must_stay_inside_ru_by(self):
         # whitelist.txt comes from a third-party repo and goes DIRECT: foreign ranges would bypass the VPN
