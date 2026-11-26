@@ -219,9 +219,9 @@ jobs:
           # Geosite files
           cp -f /tmp/geosite-artifacts/geosite.dat release/
 
-          # Checksums (pure 64-char hex strings as per INCY / Happ spec)
-          (cd release && sha256sum geoip.dat   | awk '{print $1}' > geoip.dat.sha256)
-          (cd release && sha256sum geosite.dat | awk '{print $1}' > geosite.dat.sha256)
+          # Checksums: the bare 64-char hex with no trailing newline, as INCY's geofile check expects
+          (cd release && sha256sum geoip.dat   | awk '{printf "%s", $1}' > geoip.dat.sha256)
+          (cd release && sha256sum geosite.dat | awk '{printf "%s", $1}' > geosite.dat.sha256)
 
           # Tarballs for GitHub release
           tar -czf /tmp/dist/text.tar.gz -C release text
