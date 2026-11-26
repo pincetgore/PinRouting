@@ -130,6 +130,12 @@ class ShadowrocketEmitter:
         unsupported = [r for r in profile.direct_ip if r not in supported] + profile.proxy_ip + profile.block_ip
         if unsupported:
             raise ValueError(f"[{key}] IP rules with no Shadowrocket equivalent: {', '.join(unsupported)}")
+        # The header below hardcodes always-real-ip and matches IP rules after resolving (no no-resolve)
+        if profile.fake_dns != "false" or profile.domain_strategy != "IPIfNonMatch":
+            raise ValueError(
+                f"[{key}] Shadowrocket supports only FakeDNS 'false' and DomainStrategy 'IPIfNonMatch', got "
+                f"FakeDNS '{profile.fake_dns}', DomainStrategy '{profile.domain_strategy}'"
+            )
         output_dir.mkdir(parents=True, exist_ok=True)
         branch = "main"
         raw_base = f"https://raw.githubusercontent.com/{repo}/{branch}/SHADOWROCKET"

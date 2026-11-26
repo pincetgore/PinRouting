@@ -18,6 +18,8 @@ _CDN = "https://cdn.jsdelivr.net/gh/pincetgore/PinRouting@release"
 Flag = Literal["true", "false"]  # strings, not booleans, per Happ/INCY spec
 DnsType = Literal["DoH", "DoH3", "DoU", "DoT"]
 DomainStrategy = Literal["AsIs", "IPIfNonMatch", "IPOnDemand"]
+# The only order the Shadowrocket emitter and the routing tests implement; teach both before adding another
+RouteOrder = Literal["block-proxy-direct"]
 
 
 class ProfileError(ValueError):
@@ -70,7 +72,7 @@ class ProfileConfig:
     geosite_url: str = field(default=f"{_CDN}/geosite.dat", metadata=_key("Geositeurl"))
     last_updated: str | None = field(default=None, metadata=_key("LastUpdated"))
     dns_hosts: dict[str, str] = field(default_factory=dict, metadata=_key("DnsHosts"))
-    route_order: str = field(default="block-proxy-direct", metadata=_key("RouteOrder"))
+    route_order: RouteOrder = field(default="block-proxy-direct", metadata=_key("RouteOrder"))
     direct_sites: list[str] = field(default_factory=list, metadata=_key("DirectSites"))
     direct_ip: list[str] = field(default_factory=list, metadata=_key("DirectIp"))
     proxy_sites: list[str] = field(default_factory=list, metadata=_key("ProxySites"))

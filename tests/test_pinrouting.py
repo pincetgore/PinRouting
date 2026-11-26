@@ -184,6 +184,13 @@ class ShadowrocketProfileTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp, self.assertRaisesRegex(ValueError, "203.0.113.0/24"):
             ShadowrocketEmitter(Path(tmp)).emit_profile("X", cfg, Path(tmp), repo="o/r", epoch="0", updated_str="")
 
+    def test_settings_shadowrocket_cannot_follow_are_errors(self):
+        # The .CONF hardcodes always-real-ip and resolve-then-match-IP; Happ/INCY would obey the profile instead
+        for key, value in (("FakeDNS", "true"), ("DomainStrategy", "AsIs")):
+            cfg = ProfileConfig.from_dict({"Name": "x", key: value})
+            with tempfile.TemporaryDirectory() as tmp, self.assertRaisesRegex(ValueError, key):
+                ShadowrocketEmitter(Path(tmp)).emit_profile("X", cfg, Path(tmp), repo="o/r", epoch="0", updated_str="")
+
 
 class IpListGateTest(unittest.TestCase):
     def test_download_must_be_a_cidr_list_of_enough_size(self):
@@ -228,13 +235,14 @@ class ProfileConfigTest(unittest.TestCase):
             "RemoteDNSIP": "9.9.9",
             "DomesticDNSType": "DoQ",
             "DomainStrategy": "Bogus",
+            "RouteOrder": "block-proxy-dirct",
             "DnsHosts": {"a.example": "nope"},
             "ProxySites": ["domain:example.org"],
             "BlockIp": ["10.0.0.0/33"],
         }
         with self.assertRaises(ValueError) as cm:
             ProfileConfig.from_dict(bad)
-        for expected in ("Name", "FakeDNS", "RemoteDNSIP", "DomesticDNSType", "DomainStrategy",
+        for expected in ("Name", "FakeDNS", "RemoteDNSIP", "DomesticDNSType", "DomainStrategy", "RouteOrder",
                          "a.example", "domain:example.org", "10.0.0.0/33"):
             self.assertIn(expected, str(cm.exception))
 
