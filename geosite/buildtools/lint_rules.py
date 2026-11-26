@@ -23,6 +23,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
+from pinrouting.geoip import cidr_of_line
 from pinrouting.geosite import is_valid_domain, is_valid_keyword, split_rule
 
 GEOSITE_DIR = REPO_ROOT / "geosite" / "data"
@@ -152,11 +153,10 @@ def lint_geoip_file(filepath: Path) -> tuple[int, int]:
 
     with open(filepath, "r", encoding="utf-8") as f:
         for idx, line in enumerate(f, 1):
-            line = line.strip()
-            if not line or line.startswith("#"):
+            cidr_str = cidr_of_line(line)
+            if not cidr_str:
                 continue
 
-            cidr_str = line.split()[0].split("#")[0].strip()
             try:
                 net = ipaddress.ip_network(cidr_str, strict=False)
             except ValueError as e:

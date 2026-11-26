@@ -62,6 +62,14 @@ class LintRulesTest(unittest.TestCase):
             path.write_text("full:a.x.example\ndomain:x.example\nfull:y.example\n", encoding="utf-8")
             self.assertEqual(lint_geosite_file(path), (0, 1))
 
+    def test_geoip_line_is_read_like_the_build_reads_it(self):
+        # lint must reject what the Shadowrocket emitter cannot parse, and accept inline comments
+        lint_geoip_file = load_buildtool("lint_rules").lint_geoip_file
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            path = Path(tmp) / "list.txt"
+            path.write_text("10.0.0.0/24 # office\n10.0.2.0/24 junk\n", encoding="utf-8")
+            self.assertEqual(lint_geoip_file(path), (1, 0))
+
 
 class DeduplicateTest(unittest.TestCase):
     def test_ip_in_direct(self):
@@ -70,6 +78,10 @@ class DeduplicateTest(unittest.TestCase):
         self.assertEqual([str(n) for n in nets], ["10.0.0.0/23"])
         for ip, inside in (("10.0.0.0", True), ("10.0.1.255", True), ("10.0.2.0", False), ("9.255.255.255", False), ("x", False)):
             self.assertEqual(dedup.ip_in_direct(ip, nets, starts), inside, ip)
+
+    def test_inline_comment_keeps_the_cidr(self):
+        nets, _ = load_buildtool("deduplicate").parse_cidrs_from_text("10.0.0.0/24 # office\n")
+        self.assertEqual([str(n) for n in nets], ["10.0.0.0/24"])
 
 
 class RemoveDomainsTest(unittest.TestCase):

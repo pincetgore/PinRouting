@@ -7,6 +7,8 @@ import ipaddress
 import re
 from pathlib import Path
 
+from pinrouting.geoip import cidr_of_line
+
 # Fixed floor of CIDRs per downloaded list, about half its 10.2026 size. It applies when the previous
 # release has no count for the list or the list held under 1000 CIDRs: small lists swing too much for
 # the half-of-previous rule. refiltercommunity has held 1..14 entries: non-empty only.
@@ -80,7 +82,7 @@ def check_downloads(directory: Path, prev_file: Path | None, accept: bool) -> li
 
 def check_built_list(name: str, text: str) -> list[str]:
     """Checks one text dump of the geoip builder (output/text/<name>.txt). Returns error messages."""
-    cidrs = (line.split("#", 1)[0].strip() for line in text.splitlines())
+    cidrs = (cidr_of_line(line) for line in text.splitlines())
     nets = [ipaddress.ip_network(c, strict=False) for c in cidrs if c]
     errors: list[str] = []
     total = sum(n.num_addresses for n in ipaddress.collapse_addresses(n for n in nets if n.version == 4))

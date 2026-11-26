@@ -5,6 +5,7 @@ from __future__ import annotations
 import ipaddress
 from pathlib import Path
 
+from pinrouting.geoip import cidr_of_line
 from pinrouting.geosite import parse_rule
 from pinrouting.models import ProfileConfig
 
@@ -57,7 +58,7 @@ class ShadowrocketEmitter:
         ip_lines: list[str] = []
         with open(src_path, "r", encoding="utf-8") as f:
             for line in f:
-                cidr = line.split("#", 1)[0].strip()
+                cidr = cidr_of_line(line)
                 if not cidr:
                     continue
                 rtype = "IP-CIDR6" if ipaddress.ip_network(cidr, strict=False).version == 6 else "IP-CIDR"

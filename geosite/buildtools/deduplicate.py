@@ -35,6 +35,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "tools"))
 
+from pinrouting.geoip import cidr_of_line
 from pinrouting.geosite import parse_rule
 
 # Ссылка на опубликованные списки IP-диапазонов ({name}.txt) в ветке release
@@ -100,11 +101,11 @@ def parse_cidrs_from_text(data: str) -> tuple[list[ipaddress.IPv4Network], list[
     IPv4-сетей и список их начал (для двоичного поиска)."""
     nets: list[ipaddress.IPv4Network] = []
     for line in data.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
+        cidr = cidr_of_line(line)
+        if not cidr:
             continue
         try:
-            net = ipaddress.ip_network(line, strict=False)
+            net = ipaddress.ip_network(cidr, strict=False)
         except ValueError:
             continue
         if isinstance(net, ipaddress.IPv4Network):
