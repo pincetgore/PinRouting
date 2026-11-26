@@ -78,6 +78,30 @@ class LintRulesTest(unittest.TestCase):
             self.assertEqual(lint_geoip_file(path), (1, 0))
 
 
+class GeoblockReportTest(unittest.TestCase):
+    def test_lists_are_read_as_plain_or_hosts_format(self):
+        report = load_buildtool("geoblock_report")
+        text = "# comment\nExample.COM\n0.0.0.0 ads.example # note\nnot a domain!\n\n"
+        self.assertEqual(report.parse_domains(text), {"example.com", "ads.example"})
+
+    def test_only_unexpected_direct_routes_are_reported(self):
+        report = load_buildtool("geoblock_report")
+        resolvers = {"A": lambda d: "DIRECT" if d.endswith(".ru") else "PROXY", "B": lambda d: "PROXY"}
+        found = report.find_direct({"x.ru", "ok.ru", "y.com"}, resolvers, allowed=lambda d: d == "ok.ru")
+        self.assertEqual(found, {"A": ["x.ru"], "B": []})
+
+    def test_real_profiles_and_allow_list(self):
+        # google.com and Twitch are DIRECT on purpose; any other google.com host must be in geoblock-ru
+        report = load_buildtool("geoblock_report")
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()) as out:
+            lst = Path(tmp) / "geoblock.lst"
+            lst.write_text("google.com\ngql.twitch.tv\ngeminiweb-pa.clients.google.com\n", encoding="utf-8")
+            self.assertEqual(report.main([str(lst)]), 0)
+            lst.write_text("google.com\nunlisted-probe.google.com\n", encoding="utf-8")
+            self.assertEqual(report.main([str(lst)]), 1)
+        self.assertIn("`unlisted-probe.google.com`", out.getvalue())
+
+
 class DeduplicateTest(unittest.TestCase):
     def test_ip_in_direct(self):
         dedup = load_buildtool("deduplicate")

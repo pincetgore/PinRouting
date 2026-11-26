@@ -1,0 +1,9 @@
+# Domains from third-party geoblock lists that PinRouting routes DIRECT on purpose (geosite format).
+# Read by geoblock_report.py; everything else it finds belongs in geosite/data/category-geoblock-ru.
+
+# Google search stays DIRECT via geosite:whitelist; restricted google.com services are in category-geoblock-ru
+full:google.com
+
+# Twitch is DIRECT by design (geosite:twitch)
+domain:twitch.tv
+domain:ttvnw.net

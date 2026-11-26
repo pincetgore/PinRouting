@@ -68,6 +68,21 @@ jobs:
         run: |
           ruff check .
 
+      # Report only: geoblocked services our profiles send DIRECT (e.g. a google.com host caught by
+      # domain:google.com in geosite:whitelist). Fix in geosite/data/category-geoblock-ru or
+      # geosite/buildtools/geoblock_allow_direct.txt; a hit marks this step, the cleanup still runs.
+      - name: Check Geoblock Lists Against Profiles
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          for src in \
+            https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Categories/geoblock.lst \
+            https://raw.githubusercontent.com/dartraiden/no-russia-hosts/refs/heads/master/hosts.txt \
+            https://raw.githubusercontent.com/Noktomezo/RussiaFancyLists/main/lists/geoblock/full.lst; do
+            curl -fsSL --retry 3 --connect-timeout 10 -o "$RUNNER_TEMP/geoblock-$(basename "$src")" "$src"
+          done
+          python3 geosite/buildtools/geoblock_report.py "$RUNNER_TEMP"/geoblock-* | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Run Dead Entries Checker
         id: checker
         run: |
