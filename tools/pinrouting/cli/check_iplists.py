@@ -85,7 +85,7 @@ def check_built_list(name: str, text: str) -> list[str]:
     cidrs = (cidr_of_line(line) for line in text.splitlines())
     nets = [ipaddress.ip_network(c, strict=False) for c in cidrs if c]
     errors: list[str] = []
-    total = sum(n.num_addresses for n in ipaddress.collapse_addresses(n for n in nets if n.version == 4))
+    total = sum(n.num_addresses for n in ipaddress.collapse_addresses(n for n in nets if isinstance(n, ipaddress.IPv4Network)))
     if total > MAX_IPV4_ADDRESSES[name]:
         errors.append(f"{name}.txt covers {total:,} IPv4 addresses, limit is {MAX_IPV4_ADDRESSES[name]:,}")
     for ip in MUST_NOT_CONTAIN:
