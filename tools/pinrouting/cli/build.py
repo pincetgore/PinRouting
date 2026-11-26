@@ -28,11 +28,8 @@ def build_all(
     published: dict = {}
     default_happ = happ_dir / "DEFAULT.JSON"
     if default_happ.is_file():
-        try:
-            with open(default_happ, "r", encoding="utf-8") as f:
-                published = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            pass
+        with open(default_happ, "r", encoding="utf-8") as f:
+            published = json.load(f)
     if epoch is None:
         epoch = published.get("LastUpdated")
     if epoch is not None:
@@ -48,13 +45,10 @@ def build_all(
     else:
         geodata_urls = None  # first build: use the URLs from profiles/*.json
 
-    # One timestamp for every Shadowrocket header; "now" when there is no (valid) epoch
+    # One timestamp for every Shadowrocket header; "now" on the very first build, which has no epoch
     stamp = datetime.datetime.now(datetime.UTC)
     if epoch:
-        try:
-            stamp = datetime.datetime.fromtimestamp(int(epoch), tz=datetime.UTC)
-        except (ValueError, TypeError):
-            pass
+        stamp = datetime.datetime.fromtimestamp(int(epoch), tz=datetime.UTC)
     updated_str = stamp.strftime("%Y-%m-%d %H:%M:%S UTC")
     sr_epoch = str(int(stamp.timestamp()))
 

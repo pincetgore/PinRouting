@@ -12,6 +12,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+from pinrouting.cli.build import build_all
 from pinrouting.cli.check_iplists import (
     MIN_CIDRS,
     check_built_list,
@@ -266,6 +267,20 @@ class IpListGateTest(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("104.16.0.0/13", errors[0])
         self.assertEqual(len(check_whitelist_geo("77.88.0.0/16\n", geo)), 1)  # 48k of the /16 lie outside the /18
+
+
+class BuildTest(unittest.TestCase):
+    def test_bad_inputs_stop_the_build(self):
+        # Silently falling back would publish profile URLs and "now" instead of the pinned values
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "HAPP").mkdir()
+            (root / "HAPP/DEFAULT.JSON").write_text("{", encoding="utf-8")
+            with self.assertRaises(json.JSONDecodeError):
+                build_all(root, repo="o/r")
+            (root / "HAPP/DEFAULT.JSON").unlink()
+            with self.assertRaisesRegex(ValueError, "abc"):
+                build_all(root, repo="o/r", epoch="abc")
 
 
 class ProfileConfigTest(unittest.TestCase):
