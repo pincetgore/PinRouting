@@ -168,14 +168,17 @@ def poll_results(request_id: str, nodes: list[str]) -> dict[str, Any] | None:
 
 def extract_a_records(node_result: Any) -> list[str] | None:
     """Достаёт IPv4-адреса (A-записи) из ответа одного сервера.
-    Возвращает список IP или None, если записей нет."""
+    None — домена нет (check-host отдаёт NXDOMAIN как пустые A и AAAA);
+    [] — домен есть, но только с IPv6."""
     if not isinstance(node_result, list):
         return None
     ips: list[str] = []
+    has_aaaa = False
     for entry in node_result:
-        if isinstance(entry, dict) and "A" in entry:
-            ips.extend(entry["A"])
-    return ips or None
+        if isinstance(entry, dict):
+            ips.extend(entry.get("A") or [])
+            has_aaaa = has_aaaa or bool(entry.get("AAAA"))
+    return ips if ips or has_aaaa else None
 
 
 def try_fallback_group(domain: str, group: list[str]) -> tuple[str, list[str] | None] | None:
@@ -250,6 +253,10 @@ def classify_node(ips: list[str] | None, tag: str,
     if ips is None:
         detail_parts.append(f"{tag}=NXDOMAIN")
         return "nxdomain"
+    if not ips:
+        # Только IPv6: direct-список здесь IPv4, подтвердить нельзя — домен остаётся
+        detail_parts.append(f"{tag}=IPV6_ONLY")
+        return "outside"
     all_in = all(ip_in_direct(ip, intervals, starts) for ip in ips)
     if all_in:
         detail_parts.append(f"{tag}=direct({','.join(ips)})")

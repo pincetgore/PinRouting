@@ -85,6 +85,24 @@ class DeduplicateTest(unittest.TestCase):
         for ip, inside in (("10.0.0.0", True), ("10.0.1.255", True), ("10.0.2.0", False), ("9.255.255.255", False), ("x", False)):
             self.assertEqual(dedup.ip_in_direct(ip, nets, starts), inside, ip)
 
+    def test_ipv6_only_answer_is_not_nxdomain(self):
+        # check-host.net shapes: NXDOMAIN is A=[] and AAAA=[] with TTL null; IPv6-only has AAAA but no A
+        dedup = load_buildtool("deduplicate")
+        nets, starts = dedup.parse_cidrs_from_text("77.88.8.0/24\n")
+        direct = [{"A": ["77.88.8.8"], "AAAA": [], "TTL": 60}]
+        ipv6_only = [{"A": [], "AAAA": ["2a00:1450:4001:c0f::71"], "TTL": 110}]
+        nxdomain = [{"A": [], "AAAA": [], "TTL": None}]
+
+        def check(foreign):
+            nodes = {n: direct for n in dedup.RU_NODES} | {g[0]: foreign for g in dedup.FOREIGN_NODES}
+            api = lambda url: {"request_id": "r"} if "/check-dns?" in url else nodes
+            with mock.patch.object(dedup, "curl_json", api), mock.patch.object(dedup.time, "sleep"):
+                return dedup.check_one_domain(1, "domain", "x.example", nets, starts)[3]
+
+        self.assertTrue(check(direct))
+        self.assertTrue(check(nxdomain))  # direct where it resolves, gone elsewhere: still a candidate
+        self.assertFalse(check(ipv6_only))  # abroad it lives on IPv6 we cannot place: keep it
+
     def test_inline_comment_keeps_the_cidr(self):
         nets, _ = load_buildtool("deduplicate").parse_cidrs_from_text("10.0.0.0/24 # office # floor 2\n")
         self.assertEqual([str(n) for n in nets], ["10.0.0.0/24"])
