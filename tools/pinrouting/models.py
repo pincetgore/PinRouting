@@ -87,28 +87,32 @@ class ProfileConfig:
 
     def problems(self) -> list[str]:
         """Checks that need nothing but the profile; geosite/geoip existence is checked by lint."""
+        return self._setting_problems() + self._rule_problems()
+
+    def _setting_problems(self) -> list[str]:
         problems = [] if self.name else ["Profile Name cannot be empty"]
         for f in fields(self):
             allowed = _CHOICES.get(f.name)
             value = getattr(self, f.name)
             if allowed and value not in allowed:
                 problems.append(f"{f.metadata['key']} '{value}' is not one of: {', '.join(allowed)}")
-        for label, ip in (("RemoteDNSIP", self.remote_dns_ip), ("DomesticDNSIP", self.domestic_dns_ip)):
-            if not _is_ip(ip):
-                problems.append(f"{label} '{ip}' is not an IP address")
+        dns_ips = {"RemoteDNSIP": self.remote_dns_ip, "DomesticDNSIP": self.domestic_dns_ip}
+        problems += [f"{label} '{ip}' is not an IP address" for label, ip in dns_ips.items() if not _is_ip(ip)]
         problems += [f"Invalid IP '{ip}' for host '{d}' in DnsHosts" for d, ip in self.dns_hosts.items() if not _is_ip(ip)]
+        return problems
+
+    def _rule_problems(self) -> list[str]:
         # The Shadowrocket emitter and the routing tests only understand geosite: categories
-        problems += [
+        problems = [
             f"Site rule '{s}' must be 'geosite:<category>'"
             for s in self.direct_sites + self.proxy_sites + self.block_sites
             if not s.startswith("geosite:")
         ]
-        problems += [
+        return problems + [
             f"Invalid CIDR rule '{r}'"
             for r in self.direct_ip + self.proxy_ip + self.block_ip
             if not r.startswith("geoip:") and not _is_cidr(r)
         ]
-        return problems
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ProfileConfig:

@@ -19,6 +19,11 @@ from pathlib import Path
 from pinrouting.models import ProfileConfig, ProfileError
 
 
+def geosite_categories(root_dir: Path) -> set[str]:
+    """Category names in geosite/data (one file each)."""
+    return {p.name for p in (root_dir / "geosite" / "data").iterdir() if p.is_file() and not p.name.startswith(".")}
+
+
 def built_geoip_categories(root_dir: Path) -> set[str]:
     """Category names the geoip builder will put into geoip.dat."""
     with open(root_dir / "geoip" / "config.json", "r", encoding="utf-8") as f:
@@ -37,16 +42,27 @@ def built_geoip_categories(root_dir: Path) -> set[str]:
     return {n.lower() for n in names}
 
 
+def category_problems(cfg: ProfileConfig, geosites: set[str], geoips: set[str]) -> list[str]:
+    """The model checked the values; what is left needs the repo: do the referenced categories exist?"""
+    problems = [
+        f"Unknown geosite category '{site.split(':', 1)[1]}' (referenced as '{site}')"
+        for site in cfg.direct_sites + cfg.proxy_sites + cfg.block_sites
+        if site.split(":", 1)[1] not in geosites
+    ]
+    unbuilt = [
+        cat for rule in cfg.direct_ip + cfg.proxy_ip + cfg.block_ip
+        if (cat := rule.removeprefix("geoip:")) != rule and cat not in geoips
+    ]
+    return problems + [
+        f"geoip category '{cat}' is not built by geoip/config.json (available: {', '.join(sorted(geoips))})"
+        for cat in unbuilt
+    ]
+
+
 def lint_profiles(root_dir: Path) -> list[str]:
     errors: list[str] = []
     profiles_dir = root_dir / "profiles"
-    geosite_data_dir = root_dir / "geosite" / "data"
-
-    available_geosites = {
-        p.name
-        for p in geosite_data_dir.iterdir()
-        if p.is_file() and not p.name.startswith(".")
-    }
+    available_geosites = geosite_categories(root_dir)
     available_geoips = built_geoip_categories(root_dir)
 
     profile_files = sorted(profiles_dir.glob("*.json"))
@@ -58,24 +74,12 @@ def lint_profiles(root_dir: Path) -> list[str]:
         try:
             cfg = ProfileConfig.load_from_file(pf)
         except ProfileError as e:
-            errors += [f"[{pf.name}] {p}" for p in e.problems]
-            continue
+            problems = e.problems
         except (json.JSONDecodeError, OSError, TypeError) as e:
-            errors.append(f"[{pf.name}] Failed to parse profile: {e}")
-            continue
-
-        # The model checked the values; what is left needs the repo: do the categories exist?
-        for site in cfg.direct_sites + cfg.proxy_sites + cfg.block_sites:
-            cat = site.split(":", 1)[1]
-            if cat not in available_geosites:
-                errors.append(f"[{pf.name}] Unknown geosite category '{cat}' (referenced as '{site}')")
-        for ip_rule in cfg.direct_ip + cfg.proxy_ip + cfg.block_ip:
-            cat = ip_rule.removeprefix("geoip:")
-            if cat != ip_rule and cat not in available_geoips:
-                errors.append(
-                    f"[{pf.name}] geoip category '{cat}' is not built by geoip/config.json "
-                    f"(available: {', '.join(sorted(available_geoips))})"
-                )
+            problems = [f"Failed to parse profile: {e}"]
+        else:
+            problems = category_problems(cfg, available_geosites, available_geoips)
+        errors += [f"[{pf.name}] {p}" for p in problems]
 
     return errors
 
