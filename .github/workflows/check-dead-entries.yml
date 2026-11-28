@@ -62,7 +62,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install dnspython==2.9.1 ruff==0.17.3  # pinned like in build-and-update.yml
+          pip install dnspython==2.9.2 ruff==0.17.6  # pinned like in build-and-update.yml
 
       - name: Lint Python Code
         run: |
