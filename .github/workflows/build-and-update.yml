@@ -115,7 +115,6 @@ jobs:
           set -euo pipefail
           mkdir -p downloads
           pids=()
-          ${{ env.CURL }} -o whitelist.txt https://raw.githubusercontent.com/escapingworm/russia-whitelist/refs/heads/main/ru-whitelist-cidr.txt & pids+=($!)
           ${{ env.CURL }} -o antifilterdownloadcommunity.txt https://community.antifilter.download/list/community.lst & pids+=($!)
           ${{ env.CURL }} -o refilter.txt https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/ipsum.lst & pids+=($!)
           ${{ env.CURL }} -o refiltercommunity.txt https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community_ips.lst & pids+=($!)

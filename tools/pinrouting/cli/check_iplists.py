@@ -14,7 +14,6 @@ from pinrouting.geoip import cidr_of_line
 # release has no count for the list or the list held under 1000 CIDRs: small lists swing too much for
 # the half-of-previous rule. refiltercommunity has held 1..14 entries: non-empty only.
 MIN_CIDRS = {
-    "whitelist.txt": 40,
     "antifilterdownloadcommunity.txt": 400,
     "refilter.txt": 10000,
     "refiltercommunity.txt": 1,

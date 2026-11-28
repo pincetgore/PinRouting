@@ -247,7 +247,7 @@ IP-списки не проверяются: APNs и RU-only хосты не о�
 
 ### 📋 Белые списки и правила маршрутизации
 * [DigneZzZ/routing](https://github.com/DigneZzZ/routing) — архитектурные подходы к оптимизации мобильного роутинга и концепции сквозного тестирования правил.
-* [escapingworm/russia-whitelist](https://github.com/escapingworm/russia-whitelist) — проверенные белые списки подсетей РФ (CIDR).
+* [escapingworm/russia-whitelist](https://github.com/escapingworm/russia-whitelist) — проверенные белые списки подсетей РФ (CIDR); снимок 04.2026 хранится в `geoip/CUSTOM-WHITELIST.txt`.
 * [kirilllavrov/RU-domain-list-for-whitelist](https://github.com/kirilllavrov/RU-domain-list-for-whitelist) — списки российских доменов для белого списка.
 * [hxehex/russia-mobile-internet-whitelist](https://github.com/hxehex/russia-mobile-internet-whitelist) — белые списки ресурсов мобильного интернета РФ.
 * [pincetgore/amnezia-app-ru-list](https://github.com/pincetgore/amnezia-app-ru-list) — структурированные базы доверенных доменов РФ по отраслям.

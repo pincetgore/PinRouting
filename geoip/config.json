@@ -230,15 +230,6 @@
       "action": "add",
       "args": {
         "name": "whitelist",
-        "uri": "./whitelist.txt",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "whitelist",
         "uri": "./CUSTOM-WHITELIST.txt"
       }
     },

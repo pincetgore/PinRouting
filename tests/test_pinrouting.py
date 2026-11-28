@@ -243,14 +243,15 @@ class ShadowrocketProfileTest(unittest.TestCase):
 
 class IpListGateTest(unittest.TestCase):
     def test_download_must_be_a_cidr_list_of_enough_size(self):
-        full = "# header\n" + "".join(f"10.0.{i}.0/24\n" for i in range(50))
-        self.assertEqual(check_download("whitelist.txt", full), (50, None))
-        self.assertIn("not a CIDR list", check_download("whitelist.txt", "<html>\n10.0.0.0/24\n")[1])
-        self.assertIn("not a CIDR list", check_download("whitelist.txt", "")[1])
-        self.assertIn("at least 40", check_download("whitelist.txt", "10.0.0.0/24\n")[1])
+        name = "antifilterdownloadcommunity.txt"  # fixed floor 400
+        full = "# header\n" + "".join(f"10.{i >> 8}.{i & 255}.0/24\n" for i in range(500))
+        self.assertEqual(check_download(name, full), (500, None))
+        self.assertIn("not a CIDR list", check_download(name, "<html>\n10.0.0.0/24\n")[1])
+        self.assertIn("not a CIDR list", check_download(name, "")[1])
+        self.assertIn("at least 400", check_download(name, "10.0.0.0/24\n")[1])
         # 1000+ CIDRs in the previous release: half of that replaces the fixed floor
-        self.assertIn("at least 1000", check_download("whitelist.txt", full, last=2000)[1])
-        self.assertIsNone(check_download("whitelist.txt", full, last=100)[1])
+        self.assertIn("at least 1000", check_download(name, full, last=2000)[1])
+        self.assertIsNone(check_download(name, full, last=100)[1])
 
     def test_built_list_too_big_or_foreign(self):
         self.assertEqual(check_built_list("whitelist", "77.88.8.0/24\n2a02:6b8::/32\n"), [])
