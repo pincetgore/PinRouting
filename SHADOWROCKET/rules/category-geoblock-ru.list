@@ -1,7 +1,7 @@
 # NAME: category-geoblock-ru.list
-# TOTAL: 1005
+# TOTAL: 1003
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-11-28 10:45:44 UTC
+# UPDATED: 2026-11-28 11:46:37 UTC
 # Российские сайты, которые ограничивают функционал для российских IP
 DOMAIN-SUFFIX,4pda.ru
 DOMAIN-SUFFIX,4pda.to
@@ -265,7 +265,6 @@ DOMAIN-SUFFIX,miro.com
 DOMAIN-SUFFIX,mistral.ai
 # Monday.com
 DOMAIN-SUFFIX,monday.com
-DOMAIN-SUFFIX,mondayapps.com
 # Naukri
 DOMAIN-SUFFIX,naukimg.com
 DOMAIN-SUFFIX,naukri.com
@@ -481,7 +480,6 @@ DOMAIN-SUFFIX,byteintlapi.com
 DOMAIN-SUFFIX,bytelb.com
 DOMAIN-SUFFIX,byteoversea.net
 DOMAIN-SUFFIX,musemuse.cn
-DOMAIN-SUFFIX,musica.ly
 DOMAIN-SUFFIX,musically-alternate.app.link
 DOMAIN-SUFFIX,musically.app.link
 DOMAIN-SUFFIX,sgpstatp.com

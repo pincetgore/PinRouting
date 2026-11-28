@@ -1,7 +1,7 @@
 # NAME: torrent.list
-# TOTAL: 357
+# TOTAL: 329
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-11-28 10:45:44 UTC
+# UPDATED: 2026-11-28 11:46:37 UTC
 DOMAIN-SUFFIX,dht.aelitis.com
 DOMAIN-SUFFIX,dht.transmissionbt.com
 DOMAIN-SUFFIX,dht.vuze.com
@@ -15,14 +15,11 @@ DOMAIN-SUFFIX,academic-p2p.appspot.com
 DOMAIN-SUFFIX,acg.rip
 DOMAIN-SUFFIX,all4nothin.net
 DOMAIN-SUFFIX,anidex.moe
-DOMAIN-SUFFIX,api.bitumconference.ru
 DOMAIN-SUFFIX,aruacfilmes.com.br
 DOMAIN-SUFFIX,asger.xyz
 DOMAIN-SUFFIX,baibako.tv
 DOMAIN-SUFFIX,bclearning.top
-DOMAIN-SUFFIX,big-boss-tracker.net
 DOMAIN-SUFFIX,bit-hdtv.com
-DOMAIN-SUFFIX,bithq.org
 DOMAIN-SUFFIX,bitseduce.com
 DOMAIN-SUFFIX,bitsparadise.info
 DOMAIN-SUFFIX,biztorrents.com
@@ -30,15 +27,12 @@ DOMAIN-SUFFIX,blackcats-games.net
 DOMAIN-SUFFIX,blokas.io
 DOMAIN-SUFFIX,bluebird-hd.org
 DOMAIN-SUFFIX,bms-hosxp.com
-DOMAIN-SUFFIX,bobbialbano.com
 DOMAIN-SUFFIX,bt-club.ws
 DOMAIN-SUFFIX,bt-tracker.gamexp.ru
 DOMAIN-SUFFIX,bt.3dmgame.com
-DOMAIN-SUFFIX,bt.3kb.xyz
 DOMAIN-SUFFIX,bt.ali213.net
 DOMAIN-SUFFIX,bt.beatrice-raws.org
 DOMAIN-SUFFIX,bt.edwardk.info
-DOMAIN-SUFFIX,bt.hliang.com
 DOMAIN-SUFFIX,bt.zlofenix.org
 DOMAIN-SUFFIX,bt2.54new.com
 DOMAIN-SUFFIX,bt2.edwardk.info
@@ -61,17 +55,13 @@ DOMAIN-SUFFIX,engplus.ru
 DOMAIN-SUFFIX,exodus.desync.com
 DOMAIN-SUFFIX,explodie.org
 DOMAIN-SUFFIX,finbytes.org
-DOMAIN-SUFFIX,forever-tracker.zooki.xyz
-DOMAIN-SUFFIX,free-tracker.zooki.xyz
 DOMAIN-SUFFIX,funfile.org
 DOMAIN-SUFFIX,git.vulnix.sh
 DOMAIN-SUFFIX,h4.trakx.nibba.trade
 DOMAIN-SUFFIX,hdreactor.org
 DOMAIN-SUFFIX,inferno.demonoid.pw
-DOMAIN-SUFFIX,tracker.zerobytes.xyz
 DOMAIN-SUFFIX,jsb.by
 DOMAIN-SUFFIX,kinorun.com
-DOMAIN-SUFFIX,learnbits.me
 DOMAIN-SUFFIX,line-net.ru
 DOMAIN-SUFFIX,ln.mtahost.co
 DOMAIN-SUFFIX,loushao.net
@@ -94,22 +84,18 @@ DOMAIN-SUFFIX,open.acgnxtracker.com
 DOMAIN-SUFFIX,open.acgtracker.com
 DOMAIN-SUFFIX,open.demonii.com
 DOMAIN-SUFFIX,open.demonii.si
-DOMAIN-SUFFIX,open.kickasstracker.com
 DOMAIN-SUFFIX,open.lolicon.eu
 DOMAIN-SUFFIX,open.nyaatorrents.info
 DOMAIN-SUFFIX,open.stealth.si
 DOMAIN-SUFFIX,open.touki.ru
-DOMAIN-SUFFIX,opentor.org
 DOMAIN-SUFFIX,opentracker.acgnx.com
 DOMAIN-SUFFIX,opentracker.acgnx.se
 DOMAIN-SUFFIX,opentracker.xyz
 DOMAIN-SUFFIX,p4p.arenabg.com
 DOMAIN-SUFFIX,peerfect.org
-DOMAIN-SUFFIX,potuk.com
 DOMAIN-SUFFIX,pow7.com
 DOMAIN-SUFFIX,prestige.minimafia.nl
 DOMAIN-SUFFIX,proaudiotorrents.org
-DOMAIN-SUFFIX,public-tracker.zooki.xyz
 DOMAIN-SUFFIX,public.popcorn-tracker.org
 DOMAIN-SUFFIX,publictracker.ch
 DOMAIN-SUFFIX,publictracker.xyz
@@ -131,8 +117,6 @@ DOMAIN-SUFFIX,sukebei.tracker.wf
 DOMAIN-SUFFIX,t.nyaatracker.com
 DOMAIN-SUFFIX,t.overflow.biz
 DOMAIN-SUFFIX,tc-boxing.com
-DOMAIN-SUFFIX,tehconnection.eu
-DOMAIN-SUFFIX,thegeeks.bz
 DOMAIN-SUFFIX,theplace.bz
 DOMAIN-SUFFIX,thetracker.org
 DOMAIN-SUFFIX,thetradersden.org
@@ -141,19 +125,15 @@ DOMAIN-SUFFIX,tk.mabo.ltd
 DOMAIN-SUFFIX,torrent.arjlover.net
 DOMAIN-SUFFIX,torrent.mp3quran.net
 DOMAIN-SUFFIX,torrent.resonatingmedia.com
-DOMAIN-SUFFIX,torrent.tdjs.tech
 DOMAIN-SUFFIX,torrentclub.tech
 DOMAIN-SUFFIX,torrentsmd.com
 DOMAIN-SUFFIX,torrenttracker.nwc.acsalaska.net
 DOMAIN-SUFFIX,torrentzilla.org
 DOMAIN-SUFFIX,tp.m-team.cc
 DOMAIN-SUFFIX,tr.bangumi.moe
-DOMAIN-SUFFIX,tr.cili001.com
 DOMAIN-SUFFIX,tr.ready4.icu
 DOMAIN-SUFFIX,tr2.ysagin.top
 DOMAIN-SUFFIX,tracker-udp.gbitt.info
-DOMAIN-SUFFIX,tracker-v6.zooki.xyz
-DOMAIN-SUFFIX,tracker.36dm.com
 DOMAIN-SUFFIX,tracker.acgnx.se
 DOMAIN-SUFFIX,tracker.aletorrenty.pl
 DOMAIN-SUFFIX,tracker.ali213.net
@@ -163,24 +143,20 @@ DOMAIN-SUFFIX,tracker.anonwebz.xyz
 DOMAIN-SUFFIX,tracker.army
 DOMAIN-SUFFIX,tracker.beeimg.com
 DOMAIN-SUFFIX,tracker.bittor.pw
-DOMAIN-SUFFIX,tracker.bittorrent.am
 DOMAIN-SUFFIX,tracker.bt-hash.com
 DOMAIN-SUFFIX,tracker.bt4g.com
 DOMAIN-SUFFIX,tracker.btnext.com
 DOMAIN-SUFFIX,tracker.bz
 DOMAIN-SUFFIX,tracker.coppersurfer.tk
 DOMAIN-SUFFIX,tracker.corpscorp.online
-DOMAIN-SUFFIX,tracker.cyber-hub.net
 DOMAIN-SUFFIX,tracker.cyberia.is
 DOMAIN-SUFFIX,tracker.dler.org
 DOMAIN-SUFFIX,tracker.dyne.org
 DOMAIN-SUFFIX,tracker.e-utp.net
 DOMAIN-SUFFIX,tracker.etree.org
 DOMAIN-SUFFIX,tracker.filemail.com
-DOMAIN-SUFFIX,tracker.filepit.to
 DOMAIN-SUFFIX,tracker.files.fm
 DOMAIN-SUFFIX,tracker.flashtorrents.org
-DOMAIN-SUFFIX,tracker.fortu.io
 DOMAIN-SUFFIX,tracker.frozen-layer.net
 DOMAIN-SUFFIX,tracker.gbitt.info
 DOMAIN-SUFFIX,tracker.gigatorrents.ws
@@ -218,7 +194,6 @@ DOMAIN-SUFFIX,tracker.tamersunion.org
 DOMAIN-SUFFIX,tracker.tasvideos.org
 DOMAIN-SUFFIX,tracker.teambelgium.net
 DOMAIN-SUFFIX,tracker.tiny-vps.com
-DOMAIN-SUFFIX,tracker.tntvillage.scambioetico.org
 DOMAIN-SUFFIX,tracker.torrentbay.to
 DOMAIN-SUFFIX,tracker.torrentbytes.net
 DOMAIN-SUFFIX,tracker.torrentleech.org
@@ -231,7 +206,6 @@ DOMAIN-SUFFIX,tracker.v6speed.org
 DOMAIN-SUFFIX,tracker.vectahosting.eu
 DOMAIN-SUFFIX,tracker.vulnix.sh
 DOMAIN-SUFFIX,tracker.ygsub.com
-DOMAIN-SUFFIX,tracker.yoshi210.com
 DOMAIN-SUFFIX,tracker.zemoj.com
 DOMAIN-SUFFIX,tracker.zum.bi
 DOMAIN-SUFFIX,tracker0.ufibox.com
@@ -264,7 +238,6 @@ DOMAIN-SUFFIX,zephir.monocul.us
 DOMAIN-SUFFIX,zer0day.ch
 DOMAIN-SUFFIX,zer0day.to
 DOMAIN-SUFFIX,zone-torrent.net
-DOMAIN-SUFFIX,open.demonoid.ch
 DOMAIN-SUFFIX,wepzone.net
 DOMAIN-SUFFIX,ttk2.nbaonlineservice.com
 DOMAIN-SUFFIX,tracker.tryhackx.org
@@ -344,7 +317,6 @@ DOMAIN-SUFFIX,tr3.ysagin.top
 DOMAIN-SUFFIX,tracker.7471.top
 DOMAIN-SUFFIX,tracker.aruku.ovh
 DOMAIN-SUFFIX,tracker.cn.nyaa.net
-DOMAIN-SUFFIX,tracker.ddunlimited.net
 DOMAIN-SUFFIX,tracker.dler.com
 DOMAIN-SUFFIX,tracker.farted.net
 DOMAIN-SUFFIX,tracker.foreverpirates.co

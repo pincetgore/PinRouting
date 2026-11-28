@@ -1,7 +1,7 @@
 # NAME: domains-geo-detect.list
-# TOTAL: 222
+# TOTAL: 221
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-11-28 10:45:44 UTC
+# UPDATED: 2026-11-28 11:46:37 UTC
 # Geo and IP detection domains (direct)
 DOMAIN-SUFFIX,2ip.io
 DOMAIN-SUFFIX,2ip.ua
@@ -157,7 +157,6 @@ DOMAIN-SUFFIX,myip.lv
 DOMAIN-SUFFIX,myip.ma
 DOMAIN-SUFFIX,myip.md
 DOMAIN-SUFFIX,myip.mk
-DOMAIN-SUFFIX,myip.mn
 DOMAIN-SUFFIX,myip.ms
 DOMAIN-SUFFIX,myip.mx
 DOMAIN-SUFFIX,myip.my

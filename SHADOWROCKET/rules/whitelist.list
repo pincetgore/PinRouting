@@ -1,7 +1,7 @@
 # NAME: whitelist.list
-# TOTAL: 858
+# TOTAL: 854
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-11-28 10:45:44 UTC
+# UPDATED: 2026-11-28 11:46:37 UTC
 # Direct for checkers
 DOMAIN-SUFFIX,ipify.org
 DOMAIN-SUFFIX,checkip.amazonaws.com
@@ -729,7 +729,6 @@ DOMAIN-SUFFIX,k-b.ru
 DOMAIN-SUFFIX,kfc.ru
 DOMAIN-SUFFIX,krasnoeibeloe.ru
 DOMAIN-SUFFIX,labirint.ru
-DOMAIN-SUFFIX,lamoda.co
 DOMAIN-SUFFIX,lamoda.ru
 DOMAIN-SUFFIX,letu.ru
 DOMAIN-SUFFIX,loverepublic.ru
@@ -745,7 +744,6 @@ DOMAIN-SUFFIX,onepricecoffee.com
 DOMAIN-SUFFIX,onlinetrade.ru
 DOMAIN-SUFFIX,ostin.com
 DOMAIN-SUFFIX,ostin.ru
-DOMAIN-SUFFIX,ozon.app
 DOMAIN-SUFFIX,ozon.com
 DOMAIN-SUFFIX,ozon.dev
 DOMAIN-SUFFIX,ozon.kz
@@ -851,7 +849,6 @@ DOMAIN-SUFFIX,karofilm.ru
 DOMAIN-SUFFIX,kassir.ru
 DOMAIN-SUFFIX,kinoteatr.ru
 DOMAIN-SUFFIX,kion.ru
-DOMAIN-SUFFIX,kion.tv
 DOMAIN-SUFFIX,litres.ru
 DOMAIN-SUFFIX,matchpremier.ru
 DOMAIN-SUFFIX,matchtv.ru
@@ -874,7 +871,6 @@ DOMAIN-SUFFIX,vc.ru
 DOMAIN-SUFFIX,vedomosti.ru
 DOMAIN-SUFFIX,vkclips.app
 DOMAIN-SUFFIX,vkplay.ru
-DOMAIN-SUFFIX,wink.tv
 DOMAIN-SUFFIX,zvuk.ru
 # Общественные, волонтерские и поисковые организации
 DOMAIN-SUFFIX,dobro.ru
