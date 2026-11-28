@@ -36,7 +36,7 @@ env:
   # Upstream builders are pinned: their code runs in a job that can push to this repo.
   # Bump these SHAs deliberately after reviewing upstream changes.
   GEOIP_BUILDER_REF: 424733bd132427dbd505ccc3b8e3ebc427494063       # Loyalsoldier/geoip
-  GEOSITE_BUILDER_REF: c6adacf29cc4fb05e04651fcf03e00989ef9f797     # v2fly/domain-list-community
+  GEOSITE_BUILDER_REF: f68dab92e2ce656bbd81a4ae424de79b179f0f77     # v2fly/domain-list-community
 
 jobs:
   build:
@@ -80,7 +80,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v7
         with:
-          go-version: '1.26'  # builders need go 1.26 (geoip) and 1.25.12 (v2fly)
+          go-version: '1.26'  # builders need go 1.26.11 (geoip) and 1.26.10 (v2fly)
           cache: false
 
       # -----------------------------------------------------------------------
