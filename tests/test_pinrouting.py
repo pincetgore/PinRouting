@@ -176,6 +176,25 @@ class DomainLivenessTest(unittest.TestCase):
             self.assertFalse(alive("ent.example", suffix=False))
             self.assertFalse(alive("dead.example", suffix=True))
 
+    def test_moved_or_dead_dns_hosts_pin_is_reported(self):
+        import dns.resolver
+        from pinrouting.cli.check_dead import stale_dns_hosts
+
+        live = {"same.example": {"203.0.113.7", "203.0.113.8"}, "moved.example": {"198.51.100.1"}}
+
+        def resolve(host: str) -> set[str]:
+            if host not in live:
+                raise dns.resolver.NXDOMAIN
+            return live[host]
+
+        with tempfile.TemporaryDirectory() as tmp:
+            hosts = {"same.example": "203.0.113.7", "moved.example": "203.0.113.9", "gone.example": "203.0.113.10"}
+            (Path(tmp) / "p.json").write_text(json.dumps({"Name": "p", "DnsHosts": hosts}), encoding="utf-8")
+            problems = stale_dns_hosts(Path(tmp), resolve)
+        self.assertEqual(len(problems), 2)
+        self.assertIn("gone.example to 203.0.113.10, but gone.example does not resolve (NXDOMAIN)", problems[0])
+        self.assertIn("moved.example to 203.0.113.9, but DNS now answers 198.51.100.1", problems[1])
+
 
 class LintProfilesTest(unittest.TestCase):
     def test_typos_in_profile_values_are_errors(self):

@@ -5,7 +5,8 @@ answers NXDOMAIN; errors and timeouts count as alive. Supports dry-run inspectio
 removal with Markdown and JSON reporting.
 
 IP lists are not checked: many hosts (APNs, RU-only services) ignore probes from foreign CI runners,
-so "no answer" does not mean "unused".
+so "no answer" does not mean "unused". DnsHosts pins in profiles/*.json are checked against live DNS
+and reported as warnings.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ import argparse
 import asyncio
 import json
 import time
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -23,6 +24,7 @@ import dns.asyncresolver
 import dns.exception
 import dns.resolver
 from pinrouting.geosite import parse_rule, remove_domains
+from pinrouting.models import ProfileConfig
 
 DEFAULT_RESOLVERS = ["1.1.1.1", "8.8.8.8", "77.88.8.8"]
 DEFAULT_CONCURRENCY = 150
@@ -100,6 +102,34 @@ async def check_domain_liveness(
 
     # Some resolvers failed with errors/timeouts: play safe, do not mark dead
     return True, f"unconfirmed DNS status ({last_error})"
+
+
+def stale_dns_hosts(profiles_dir: Path, resolve: Callable[[str], set[str]]) -> list[str]:
+    """DnsHosts pins whose IP is no longer among the host's A records.
+
+    Clients use the pinned IP and never ask DNS, so a moved host breaks silently for every user.
+    """
+    pins = {
+        pin for pf in sorted(profiles_dir.glob("*.json")) for pin in ProfileConfig.load_from_file(pf).dns_hosts.items()
+    }
+    problems: list[str] = []
+    for host, ip in sorted(pins):
+        try:
+            live = resolve(host)
+        except dns.exception.DNSException as e:
+            problems.append(f"DnsHosts pins {host} to {ip}, but {host} does not resolve ({type(e).__name__})")
+            continue
+        if ip not in live:
+            problems.append(f"DnsHosts pins {host} to {ip}, but DNS now answers {', '.join(sorted(live))}")
+    return problems
+
+
+def _a_records(host: str) -> set[str]:
+    # Yandex, the profiles' domestic DNS: the answer RU clients would get without the pin
+    resolver = dns.resolver.Resolver(configure=False)
+    resolver.nameservers = ["77.88.8.8"]
+    resolver.lifetime = 5
+    return {r.address for r in resolver.resolve(host, "A")}
 
 
 def collect_domain_tasks(
@@ -306,6 +336,8 @@ async def run_checker(args: argparse.Namespace) -> int:
 
     await checker.check_all_domains()
     checker.summary.end_time = time.time()
+    for warning in stale_dns_hosts(root_dir / "profiles", _a_records):
+        print(f"::warning::{warning}")
 
     if args.remove and checker.summary.dead_domains:
         print("[*] Removing dead domains from files...")
