@@ -35,7 +35,7 @@ env:
   CURL: curl -fsSL --retry 5 --retry-delay 3 --connect-timeout 10
   # Upstream builders are pinned: their code runs in a job that can push to this repo.
   # Bump these SHAs deliberately after reviewing upstream changes.
-  GEOIP_BUILDER_REF: 424733bd132427dbd505ccc3b8e3ebc427494063       # Loyalsoldier/geoip
+  GEOIP_BUILDER_REF: 74979bc45fae8c817081b11c5222863f0f31d4e5       # Loyalsoldier/geoip
   GEOSITE_BUILDER_REF: f68dab92e2ce656bbd81a4ae424de79b179f0f77     # v2fly/domain-list-community
 
 jobs:
