@@ -68,6 +68,17 @@ class LintRulesTest(unittest.TestCase):
             path.write_text("full:a.x.example\ndomain:x.example\nfull:y.example\n", encoding="utf-8")
             self.assertEqual(lint_geosite_file(path), (0, 1))
 
+    def test_regexp_go_re2_rejects_is_an_error(self):
+        # Python re accepts these, v2fly's Go RE2 does not: the daily geosite build would fail
+        lint_geosite_file = load_buildtool("lint_rules").lint_geosite_file
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            path = Path(tmp) / "cat"
+            for bad in (r"^(?!www)x\.example$", r"(?<=a)b", r"(?>a)", r"(a)\1"):
+                path.write_text(f"regexp:{bad}\n", encoding="utf-8")
+                self.assertEqual(lint_geosite_file(path), (1, 0), bad)
+            path.write_text("regexp:^(?:a|b)-[0-9a-z]{6}\\.example$\nregexp:(?P<name>x)\\.example\n", encoding="utf-8")
+            self.assertEqual(lint_geosite_file(path), (0, 0))
+
     def test_geoip_line_is_read_like_the_build_reads_it(self):
         # lint must reject what the Shadowrocket emitter cannot parse, and accept inline comments
         lint_geoip_file = load_buildtool("lint_rules").lint_geoip_file

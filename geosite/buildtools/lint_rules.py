@@ -31,6 +31,8 @@ GEOIP_DIR = REPO_ROOT / "geoip"
 
 VALID_GEOSITE_TYPES = {"domain", "full", "keyword", "regexp"}
 ATTR_RE = re.compile(r"@[a-z0-9!]+")
+# v2fly compiles regexp: with Go RE2, which has no lookaround, atomic groups or backreferences
+RE2_UNSUPPORTED = re.compile(r"\(\?(<?[=!]|>)|\\[1-9]")
 
 
 def lint_geosite_file(filepath: Path) -> tuple[int, int]:
@@ -83,6 +85,9 @@ def lint_geosite_file(filepath: Path) -> tuple[int, int]:
                     re.compile(val)
                 except re.error as e:
                     error(idx, f"Invalid regexp: {e}: {line}")
+                    continue
+                if unsupported := RE2_UNSUPPORTED.search(val):
+                    error(idx, f"Regexp uses '{unsupported.group()}', which Go RE2 (v2fly) rejects: {line}")
                     continue
 
             # Check exact duplicates
