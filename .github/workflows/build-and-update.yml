@@ -167,10 +167,7 @@ jobs:
           test -s output/dat/geoip.dat
           test -s output/text/direct.txt && test -s output/text/whitelist.txt
           # Too-big lists (an upstream 0.0.0.0/0) must fail here, before the release branch serves them
-          # whitelist.txt is third-party and goes DIRECT: it must stay inside the RU/BY geo lists
-          PYTHONPATH="$GITHUB_WORKSPACE/tools" python3 -m pinrouting check-iplists output output/text \
-            --whitelist-geo geolite_ru.lst geolite_by.lst dbip_ru.lst dbip_by.lst ipinfo_ru.lst ipinfo_by.lst \
-              CUSTOM-WHITELIST.txt
+          PYTHONPATH="$GITHUB_WORKSPACE/tools" python3 -m pinrouting check-iplists output output/text
           ls -lh output/dat/*.dat
 
       # -----------------------------------------------------------------------

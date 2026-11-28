@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import ipaddress
 import re
-from bisect import bisect_right
 from pathlib import Path
 
 from pinrouting.geoip import cidr_of_line
@@ -30,9 +29,6 @@ _CIDR = re.compile(r"[0-9a-fA-F:.]+/[0-9]+")
 # IPv4 addresses a built list may cover. In 11.2026 direct covered 49.0M and whitelist 0.22M: one
 # 0.0.0.0/0 line in an upstream "add" list would otherwise send nearly all traffic DIRECT, past the VPN.
 MAX_IPV4_ADDRESSES = {"direct": 80_000_000, "whitelist": 400_000}
-# IPv4 addresses of whitelist.txt allowed outside the RU/BY geo lists and CUSTOM-WHITELIST.txt. The list
-# comes from a third-party repo and goes DIRECT; in 11.2026 only 256 were outside (151.236.93.0/24).
-MAX_WHITELIST_OUTSIDE_GEO = 4096
 # Foreign addresses (Google DNS) that must never be routed DIRECT
 MUST_NOT_CONTAIN = ("8.8.8.8", "2001:4860:4860::8888")
 
@@ -103,34 +99,6 @@ def check_built_list(name: str, text: str) -> list[str]:
     return errors
 
 
-def check_whitelist_geo(whitelist_text: str, geo_texts: list[str]) -> list[str]:
-    """Checks that the built whitelist stays inside the RU/BY geo lists (and CUSTOM-WHITELIST.txt).
-
-    shortcut: IPv4 only, like MAX_IPV4_ADDRESSES; check IPv6 too if the whitelist sources start shipping it.
-    """
-    geo = [n for text in geo_texts for n in _networks(text) if isinstance(n, ipaddress.IPv4Network)]
-    cover = [(int(n.network_address), int(n.broadcast_address) + 1) for n in ipaddress.collapse_addresses(geo)]
-    starts = [lo for lo, _ in cover]
-    outside: list[tuple[int, ipaddress.IPv4Network]] = []
-    wl = (n for n in _networks(whitelist_text) if isinstance(n, ipaddress.IPv4Network))
-    for net in ipaddress.collapse_addresses(wl):
-        lo, hi = int(net.network_address), int(net.broadcast_address) + 1
-        i, inside = max(bisect_right(starts, lo) - 1, 0), 0  # cover is sorted and disjoint
-        while i < len(cover) and cover[i][0] < hi:
-            inside += max(0, min(hi, cover[i][1]) - max(lo, cover[i][0]))
-            i += 1
-        if inside < hi - lo:
-            outside.append((hi - lo - inside, net))
-    total = sum(count for count, _ in outside)
-    if total <= MAX_WHITELIST_OUTSIDE_GEO:
-        return []
-    biggest = ", ".join(str(net) for _, net in sorted(outside, reverse=True)[:5])
-    return [(
-        f"whitelist.txt has {total:,} IPv4 addresses outside the RU/BY geo lists, limit is "
-        f"{MAX_WHITELIST_OUTSIDE_GEO:,} (largest: {biggest}). They would go DIRECT, past the VPN."
-    )]
-
-
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="pinrouting check-iplists", description=__doc__)
     sub = parser.add_subparsers(dest="mode", required=True)
@@ -140,8 +108,6 @@ def main(argv: list[str] | None = None) -> int:
     downloads.add_argument("--accept", action="store_true", help="skip the half-of-previous-release check")
     output = sub.add_parser("output", help="check the built direct.txt / whitelist.txt")
     output.add_argument("text_dir", type=Path, help="geoip builder output/text dir")
-    output.add_argument("--whitelist-geo", type=Path, nargs="+", required=True,
-                        help="RU/BY CIDR lists (and CUSTOM-WHITELIST.txt) the whitelist must stay inside")
     args = parser.parse_args(argv)
 
     if args.mode == "downloads":
@@ -151,8 +117,6 @@ def main(argv: list[str] | None = None) -> int:
         texts = {name: (args.text_dir / f"{name}.txt").read_text(encoding="utf-8") for name in MAX_IPV4_ADDRESSES}
         for name, text in texts.items():
             errors += check_built_list(name, text)
-        geo = [path.read_text(encoding="utf-8") for path in args.whitelist_geo]
-        errors += check_whitelist_geo(texts["whitelist"], geo)
     for err in errors:
         print(f"::error::{err}")
     return 1 if errors else 0

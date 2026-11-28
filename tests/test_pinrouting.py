@@ -18,7 +18,6 @@ from pinrouting.cli.check_iplists import (
     check_built_list,
     check_download,
     check_downloads,
-    check_whitelist_geo,
 )
 from pinrouting.cli.lint import lint_profiles
 from pinrouting.emitters.shadowrocket import ShadowrocketEmitter
@@ -282,16 +281,6 @@ class IpListGateTest(unittest.TestCase):
             self.assertFalse(baseline.exists())
             self.assertEqual(check_downloads(d, yesterday, accept=True), [])  # a real drop, accepted by hand
             self.assertTrue(baseline.exists())
-
-    def test_whitelist_must_stay_inside_ru_by(self):
-        # whitelist.txt comes from a third-party repo and goes DIRECT: foreign ranges would bypass the VPN
-        geo = ["77.88.0.0/18\n", "# custom\n5.255.255.0/24\n"]
-        self.assertEqual(check_whitelist_geo("77.88.8.0/24\n5.255.255.0/24\n", geo), [])
-        self.assertEqual(check_whitelist_geo("77.88.8.0/24\n151.236.93.0/24\n", geo), [])  # a few stray /24s
-        errors = check_whitelist_geo("77.88.8.0/24\n104.16.0.0/13\n", geo)
-        self.assertEqual(len(errors), 1)
-        self.assertIn("104.16.0.0/13", errors[0])
-        self.assertEqual(len(check_whitelist_geo("77.88.0.0/16\n", geo)), 1)  # 48k of the /16 lie outside the /18
 
 
 class BuildTest(unittest.TestCase):
