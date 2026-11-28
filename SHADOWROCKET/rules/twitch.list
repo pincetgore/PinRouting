@@ -1,7 +1,7 @@
 # NAME: twitch.list
-# TOTAL: 34
+# TOTAL: 37
 # REPO: https://github.com/pincetgore/PinRouting
-# UPDATED: 2026-11-28 08:36:54 UTC
+# UPDATED: 2026-11-28 10:21:14 UTC
 DOMAIN-SUFFIX,twitch.tv
 DOMAIN-SUFFIX,ttvnw.net
 DOMAIN-SUFFIX,ext-twitch.tv
@@ -10,6 +10,7 @@ DOMAIN-SUFFIX,live-video.net
 DOMAIN-SUFFIX,twitchcdn.net
 DOMAIN-SUFFIX,twitchsvc.net
 DOMAIN-SUFFIX,twitch-ext.rootonline.de
+DOMAIN-SUFFIX,twitchcon.com
 DOMAIN-SUFFIX,twitch.map.fastly.net
 DOMAIN-SUFFIX,dxtkri2c61io4.cloudfront.net
 DOMAIN-SUFFIX,d36mepituis1gg.cloudfront.net
@@ -36,3 +37,5 @@ DOMAIN-SUFFIX,d6tizftlrpuof.cloudfront.net
 DOMAIN-SUFFIX,ddacn6pr5v0tl.cloudfront.net
 DOMAIN-SUFFIX,dgeft87wbj63p.cloudfront.net
 DOMAIN-SUFFIX,dykkng5hnh52u.cloudfront.net
+DOMAIN-SUFFIX,d1ndex63qxojbr.cloudfront.net
+DOMAIN-SUFFIX,d3stzm2eumvgb4.cloudfront.net
