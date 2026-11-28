@@ -147,15 +147,9 @@ class ShadowrocketEmitter:
         ]
         hosts_str = "\n".join(hosts_lines)
 
-        profile_display = {
-            "DEFAULT": "DEFAULT (Основной)",
-            "WHITELIST": "WHITELIST (Белый список)",
-            "BASIC": "BASIC (Базовый профиль)",
-        }.get(key, profile.name)
-
         # Header template
         conf_header = f"""# @PinRouting for Shadowrocket
-# Profile: {profile_display}
+# Profile: {key} ({profile.name})
 # LastUpdated: {epoch} ({updated_str})
 # Repository: https://github.com/{repo}
 
@@ -213,15 +207,10 @@ update-url = {raw_base}/{key}.CONF
         rule_parts: list[str] = ["[Rule]"]
 
         # 1-3. Site rules, in RouteOrder: block -> proxy -> direct
-        direct_title = (
-            "# --- Прямое подключение (DirectSites: системные пуш-уведомления) ---"
-            if key == "BASIC"
-            else "# --- Прямое подключение (DirectSites) ---"
-        )
         sections = [
             (profile.block_sites, "REJECT", "# --- Блокировка (BlockSites) ---"),
             (profile.proxy_sites, "PROXY", "# --- Проксируемые зарубежные сервисы (ProxySites) ---"),
-            (profile.direct_sites, "DIRECT", direct_title),
+            (profile.direct_sites, "DIRECT", "# --- Прямое подключение (DirectSites) ---"),
         ]
         for sites, policy, title in sections:
             if not sites:
@@ -252,14 +241,7 @@ update-url = {raw_base}/{key}.CONF
 
         # 5. Final fallback
         if profile.global_proxy == "true":
-            if key == "BASIC":
-                rule_parts.append(
-                    "# --- Финальное правило (весь остальной трафик в VPN) ---"
-                )
-            else:
-                rule_parts.append(
-                    "# --- Финальное правило (аналог GlobalProxy: true — весь остальной зарубежный трафик в VPN) ---"
-                )
+            rule_parts.append("# --- Финальное правило (GlobalProxy: true — весь остальной трафик в VPN) ---")
             rule_parts.append("FINAL,PROXY\n")
         else:
             rule_parts.append(
