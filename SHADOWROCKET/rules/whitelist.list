@@ -1,5 +1,5 @@
 # NAME: whitelist.list
-# TOTAL: 854
+# TOTAL: 853
 # REPO: https://github.com/pincetgore/PinRouting
 # UPDATED: 2026-11-28 11:46:37 UTC
 # Direct for checkers
@@ -110,7 +110,6 @@ DOMAIN-SUFFIX,oryol.ru
 DOMAIN-SUFFIX,penza.ru
 DOMAIN-SUFFIX,psk.ru
 DOMAIN-SUFFIX,pskov.ru
-DOMAIN-SUFFIX,rnd.ru
 DOMAIN-SUFFIX,ryazan.ru
 DOMAIN-SUFFIX,sakhalin.ru
 DOMAIN-SUFFIX,samara.ru
